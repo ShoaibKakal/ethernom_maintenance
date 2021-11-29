@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#E6BE48</color>
+    <color name="colorPrimaryDark">#1BAAA0</color>
+    <color name="colorAccent">#656363</color>
+    <color name="colorGoopleBackground">#1BAAA0</color>
+    <color name="color_background">#F7F6F9</color>
+    <color name="white_blur">#39FFFFFF</color>
+    <color name="colorBlack">#2D2D2E</color>
+    <color name="colorGray">#D3D3D3</color>
+    <color name="colorWhite">#ffffff</color>
+    <color name="colorSuccess">#8BC34A</color>
+    <color name="colorWarning">#CBA830</color>
+    <color name="colorDanger">#f44336</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="colorBase">#EB5857</color>
+    <color name="colorBeCareful">#E6BE48</color>
+    <color name="colorButton">#166C93</color>
+    <color name="colorBox">#67CF93</color>
+    <color name="colorOrange">#F3996B</color>
+    <color name="grey_50">#FAFAFA</color>
+    <color name="colorFirst">#F6D76B</color>
+    <color name="colorSecond">#1BAAA0</color>
+
+    <color name="colorText">#4A4A4B</color>
+    <color name="colorLine">#5D5E60</color>
+    <color name="colorGrey_900">#D7212121</color>
+    <color name="colorGrey_200">#9EEEEEEE</color>
+    <color name="colorIcon">#757575</color>
+    <color name="colorBlueGrey">#ECEFF1</color>
+    <color name="colorBtnClick">#63656667</color>
+    <color name="colorBlue_200">#90CAF9</color>
+    <color name="colorTeal_200">#80CBC4</color>
+    <color name="colorRed_A100">#FF8A80</color>
+    <color name="colorBlueGrey_200">#B0BEC5</color>
+
+
+</resources>

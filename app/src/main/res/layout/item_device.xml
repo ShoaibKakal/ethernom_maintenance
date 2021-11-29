@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:background="?attr/selectableItemBackground"
+    android:layout_height="60dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="15dp"
+        android:layout_toStartOf="@+id/addImage"
+        android:orientation="vertical"
+        tools:ignore="RelativeOverlap">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/txt_card_name"
+            style="@style/SingleLineTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/card_name"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/text_size_16sp" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/txt_card_sn"
+            style="@style/SingleLineTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:text="@string/sn"
+            android:textColor="@android:color/darker_gray"
+            android:textSize="@dimen/text_size_14sp" />
+    </LinearLayout>
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/addImage"
+        android:layout_width="14dp"
+        android:layout_height="14dp"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="@dimen/dimen_15dp"
+        android:src="@drawable/ic_add_black" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dimen_0_3dp"
+        android:layout_alignParentBottom="true"
+        android:background="@color/colorGray" />
+
+</RelativeLayout>

@@ -1,0 +1,88 @@
+<resources>
+    <string name="app_name">ethernom_maintenance</string>
+
+    <!--    Toast-->
+    <string name="toast_success">SUCCESS :</string>
+    <string name="toast_warning">WARNING :</string>
+    <string name="toast_danger">DANGER :</string>
+    <string name="okay">Okay</string>
+    <string name="exit">Exit</string>
+    <string name="connection_successfully">Connection Successfully</string>
+    <string name="back">Back</string>
+    <string name="phone_number">Phone Number</string>
+    <string name="setting">Setting</string>
+    <string name="set_up">Setup</string>
+    <string name="goople_mode">Goople Mode</string>
+    <string name="name">Name</string>
+
+    <!-- Splash Activity -->
+    <string name="app_version">Version:</string>
+    <string name="warning">Warning</string>
+    <string name="turn_on_bluetooth_message_cred">Turn on Bluetooth and allow the Ethernom Contact Tracing to connect Bluetooth accessories. Do you want to enable it?</string>
+    <string name="enable">Enable</string>
+    <string name="loading">Loading</string>
+
+    <string name="capsule_onboarding_completed">Capsule onboarding completed</string>
+    <string name="searching_nearby_device">Searching nearby device...</string>
+
+    <!-- Login Activity -->
+    <string name="test_txt">Test Toolbar</string>
+    <string name="authentication"><u>Authentication</u></string>
+    <string name="access_for_maintenance_device">Access for maintenance devices.</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="log_in">Log in</string>
+
+    <!-- Discover Activity -->
+    <string name="discover_toolbar_text">Discover Device</string>
+    <string name="question">&#63;</string>
+    <string name="card_name">Google!Puttheavy</string>
+    <string name="sn">1.2.123</string>
+
+    <!-- Maintenance Activity -->
+    <string name="main_toolbar">Maintenance</string>
+    <string name="select_an_option_below"><u>Select an options</u></string>
+    <string name="menu_reset">Capsule Factory Reset</string>
+    <string name="menu_debug_process">Debug Process</string>
+    <string name="menu_read_qr">Read QR Code</string>
+    <string name="menu_about">About</string>
+
+    <!-- Debug Process Activity -->
+    <string name="debug_toolbar">Debug Process</string>
+    <string name="debug_info"><u>Debug Information</u></string>
+    <string name="battery_level">Battery Level:</string>
+    <string name="ao">AO</string>
+    <string name="cs">CS</string>
+    <string name="ent">EVENT</string>
+    <string name="close">Close</string>
+    <string name="disable_ct">Disable CT</string>
+    <string name="enable_ct">Enable CT</string>
+
+    <!-- QR Code Activity -->
+    <string name="qr_code_toolbar">QR Code</string>
+    <string name="qr_info"><u>QR Code Information</u></string>
+    <string name="save_qr_code">Save QR</string>
+    <string name="show_qr_folder">Show Folder QR</string>
+
+
+    <!-- About Activity -->
+    <string name="about_toolbar">About</string>
+
+    <!-- Dialog -->
+    <string name="capsule_reset_title">Special system factory reset</string>
+    <string name="capsule_reset_in_progress">System configuration request special reset in progress.</string>
+    <string name="capsule_reset_success">System configuration successfully.</string>
+    <string name="capsule_reset_failed">System configuration request special reset was failure. Please try again.</string>
+
+    <string name="debug_title">Debug Process Request</string>
+    <string name="debug_in_progress">System configuration debug process in progress.</string>
+    <string name="debug_success">System configuration successfully.</string>
+    <string name="debug_failed">System configuration debug process was failure. Please try again.</string>
+
+    <string name="qr_code_title">QR Code Request</string>
+    <string name="qr_code_in_progress">QR code request in progress</string>
+    <string name="qr_code_success">QR code request successfully</string>
+    <string name="qr_code_failed">QR code request was failure. Please try again.</string>
+
+
+</resources>
