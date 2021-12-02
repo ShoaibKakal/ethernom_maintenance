@@ -3,7 +3,6 @@ package com.ethernom.maintenance.ao.login
 import android.content.Context
 import android.util.Log
 import com.ethernom.maintenance.ao.*
-import com.ethernom.maintenance.ao.select.SelectState
 
 class LoginAO (ctx: Context){
     private val tag: String = javaClass.simpleName
@@ -35,7 +34,7 @@ class LoginAO (ctx: Context){
         producerIdx = 0)
 
     val loginAcb = ACB(
-        id = AoId.AO_APP_ID,
+        id = AoId.AO_LOG_ID,
         currentState = LoginState.INIT,
         eventQ = eventQ,
         fsm = loginFsm,

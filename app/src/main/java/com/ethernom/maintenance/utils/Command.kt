@@ -13,35 +13,26 @@ object TransportCmd {
 }
 
 object APPCmd {
-    // Capsule Onboarding
-    const val C2A_COB_REQ = 0x90.toByte() // Capsule Onboarding Request
-    const val A2C_COB_RSP = 0xE0.toByte() // Capsule Onboarding Response
+    // Capsule Factory Reset
+    const val A2C_FR_REQ = 0x15.toByte() // Factory Reset Request
+    const val C2A_FR_RSP = 0x55.toByte() // Factory Reset Response
+    const val A2C_FR_COM = 0x16.toByte() // Factory Reset Complete
 
-    const val C2A_COB_CERT_REQ = 0x91.toByte() // Verify Certificate Request
-    const val A2C_COB_CERT_RSP = 0xE1.toByte() // Verify Certificate Response
+    // Debug Process
+    const val A2C_DBP_REQ       = 0x40.toByte() // Debug Process Request
+    const val C2A_DBP_RSP       = 0x80.toByte() // Debug Process Response
+    const val A2C_DBP_DATA_REQ  = 0x41.toByte() // Debug Process Data Request
+    const val C2A_DBP_DATA_RSP  = 0x81.toByte() // Debug Process Data Response
+    const val A2C_DBP_CT_REQ    = 0x42.toByte() // Update CT Request
+    const val C2A_DBP_CT_RSP    = 0x82.toByte() // Update CT Response
+    const val A2C_DBP_COM       = 0x43.toByte() // Debug Process Complete
 
-    const val C2A_COB_COM = 0x92.toByte() // Capsule Onboarding Complete
-    const val A2C_COB_ACK = 0xE2.toByte() // Capsule Onboarding Acknowledge
-
-    // Capsule Onboard new = = = = = = = = = = = = = = = = = = = = = = = =
-    const val A2C_COB_REQ       = 0x90.toByte()  // Capsule Onboarding Request
-    const val C2A_COB_RSP       = 0xE0.toByte()  // Capsule Onboarding Response
-    const val A2C_COB_CER_REQ   = 0x91.toByte()  // Save Certificate Request
-    const val C2A_COB_CER_RSP   = 0xE1.toByte()  // Save Certificate Response
-    const val A2C_COB_VER_REQ   = 0x92.toByte()  // Verify Certificate Request
-    const val C2A_COB_VER_RSP   = 0xE2.toByte()  // Verify Certificate Response
-    const val A2C_COB_COM       = 0x93.toByte()  // Capsule Onboarding Complete
-    // = = = = = = = == =  = = = = = = = = = = = = = = = = = = = = = = = =
+    // Read QR Code
+    const val A2C_RQR_REQ = 0x44.toByte()    // Read QR Code Request
+    const val C2A_RQR_RSP = 0x84.toByte()    // Read QR Code Response
+    const val A2C_RQR_COM = 0x45.toByte()    // Read QR Code Complete
 
 
-//    const val C2A_COB_REQ = 0x90.toByte() // Capsule Onboarding Request
-//    const val A2C_COB_RSP = 0xE0.toByte() // Capsule Onboarding Response
-//    const val C2A_COB_COM = 0x91.toByte() // Capsule Onboarding Complete
-//    const val A2C_COB_ACK = 0xE1.toByte() // Capsule Onboarding Acknowledge
-
-    // Global event
-    const val C2A_C_DISCONNECT = 0x05.toByte() // capsule send disconnect
-    const val C2A_Timestamp_Rqst = 0x12.toByte()
 }
 
 object Port {

@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.ethernom.maintenance">
 
-    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH"/>
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
     <uses-permission android:name="android.permission.BLUETOOTH_SCAN" />
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.WRITE_INTERNAL_STORAGE" />
 
     <uses-feature
         android:name="android.hardware.bluetooth_le"
@@ -24,22 +24,34 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Ethernom_maintenance">
+        android:usesCleartextTraffic="true"
+        android:theme="@style/Theme.Ethernom_maintenance"
+        tools:targetApi="m">
         <activity
             android:name=".ui.AboutActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="locked"
+            android:configChanges="keyboardHidden|orientation|screenSize|locale"/>
         <activity
             android:name=".ui.QRCodeActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="locked"
+            android:configChanges="keyboardHidden|orientation|screenSize|locale"/>
         <activity
             android:name=".ui.DebugProcessActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="locked"
+            android:configChanges="keyboardHidden|orientation|screenSize|locale"/>
         <activity
             android:name=".ui.MaintenanceActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="locked"
+            android:configChanges="keyboardHidden|orientation|screenSize|locale"/>
         <activity
             android:name=".ui.DiscoverActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="locked"
+            android:configChanges="keyboardHidden|orientation|screenSize|locale"/>
         <activity
             android:name=".ui.SplashActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|locale"
@@ -53,6 +65,15 @@
             </intent-filter>
         </activity>
         <activity android:name=".ui.AuthenticationActivity" />
+
+        <receiver
+            android:name=".broadcast.LocationBroadcast"
+            android:exported="false" >
+            <intent-filter>
+                <action android:name="android.location.PROVIDERS_CHANGED" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

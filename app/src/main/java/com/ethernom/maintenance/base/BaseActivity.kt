@@ -1,18 +1,27 @@
 package com.ethernom.maintenance.base
 
+import android.content.BroadcastReceiver
 import android.content.Intent
+import android.content.IntentFilter
+import android.location.LocationManager
 import android.os.Bundle
 import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Button
+import android.widget.TextView
 import androidx.annotation.StringRes
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.viewbinding.ViewBinding
 import cn.pedant.SweetAlert.SweetAlertDialog
 import com.ethernom.maintenance.R
+import com.ethernom.maintenance.broadcast.LocationBroadcast
 import com.ethernom.maintenance.utils.AppConstant.START_ACTIVITY_ANIM_LEFT
 import com.ethernom.maintenance.utils.AppConstant.START_ACTIVITY_ANIM_RIGHT
 import com.ethernom.maintenance.utils.AppConstant.START_ACTIVITY_ANIM_TOP
+import com.ethernom.maintenance.utils.customView.LoadingView
 import kotlinx.android.synthetic.main.toolbar_back_press.*
 import kotlinx.android.synthetic.main.toolbar_center_title.*
 import kotlinx.android.synthetic.main.toolbar_center_title.center_toolbar
@@ -20,13 +29,18 @@ import kotlinx.android.synthetic.main.toolbar_center_title.toolbar_title
 
 abstract class BaseActivity<VB: ViewBinding>: AppCompatActivity() {
     lateinit var binding: VB
-    private var sweetAlertDialog: SweetAlertDialog? = null
+    var alertDialog: AlertDialog? = null
+    private val locationBr: BroadcastReceiver = LocationBroadcast()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = getViewBidingClass()
         setContentView(binding.root)
         initView()
+
+        val filter1 = IntentFilter(LocationManager.PROVIDERS_CHANGED_ACTION)
+       registerReceiver(locationBr, filter1)
     }
 
     abstract fun getViewBidingClass(): VB
@@ -55,6 +69,21 @@ abstract class BaseActivity<VB: ViewBinding>: AppCompatActivity() {
             true
         } else {
             super.onOptionsItemSelected(item)
+        }
+    }
+
+    private val mLoadingViewParent: ViewGroup? = null
+    private var loadingView: LoadingView? = null
+
+    open fun showLoading(title: String) {
+        loadingView = loadingView ?: LoadingView(this).show(this, mLoadingViewParent)
+        loadingView!!.setLoadingDescription(title)
+    }
+
+    open fun hideLoading() {
+        loadingView?.let {
+            it.hide()
+            loadingView = null
         }
     }
 
@@ -92,49 +121,74 @@ abstract class BaseActivity<VB: ViewBinding>: AppCompatActivity() {
         }
     }
 
-    open fun showDialogInProgress(@StringRes title: Int, @StringRes context: Int){
-        if(sweetAlertDialog != null) sweetAlertDialog!!.dismissWithAnimation()
-        sweetAlertDialog = SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE).apply {
-            titleText = getString(title)
-            contentText = getString(context)
-            contentTextSize = 15
-            setCancelable(false)
-            show()
-        }
+    open fun showDialogInProgress(@StringRes title: Int, @StringRes contentText: Int){
+        if(alertDialog != null) alertDialog!!.dismiss()
+        val dialogBuilder: AlertDialog.Builder = AlertDialog.Builder(this)
+        val inflater = this.layoutInflater
+        val dialogView: View = inflater.inflate(R.layout.dialog_in_progress, null)
+        dialogBuilder.setView(dialogView)
+        dialogBuilder.setCancelable(false)
+        dialogView.findViewById<TextView>(R.id.title).text = getString(title)
+            dialogView.findViewById<TextView>(R.id.content).text = getString(contentText)
+
+        alertDialog = dialogBuilder.create()
+        alertDialog!!.show()
     }
 
-    open fun showDialogSuccess(@StringRes title: Int, @StringRes context: Int, confirmButton: () -> Unit){
-        if(sweetAlertDialog != null) sweetAlertDialog!!.dismissWithAnimation()
-        sweetAlertDialog = SweetAlertDialog(this, SweetAlertDialog.SUCCESS_TYPE).apply {
-            titleText = getString(title)
-            contentText = getString(context)
-            contentTextSize = 15
-            confirmText = getString(R.string.okay)
-            setCancelable(false)
-            setConfirmClickListener {
-                dismissWithAnimation()
-                confirmButton.invoke()
-                sweetAlertDialog = null
-            }
-            show()
+    open fun showDialogSuccess(@StringRes title: Int, @StringRes contentText: Int, confirmButton: () -> Unit){
+        if(alertDialog != null) alertDialog!!.dismiss()
+        val dialogBuilder: AlertDialog.Builder = AlertDialog.Builder(this)
+        val inflater = this.layoutInflater
+        val dialogView: View = inflater.inflate(R.layout.dialog_sucess, null)
+        dialogBuilder.setView(dialogView)
+        dialogBuilder.setCancelable(false)
+        dialogView.findViewById<TextView>(R.id.title).text = getString(title)
+        dialogView.findViewById<TextView>(R.id.content).text = getString(contentText)
+        dialogView.findViewById<Button>(R.id.btn_confirm).setOnClickListener {
+            confirmButton.invoke()
+            alertDialog!!.dismiss()
         }
+
+        alertDialog = dialogBuilder.create()
+        alertDialog!!.show()
     }
 
-    open fun showDialogFailed(@StringRes title: Int, @StringRes context: Int, confirmButton: () -> Unit){
-        if(sweetAlertDialog != null) sweetAlertDialog!!.dismissWithAnimation()
-        sweetAlertDialog = SweetAlertDialog(this, SweetAlertDialog.ERROR_TYPE).apply {
-            titleText = getString(title)
-            contentText = getString(context)
-            contentTextSize = 15
-            confirmText = getString(R.string.exit)
-            setCancelable(false)
-            setConfirmClickListener {
-                dismissWithAnimation()
-                confirmButton.invoke()
-                sweetAlertDialog = null
-            }
-            show()
+    open fun showDialogFailed(@StringRes title: Int, @StringRes contentText: Int, confirmButton: () -> Unit){
+        if(alertDialog != null) alertDialog!!.dismiss()
+        val dialogBuilder: AlertDialog.Builder = AlertDialog.Builder(this)
+        val inflater = this.layoutInflater
+        val dialogView: View = inflater.inflate(R.layout.dialog_failed, null)
+        dialogBuilder.setView(dialogView)
+        dialogBuilder.setCancelable(false)
+        dialogView.findViewById<TextView>(R.id.title).text = getString(title)
+        dialogView.findViewById<TextView>(R.id.content).text = getString(contentText)
+        dialogView.findViewById<Button>(R.id.btn_confirm).setOnClickListener {
+            confirmButton.invoke()
+            alertDialog!!.dismiss()
         }
+
+        alertDialog = dialogBuilder.create()
+        alertDialog!!.show()
+    }
+
+    open fun showDialogTimeout(@StringRes title: Int, @StringRes contentText: Int, confirmButton: (Boolean) -> Unit){
+        if(alertDialog != null) alertDialog!!.dismiss()
+        val dialogBuilder: AlertDialog.Builder = AlertDialog.Builder(this)
+        val inflater = this.layoutInflater
+        val dialogView: View = inflater.inflate(R.layout.dialog_timout, null)
+        dialogBuilder.setView(dialogView)
+        dialogBuilder.setCancelable(false)
+        dialogView.findViewById<TextView>(R.id.title).text = getString(title)
+        dialogView.findViewById<TextView>(R.id.content).text = getString(contentText)
+        dialogView.findViewById<Button>(R.id.btn_exit).setOnClickListener {
+            confirmButton.invoke(false)
+            alertDialog!!.dismiss()
+        }
+        dialogView.findViewById<Button>(R.id.btn_retry).setOnClickListener {
+            confirmButton.invoke(true)
+        }
+        alertDialog = dialogBuilder.create()
+        alertDialog!!.show()
     }
 
 

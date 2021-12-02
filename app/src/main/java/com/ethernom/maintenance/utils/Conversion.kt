@@ -98,6 +98,44 @@ object Conversion {
     fun hexToDecimal(hex: String): Int {
         return hex.toInt(16)
     }
+
+    fun convertHexToDec(hexDecimalN: String): Long {
+        if (checkHexaDecimalNumber(hexDecimalN)) {
+            var i = hexDecimalN.length - 1
+            var decimalN: Long = 0
+            var base = 1
+            while (i >= 0) {
+                val charAtPos = hexDecimalN[i]
+                val lastDigit = if ((charAtPos >= '0') && (charAtPos <= '9')) {
+                    charAtPos - '0'
+                } else if ((charAtPos >= 'A') && (charAtPos <= 'F')) {
+                    charAtPos.code - 55
+                } else if ((charAtPos >= 'a') && (charAtPos <= 'f')) {
+                    charAtPos.code - 87
+                } else {
+                    0
+                }
+                decimalN += lastDigit * base
+                base *= 16
+                i--
+            }
+            return decimalN
+        } else {
+            println("$hexDecimalN is not a HexaDecimal number")
+        }
+        return 0
+    }
+
+    private fun checkHexaDecimalNumber(hexaDecimalNum: String): Boolean {
+        var isHexaDecimalNum = true
+        for (charAtPos in hexaDecimalNum) {
+            if (!(((charAtPos >= '0') && (charAtPos <= '9')) || ((charAtPos >= 'A') && (charAtPos <= 'F')) || ((charAtPos >= 'a') && (charAtPos <= 'f')))) {
+                isHexaDecimalNum = false
+                break
+            }
+        }
+        return isHexaDecimalNum
+    }
 }
 
 private val HEX_CHARS = "0123456789abcdef".toCharArray()

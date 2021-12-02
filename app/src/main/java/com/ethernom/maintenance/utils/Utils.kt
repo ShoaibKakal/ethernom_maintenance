@@ -17,6 +17,8 @@ import androidx.appcompat.widget.AppCompatEditText
 import androidx.core.content.ContextCompat
 import java.net.InetAddress
 import java.net.NetworkInterface
+import java.nio.ByteBuffer
+import java.nio.ByteOrder
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
@@ -287,4 +289,40 @@ object Utils {
             return byteArrayOf(127, 0, 0, 1)
         }
     }
+
+    fun makeAPDUHeader(command: Byte, payload: ByteArray = ByteArray(0)): ByteArray {
+        /*
+        +---------+---------+--------+--------+----------+
+        | CMD (1) | REV (1) | LSB(1) | MSB(1) | Payload  |
+        +---------+---------+--------+--------+----------+
+        */
+
+        val pLength = payload.size
+        val l0 = pLength shr 8 // length of byte 0
+        val l1 = pLength and 0xff // length of byte 1
+
+        var apdu = ByteArray(0)
+        apdu += command
+        apdu += 0x00.toByte() // reserve byte
+        apdu += l0.toByte() // [LSB] Least Significant Bit
+        apdu += l1.toByte() // [MSB] Most Significant Bit
+        apdu += payload
+        return apdu
+    }
+
+    fun concatPayloadCapsuleFactoryReset(): ByteArray {
+        val params = ByteBuffer.allocate(4).order(ByteOrder.BIG_ENDIAN).putInt(0x435E1A11).array()
+        var payload = ByteArray(0)
+        payload += params
+
+        return payload
+    }
+
+    fun concatPayloadUpdateCT(status: Byte) :ByteArray {
+        var payload = ByteArray(0)
+        payload += status
+        return  payload
+    }
+
+
 }

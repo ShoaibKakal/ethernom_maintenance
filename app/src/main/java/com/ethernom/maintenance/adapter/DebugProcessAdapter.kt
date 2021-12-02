@@ -42,5 +42,11 @@ class DebugProcessAdapter(ctx: Context, array: MutableList<CapsuleOAModel>) :
         return arrayList.size
     }
 
+    @SuppressLint("NotifyDataSetChanged")
+    fun addAOs(array: MutableList<CapsuleOAModel>){
+        arrayList.addAll(array)
+        notifyDataSetChanged()
+    }
+
 
 }

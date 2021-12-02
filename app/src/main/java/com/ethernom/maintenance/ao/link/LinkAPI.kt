@@ -8,13 +8,13 @@ import com.ethernom.maintenance.ao.ACB
 import com.ethernom.maintenance.ao.DescIdx
 import com.ethernom.maintenance.ao.EventBuffer
 import com.ethernom.maintenance.ao.SrvDesc
+import com.ethernom.maintenance.ui.commonAO
 
 class LinkAPI(ctx:Context) {
     private val tag: String = javaClass.simpleName
-    private val application : MainApplication = ctx.applicationContext as MainApplication
 
     fun llOpen(userAO: ACB): SrvDesc? {
-        val freeLd = application.commonAO!!.linkAO.linkDescArr.find { it.aoUser == null } ?: return null
+        val freeLd = commonAO!!.linkAO.linkDescArr.find { it.aoUser == null } ?: return null
         Log.d(tag, "found link")
         // bind ao_user & ao_link
         freeLd.aoUser = userAO // bind to ao user to free link descriptor
@@ -25,45 +25,45 @@ class LinkAPI(ctx:Context) {
 
         // Send Open Event to own Event Queue
         val ef = EventBuffer(eventId = LinkEvent.OPEN, srvDesc = freeLd)
-        application.commonAO!!.sendEvent(freeLd.aoService.id, ef)
+        commonAO!!.sendEvent(freeLd.aoService.id, ef)
 
         return freeLd
     }
 
     fun llDiscover(ld: SrvDesc, remoteDevice:String):Int? {
-        val currentLd = application.commonAO!!.linkAO.linkDescArr.find { it.aoService.id == ld.aoService.id } ?: return null
+        val currentLd = commonAO!!.linkAO.linkDescArr.find { it.aoService.id == ld.aoService.id } ?: return null
         // Update remote device to Link Descriptor
         currentLd.ld!!.mfgSN = remoteDevice
         Log.d(tag, "Remote Device $remoteDevice")
         val ef = EventBuffer(eventId = LinkEvent.DISCOVER, srvDesc = currentLd)
-        application.commonAO!!.sendEvent(ld.aoService.id, ef)
+        commonAO!!.sendEvent(ld.aoService.id, ef)
         return 0
     }
 
     fun llSelect(ld: SrvDesc, remoteDevice: LinkDescriptor):Int? {
-        val currentLd = application.commonAO!!.linkAO.linkDescArr.find { it.aoService.id == ld.aoService.id } ?: return null
+        val currentLd = commonAO!!.linkAO.linkDescArr.find { it.aoService.id == ld.aoService.id } ?: return null
         currentLd.ld = remoteDevice
         // Send Select event to Own AO
         val ef = EventBuffer(eventId = LinkEvent.SELECT, srvDesc = currentLd)
-        application.commonAO!!.sendEvent(ld.aoService.id, ef)
+        commonAO!!.sendEvent(ld.aoService.id, ef)
         return 0
     }
 
     fun llSend(ld: SrvDesc, data:ByteArray): Int {
         val ef = EventBuffer(eventId = LinkEvent.SEND, srvDesc = ld, buffer = data)
-        application.commonAO!!.sendEvent(ld.aoService.id, ef)
+        commonAO!!.sendEvent(ld.aoService.id, ef)
         return 0
     }
 
     fun llClose(ld: SrvDesc):Int {
         val ef = EventBuffer(eventId = LinkEvent.CLOSE, srvDesc = ld)
-        application.commonAO!!.sendEvent(ld.aoService.id, ef)
+        commonAO!!.sendEvent(ld.aoService.id, ef)
         return 0
     }
 
     fun llReset(ld: SrvDesc){
         val ef = EventBuffer(eventId = LinkEvent.RESET, srvDesc = ld)
-        application.commonAO!!.sendEvent(ld.aoService.id, ef)
+        commonAO!!.sendEvent(ld.aoService.id, ef)
     }
 }
 

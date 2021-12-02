@@ -5,11 +5,12 @@ import android.util.Log
 import com.ethernom.maintenance.MainApplication
 import com.ethernom.maintenance.ao.cm.SvrBufferType
 import com.ethernom.maintenance.ao.*
+import com.ethernom.maintenance.ui.commonAO
 import com.ethernom.maintenance.utils.APPCmd
+import com.ethernom.maintenance.utils.hexa
 
 class SriAO(ctx:Context) {
     private val tag: String = javaClass.simpleName
-    private val application : MainApplication = ctx.applicationContext as MainApplication
 
     /** Common AO Variable */
     private var sriFsm = arrayOf(
@@ -61,61 +62,39 @@ class SriAO(ctx:Context) {
 
     /** Data Receive Action Function */
     private fun af2Cm(acb: ACB, buffer: EventBuffer): Boolean {
-        Log.d(tag, "SRI Data Receive  call")
+        Log.d(tag, "SRI Data Receive  call ${buffer.buffer!!.hexa()}")
         if (buffer.svrBuffer != null) {
             when(buffer.svrBuffer?.type) {
-                SvrBufferType.capsuleCertRsp -> {
-                    // Send capsule Onboard rsp Event to own Event Queue
-                    val ef = EventBuffer(eventId = AoEvent.HTTP_SRV_CERT_RSP, svrBuffer = buffer.svrBuffer)
-                    application.commonAO!!.sendEvent(AoId.AO_APP_ID, ef) //!TODO APP AO
-                }
-
-                SvrBufferType.verifyCertRsp -> {
-                    // Send capsule Onboard rsp Event to own Event Queue
-                    val ef = EventBuffer(eventId = AoEvent.HTTP_VERIFY_CERT_RSP, svrBuffer = buffer.svrBuffer)
-                    application.commonAO!!.sendEvent(AoId.AO_APP_ID, ef) //!TODO APP AO
+                SvrBufferType.unregisterRes -> {
+                    val ef = EventBuffer(eventId = AoEvent.HTTP_RESET_CERT_RES, svrBuffer = buffer.svrBuffer)
+                    commonAO!!.sendEvent(AoId.AO_CFR_ID, ef) //!TODO Capsule Factory Reset AO
                 }
             }
         } else {
             when (buffer.buffer!![0]) {
-
-                APPCmd.C2A_COB_RSP -> {
-                    val event = EventBuffer(eventId = AoEvent.C2A_ONBOARD_RSP, buffer = buffer.buffer)
-                    application.commonAO!!.sendEvent(aoId = AoId.AO_APP_ID, event)  //!TODO App AO
+                APPCmd.C2A_FR_RSP -> {
+                    val event = EventBuffer(eventId = AoEvent.C2A_CFR_RES, buffer = buffer.buffer)
+                    commonAO!!.sendEvent(aoId = AoId.AO_CFR_ID, event)  //!TODO Capsule Factory Reset AO
                 }
 
-                APPCmd.C2A_COB_CER_RSP -> {
-                    val event = EventBuffer(eventId = AoEvent.C2A_SAVE_CERT_RSP, buffer = buffer.buffer)
-                    application.commonAO!!.sendEvent(aoId = AoId.AO_APP_ID, event)  //!TODO App AO
+                APPCmd.C2A_RQR_RSP -> {
+                    val event = EventBuffer(eventId = AoEvent.C2A_RQR_RES, buffer = buffer.buffer)
+                    commonAO!!.sendEvent(aoId = AoId.AO_RQR_ID, event)  //!TODO Read QR CODE AO
                 }
 
-                APPCmd.C2A_COB_VER_RSP -> {
-                    val event = EventBuffer(eventId = AoEvent.C2A_VERIFY_CERT_RSP, buffer = buffer.buffer)
-                    application.commonAO!!.sendEvent(aoId = AoId.AO_APP_ID, event)  //!TODO App AO
+                APPCmd.C2A_DBP_RSP -> {
+                    val event = EventBuffer(eventId = AoEvent.C2A_DBP_RES, buffer = buffer.buffer)
+                    commonAO!!.sendEvent(aoId = AoId.AO_DBP_ID, event)  //!TODO DEBUG Process AO
                 }
 
-                APPCmd.C2A_COB_CERT_REQ -> {
-//                    val event = EventBuffer(eventId = AoEvent.C2A_VERIFY_CERT_RQST, buffer = buffer.buffer)
-//                    commonAO!!.sendEvent(aoId = AoId.AO_APP_ID, event)  //!TODO App AO
+                APPCmd.C2A_DBP_DATA_RSP -> {
+                    val event = EventBuffer(eventId = AoEvent.C2A_DPD_RES, buffer = buffer.buffer)
+                    commonAO!!.sendEvent(aoId = AoId.AO_DBP_ID, event)  //!TODO DEBUG Process AO
                 }
 
-                APPCmd.C2A_COB_COM -> {
-                    val event = EventBuffer(eventId = AoEvent.C2A_ONBOARD_COMPLETED, buffer = buffer.buffer)
-                    application.commonAO!!.sendEvent(aoId = AoId.AO_APP_ID, event)  //!TODO App AO
-                }
-
-                APPCmd.C2A_C_DISCONNECT -> {
-                    val event = EventBuffer(eventId = AoEvent.C2A_DISCONNECT, buffer = buffer.buffer)
-                    application.commonAO!!.sendEvent(aoId = AoId.AO_APP_ID, event)  //!TODO App AO
-                }
-
-                // special timestamp
-                APPCmd.C2A_Timestamp_Rqst -> {
-                    // Send timestam[p req Event to own Event Queue
-                    val ef = EventBuffer(eventId = AoEvent.C2A_TIMESTAMP_REQ, buffer = buffer.buffer)
-                    application.commonAO!!.sendEvent(AoId.AO_APP_ID, ef) //!TODO onboard AO
-//                    commonAO!!.sendEvent(AoId.AO_OB_ID, ef) //!TODO matching AO
-//                    commonAO!!.sendEvent(AoId.AO_OB_ID, ef) //!TODO uploading AO
+                APPCmd.C2A_DBP_CT_RSP -> {
+                    val event = EventBuffer(eventId = AoEvent.C2A_UCT_RES, buffer = buffer.buffer)
+                    commonAO!!.sendEvent(aoId = AoId.AO_DBP_ID, event)  //!TODO DEBUG Process AO
                 }
             }
         }

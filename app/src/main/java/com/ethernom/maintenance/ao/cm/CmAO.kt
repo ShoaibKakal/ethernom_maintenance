@@ -4,13 +4,12 @@ import android.content.Context
 import android.content.Intent
 import android.util.Log
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import com.ethernom.maintenance.MainApplication
-import com.ethernom.maintenance.ao.cm.rest_api.CapsuleCertResponse
 import com.ethernom.maintenance.ao.transport.TransportAPI
 import com.ethernom.maintenance.ao.*
-import com.ethernom.maintenance.ao.cm.rest_api.GetCapsuleCertificate
-import com.ethernom.maintenance.ao.cm.rest_api.VerifyCapsuleCertResponse
-import com.ethernom.maintenance.ao.cm.rest_api.VerifyCapsuleCertificate
+import com.ethernom.maintenance.ao.cm.repository.UnregisterRepository
+import com.ethernom.maintenance.model.UnregisterRequestBody
+import com.ethernom.maintenance.model.UnregisterResponse
+import com.ethernom.maintenance.ui.commonAO
 import com.ethernom.maintenance.utils.AppConstant.BLUETOOTH_DEVICE
 import com.ethernom.maintenance.utils.AppConstant.DEVICE_NAME
 import com.ethernom.maintenance.utils.AppConstant.MANUFAC_SERIAL_NUMBER
@@ -23,7 +22,6 @@ import com.ethernom.maintenance.utils.hexa
 class CmAO(ctx: Context) {
     private val tag: String = javaClass.simpleName
     private val context: Context = ctx
-    private var application: MainApplication = (ctx.applicationContext as MainApplication)
 
     /* AO variable */
     private var td: SrvDesc? = null
@@ -126,7 +124,7 @@ class CmAO(ctx: Context) {
         if(acb.id == AoId.AO_CM2_ID) {
             val ef = EventBuffer(eventId = CmEvent.HTTP_START)
             // Send HTTP START Event
-            application.commonAO!!.sendEvent(aoId = acb.id,  buff = ef)
+            commonAO!!.sendEvent(aoId = acb.id,  buff = ef)
         }
         return true
     }
@@ -214,7 +212,7 @@ class CmAO(ctx: Context) {
 
         // Send event to SRI
         val ef = EventBuffer(eventId = AoEvent.CM_DATA_REC, buffer = buffer.buffer)
-        application.commonAO!!.sendEvent(AoId.AO_SRI_ID, ef)
+        commonAO!!.sendEvent(AoId.AO_SRI_ID, ef)
 
         return true
     }
@@ -258,12 +256,8 @@ class CmAO(ctx: Context) {
     private fun af11Cm(acb: ACB, buffer: EventBuffer): Boolean {
         Log.d(tag, "HTTP SEND call")
         when (buffer.svrBuffer?.type) {
-            SvrBufferType.capsuleCertReq -> {
-                GetCapsuleCertificate(context).getCapsuleCert(buffer.svrBuffer?.capsuleCertRequest!!)
-            }
-
-            SvrBufferType.verifyCertReq -> {
-                VerifyCapsuleCertificate(context).verifyCapsuleCert(buffer.svrBuffer?.VerifyCapsuleCertRequest!!)
+            SvrBufferType.unregisterReq -> {
+                UnregisterRepository(context).unregisterRequest(buffer.svrBuffer!!.unregisterRequestBody!!)
             }
         }
 
@@ -275,7 +269,7 @@ class CmAO(ctx: Context) {
         Log.d(tag, "HTTP DATA REC call")
         // Send event to SRI
         val ef = EventBuffer(eventId = AoEvent.CM_DATA_REC, svrBuffer = buffer.svrBuffer)
-        application.commonAO!!.sendEvent(AoId.AO_SRI_ID, ef)
+        commonAO!!.sendEvent(AoId.AO_SRI_ID, ef)
         return true
     }
 
@@ -290,19 +284,15 @@ class CmAO(ctx: Context) {
 }
 
 data class SvrBuffer(
-    var type: Int = 0xff, // SvrBufferType
-    var responseFailed: Boolean? = false,
-    var capsuleCertRequest: String? = null,
-    var capsuleCertResponse: CapsuleCertResponse? = null,
-    var VerifyCapsuleCertRequest: String? = null,
-    var verifyCapsuleCertResponse: VerifyCapsuleCertResponse? = null
+    val type: Int = 0xff, // SvrBufferType
+    val responseFailed: Boolean? = false,
+    val unregisterRequestBody: UnregisterRequestBody? = null,
+    val unregisterResponse: UnregisterResponse? =null
 )
 
 object SvrBufferType {
-    const val capsuleCertReq = 0
-    const val capsuleCertRsp = 1
-    const val verifyCertReq = 2
-    const val verifyCertRsp = 3
+    const val unregisterReq = 0
+    const val unregisterRes = 1
 }
 
 object CmState {

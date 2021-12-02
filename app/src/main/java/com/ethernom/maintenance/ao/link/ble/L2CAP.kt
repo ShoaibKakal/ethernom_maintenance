@@ -18,6 +18,7 @@ import com.ethernom.maintenance.ao.SrvDesc
 import com.ethernom.maintenance.ao.link.LinkEvent
 import com.ethernom.maintenance.ao.link.LinkType
 import com.ethernom.maintenance.ao.link.WriteResponse
+import com.ethernom.maintenance.ui.commonAO
 import com.ethernom.maintenance.utils.Conversion
 import com.ethernom.maintenance.utils.hexa
 import java.io.IOException
@@ -27,7 +28,6 @@ import kotlin.collections.ArrayList
 @RequiresApi(Build.VERSION_CODES.Q)
 class L2CAP(ctx: Context) {
     private val intent = Intent(BROADCAST_INTERRUPT)
-    private val application: MainApplication = ctx.applicationContext as MainApplication
 
     private var context: Context = ctx
     private var manager: BluetoothManager = (ctx.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager)
@@ -128,7 +128,7 @@ class L2CAP(ctx: Context) {
         ld!!.ld!!.ble = result.device
 
         val eventBuffer = EventBuffer(eventId = LinkEvent.ADV_IND, srvDesc = ld!!)
-        application.commonAO!!.sendEvent(ld!!.aoService.id, eventBuffer)
+        commonAO!!.sendEvent(ld!!.aoService.id, eventBuffer)
 
         // send broadcast interrupt
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent)
@@ -137,7 +137,7 @@ class L2CAP(ctx: Context) {
     private fun onConnectionSuccess(mtu:Int) {
         ld!!.ld!!.mtu = mtu
         val eventBuffer = EventBuffer(eventId = LinkEvent.CONNECTION_RESPOND, srvDesc = ld!!)
-        application.commonAO!!.sendEvent(ld!!.aoService.id, eventBuffer)
+        commonAO!!.sendEvent(ld!!.aoService.id, eventBuffer)
 
         // send broadcast interrupt
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent)
@@ -165,7 +165,7 @@ class L2CAP(ctx: Context) {
         log("Data resp ${value.hexa()}")
 
         val eventBuffer = EventBuffer(eventId = LinkEvent.LL_RECEIVE_CB, srvDesc = ld!!, buffer = value)
-        application.commonAO!!.sendEvent(ld!!.aoService.id, eventBuffer)
+        commonAO!!.sendEvent(ld!!.aoService.id, eventBuffer)
 
         // send broadcast interrupt
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent)
@@ -182,7 +182,7 @@ class L2CAP(ctx: Context) {
                 log("L2CAP write successfully.")
 
                 val eventBuffer = EventBuffer(eventId = LinkEvent.ADV_IND, srvDesc = ld!!)
-                application.commonAO!!.sendEvent(ld!!.aoService.id, eventBuffer)
+                commonAO!!.sendEvent(ld!!.aoService.id, eventBuffer)
 
             } catch (e:IOException) {
                 log("L2CAP write failed ${e.message}.")

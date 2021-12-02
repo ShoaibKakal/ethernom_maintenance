@@ -1,15 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:forceDarkAllowed="false"
+    android:orientation="vertical"
     tools:context=".ui.DiscoverActivity"
     tools:targetApi="q">
 
-    <include layout="@layout/toolbar_center_title"/>
+    <include layout="@layout/toolbar_center_title" />
+
+    <LinearLayout
+        android:id="@+id/btn_open_setting"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorRed_A100"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:padding="@dimen/dimen_5dp"
+        android:visibility="gone"
+        android:weightSum="10">
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="@dimen/dimen_30dp"
+            android:layout_gravity="center"
+            android:layout_marginEnd="@dimen/dimen_5dp"
+            android:layout_weight="1"
+            android:src="@drawable/ic_cancel_msg" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="8"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_size_20sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tv_message"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white" />
+        </LinearLayout>
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="@dimen/dimen_30dp"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:paddingStart="@dimen/dimen_5dp"
+            android:src="@drawable/ic_next" />
+    </LinearLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -57,11 +105,11 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="@dimen/dimen_0_3dp"
-        android:background="@color/colorGray"/>
+        android:background="@color/colorGray" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rcv_device"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent" />
 
 </androidx.appcompat.widget.LinearLayoutCompat>

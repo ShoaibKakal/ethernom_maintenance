@@ -13,5 +13,19 @@ object AppConstant {
     const val START_ACTIVITY_ANIM_RIGHT = 2
     const val START_ACTIVITY_ANIM_TOP = 3
 
+    const val CAPSULE_RES_DENY = 0x00.toByte()
+    const val CAPSULE_RES_ALLOW = 0x01.toByte()
+    const val TIMER: Long = 10000
+    const val CAPSULE_FAILURE_KEY = "CAPSULE_FAILURE_KEY"
+    const val DEVICE_KEY = "DEVICE_KEY"
+    const val SERIAL_NUMBER_KEY = "SERIAL_NUMBER_KEY"
+    const val DEBUG_DATA_RES_KEY = "DEBUG_DATA_RES_KEY"
+    const val COMPLETE_TYPE_KEY = "COMPLETE_TYPE_KEY"
+    const val CHECK_BLE_RES = "CHECK_BLE_RES"
+
+    const val LOCATION_PER = 0x00.toByte()
+    const val BLE_CNN_PER = 0x01.toByte()
+
+
 
 }

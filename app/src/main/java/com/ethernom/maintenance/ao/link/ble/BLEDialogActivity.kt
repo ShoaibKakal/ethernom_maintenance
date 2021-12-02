@@ -17,6 +17,7 @@ import com.ethernom.maintenance.ao.BROADCAST_INTERRUPT
 import com.ethernom.maintenance.ao.EventBuffer
 import com.ethernom.maintenance.ao.link.LinkEvent
 import com.ethernom.maintenance.R
+import com.ethernom.maintenance.ui.commonAO
 import kotlin.system.exitProcess
 
 @RequiresApi(Build.VERSION_CODES.Q)
@@ -68,8 +69,7 @@ class BLEDialogActivity : AppCompatActivity() {
                 )) {
                     BluetoothAdapter.STATE_ON -> {
                         val buff = EventBuffer(eventId = LinkEvent.BLE_ON, buffer = byteArrayOf(0x01), srvDesc = null)
-                        val application = application as MainApplication
-                        application.commonAO!!.sendEvent(aoId = aoId, buff)
+                        commonAO!!.sendEvent(aoId = aoId, buff)
 
                         // send broadcast interrupt
                         LocalBroadcastManager.getInstance(this@BLEDialogActivity).sendBroadcast(intentIsr)

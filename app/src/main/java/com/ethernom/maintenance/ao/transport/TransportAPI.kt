@@ -8,14 +8,13 @@ import com.ethernom.maintenance.ao.ACB
 import com.ethernom.maintenance.ao.DescIdx
 import com.ethernom.maintenance.ao.EventBuffer
 import com.ethernom.maintenance.ao.SrvDesc
+import com.ethernom.maintenance.ui.commonAO
 
 class TransportAPI(ctx: Context) {
     private val tag: String = javaClass.simpleName
-    private val application: MainApplication = ctx.applicationContext as MainApplication
-
 
     fun tpOpen(userAO: ACB?, srcPort: Byte, destPort: Byte, remoteDevice: String ): SrvDesc? {
-        val freeTd = application.commonAO!!.transportAO.tpDescArr.find { it.aoUser == null } ?: return null
+        val freeTd = commonAO!!.transportAO.tpDescArr.find { it.aoUser == null } ?: return null
         Log.d(tag, "found TP")
         // bind ao_user & ao_tp
         freeTd.aoUser = userAO // bind to ao user to free transport descriptor
@@ -32,45 +31,45 @@ class TransportAPI(ctx: Context) {
         Log.d(tag, "Remote Device $remoteDevice")
         // Send Open Event to own Event Queue
         val ef = EventBuffer(eventId = TpEvent.OPEN, srvDesc = freeTd)
-        application.commonAO!!.sendEvent(freeTd.aoService.id, ef)
+        commonAO!!.sendEvent(freeTd.aoService.id, ef)
 
         return freeTd
     }
 
     fun tpSelect(td: SrvDesc, remoteDevice: LinkDescriptor):Int {
         // find sd by user ao id
-        val currentTd = application.commonAO!!.transportAO.tpDescArr.find { it.aoService.id == td.aoService.id }
+        val currentTd = commonAO!!.transportAO.tpDescArr.find { it.aoService.id == td.aoService.id }
         // Send Event to Event Q of TP AO
         val eventBuffer = EventBuffer(eventId = TpEvent.SELECT, advPkt = remoteDevice, srvDesc = currentTd)
-        application.commonAO!!.sendEvent(currentTd!!.aoService.id, eventBuffer)
+        commonAO!!.sendEvent(currentTd!!.aoService.id, eventBuffer)
         return 0
     }
 
     fun tpSend(td: SrvDesc, data:ByteArray):Int {
         // find sd by user ao id
-        val currentTd = application.commonAO!!.transportAO.tpDescArr.find { it.aoService.id == td.aoService.id }
+        val currentTd = commonAO!!.transportAO.tpDescArr.find { it.aoService.id == td.aoService.id }
         // Send Event to Event Q of TP AO
         val eventBuffer = EventBuffer(eventId = TpEvent.SEND, buffer = data, srvDesc = currentTd)
-        application.commonAO!!.sendEvent(currentTd!!.aoService.id, eventBuffer)
+        commonAO!!.sendEvent(currentTd!!.aoService.id, eventBuffer)
         return 0
     }
 
     fun tpClose(td: SrvDesc):Int {
         // find td by user ao id
-        val currentTd = application.commonAO!!.transportAO.tpDescArr.find { it.aoService.id == td.aoService.id }
+        val currentTd = commonAO!!.transportAO.tpDescArr.find { it.aoService.id == td.aoService.id }
         // Send Event to Event Q of TP AO
         val eventBuffer = EventBuffer(eventId = TpEvent.CLOSE, srvDesc = currentTd)
-        application.commonAO!!.sendEvent(currentTd!!.aoService.id, eventBuffer)
+        commonAO!!.sendEvent(currentTd!!.aoService.id, eventBuffer)
 
         return 0
     }
 
     fun tpReset(td: SrvDesc):Int {
         // find td by user ao id
-        val currentTd = application.commonAO!!.transportAO.tpDescArr.find { it.aoService.id == td.aoService.id }
+        val currentTd = commonAO!!.transportAO.tpDescArr.find { it.aoService.id == td.aoService.id }
         // Send Event to Event Q of TP AO
         val eventBuffer = EventBuffer(eventId = TpEvent.RESET, srvDesc = currentTd)
-        application.commonAO!!.sendEvent(currentTd!!.aoService.id, eventBuffer)
+        commonAO!!.sendEvent(currentTd!!.aoService.id, eventBuffer)
 
         return 0
     }

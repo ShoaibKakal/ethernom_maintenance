@@ -6,16 +6,16 @@ import com.ethernom.maintenance.ao.AoId
 import com.ethernom.maintenance.ao.CommonAO
 import com.ethernom.maintenance.ao.EventBuffer
 import com.ethernom.maintenance.ao.link.LinkDescriptor
+import com.ethernom.maintenance.ui.commonAO
 
 class CmAPI(ctx: Context) {
     private val tag: String = javaClass.simpleName
-    private var application: MainApplication = (ctx.applicationContext as MainApplication)
 
     fun cmDiscovery(type: Int) {
         if (type == CmType.capsule) {
             // Send TP Connect Event to own Event Queue
             val ef = EventBuffer(eventId = CmEvent.TP_DISCOVERY)
-            application.commonAO!!.sendEvent(AoId.AO_CM1_ID, ef)
+            commonAO!!.sendEvent(AoId.AO_CM1_ID, ef)
         }
     }
 
@@ -23,7 +23,7 @@ class CmAPI(ctx: Context) {
         if (type == CmType.capsule) {
             // Send TP Connect Event to own Event Queue
             val ef = EventBuffer(eventId = CmEvent.TP_SELECT, advPkt = remoteDevice)
-            application.commonAO!!.sendEvent(AoId.AO_CM1_ID, ef)
+            commonAO!!.sendEvent(AoId.AO_CM1_ID, ef)
         }
     }
 
@@ -31,7 +31,7 @@ class CmAPI(ctx: Context) {
         if (type == CmType.capsule) {
             // Send TP Connect Event to own Event Queue
             val ef = EventBuffer(eventId = CmEvent.TP_CONNECT, csn = csn)
-            application.commonAO!!.sendEvent(AoId.AO_CM1_ID, ef)
+            commonAO!!.sendEvent(AoId.AO_CM1_ID, ef)
         }
     }
 
@@ -39,11 +39,11 @@ class CmAPI(ctx: Context) {
         if (type == CmType.capsule) {
             // Send TP Send Event to own Event Queue
             val ef = EventBuffer(eventId = CmEvent.TP_SEND, buffer = data)
-            application.commonAO!!.sendEvent(AoId.AO_CM1_ID, ef)
+            commonAO!!.sendEvent(AoId.AO_CM1_ID, ef)
         } else if(type == CmType.server) {
             // Send HTTP Send Event to own Event Queue
             val ef = EventBuffer(eventId = CmEvent.HTTP_SEND, svrBuffer = svrData)
-            application.commonAO!!.sendEvent(AoId.AO_CM2_ID, ef)
+            commonAO!!.sendEvent(AoId.AO_CM2_ID, ef)
         }
     }
 
@@ -51,14 +51,14 @@ class CmAPI(ctx: Context) {
         if (type == CmType.capsule) {
             // Send TP Close Event to own Event Queue
             val ef = EventBuffer(eventId = CmEvent.TP_CLOSE)
-            application.commonAO!!.sendEvent(AoId.AO_CM1_ID, ef)
+            commonAO!!.sendEvent(AoId.AO_CM1_ID, ef)
         }
     }
     fun cmReset(type: Int) {
         if (type == CmType.capsule) {
             // Send TP Reset Event to own Event Queue
             val ef = EventBuffer(eventId = CmEvent.RESET)
-            application.commonAO!!.sendEvent(AoId.AO_CM1_ID, ef)
+            commonAO!!.sendEvent(AoId.AO_CM1_ID, ef)
         }
     }
 }

@@ -1,4 +1,4 @@
-package com.ethernom.maintenance.ao.cm.rest_api
+package com.ethernom.maintenance.ao.cm.restApi
 
 import com.google.gson.GsonBuilder
 import okhttp3.OkHttpClient

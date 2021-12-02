@@ -12,6 +12,7 @@ import com.ethernom.maintenance.ao.transport.TpEvent
 import com.ethernom.maintenance.ao.*
 import com.ethernom.maintenance.ao.link.ble.BLEDialogActivity
 import com.ethernom.maintenance.ao.link.ble.L2CAP
+import com.ethernom.maintenance.ui.commonAO
 import com.ethernom.maintenance.utils.Utils
 import kotlin.collections.ArrayList
 
@@ -19,7 +20,6 @@ import kotlin.collections.ArrayList
 class LinkAO(ctx: Context) {
     private val tag: String = javaClass.simpleName
     private val intent = Intent(BROADCAST_INTERRUPT)
-    private val application : MainApplication = (ctx.applicationContext as MainApplication)
 
     /** Common AO Path */
     private var linkFsm = arrayOf(
@@ -178,7 +178,7 @@ class LinkAO(ctx: Context) {
             discoveredList.add(discoveredPkt)
             // Send Discovered event to TP AO
             val ef = EventBuffer(eventId = TpEvent.DISCOVERED, advPkt = discoveredPkt)
-            application.commonAO!!.sendEvent(ld.aoUser!!.id, ef)
+            commonAO!!.sendEvent(ld.aoUser!!.id, ef)
             return true
         }
 
@@ -196,7 +196,7 @@ class LinkAO(ctx: Context) {
 
         // Send Select event to Own AO
         val ef = EventBuffer(eventId = LinkEvent.SELECT, srvDesc = ld)
-        application.commonAO!!.sendEvent(ld.aoService.id, ef)
+        commonAO!!.sendEvent(ld.aoService.id, ef)
 
         return true
     }
@@ -223,7 +223,7 @@ class LinkAO(ctx: Context) {
             if(connectReqTimeOut) {
                 // Send Event to Event Q
                 val ef = EventBuffer(eventId = LinkEvent.CONNECTION_TIMEOUT, srvDesc = ld)
-                application.commonAO!!.sendEvent(ld.aoService.id, ef)
+                commonAO!!.sendEvent(ld.aoService.id, ef)
 
                 // send broadcast interrupt
                 LocalBroadcastManager.getInstance(context).sendBroadcast(intent)
@@ -241,7 +241,7 @@ class LinkAO(ctx: Context) {
 
         // Send event to User AO for indicate connection timeout
         val ef = EventBuffer(eventId = TpEvent.CONN_TO, srvDesc = ld)
-        application.commonAO!!.sendEvent(ld!!.aoUser?.id!!, ef)
+        commonAO!!.sendEvent(ld!!.aoUser?.id!!, ef)
 
         return true
     }
@@ -260,7 +260,7 @@ class LinkAO(ctx: Context) {
         Log.d("TAG", "afConnectionRespond ${ld.ld!!.deviceName}")
         // Send event to User AO for indicate connection available
         val ef = EventBuffer(eventId = TpEvent.CONN_AVB, srvDesc = ld)
-        application.commonAO!!.sendEvent(ld.aoUser?.id!!, ef)
+        commonAO!!.sendEvent(ld.aoUser?.id!!, ef)
 
         return true
     }
@@ -282,7 +282,7 @@ class LinkAO(ctx: Context) {
 
         // Send event to Transport layer for indicate data
         val ef = EventBuffer(eventId = TpEvent.LL_CB_DATA, srvDesc = ld, buffer = data)
-        application.commonAO!!.sendEvent(ld!!.aoUser?.id!!, ef)
+        commonAO!!.sendEvent(ld!!.aoUser?.id!!, ef)
 
         return true
     }

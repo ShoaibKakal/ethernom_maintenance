@@ -17,23 +17,11 @@ class ApplicationSession(val context: Context) : BaseSession(context) {
         }
     }
     enum class SharedPreKeyType {
-        DEVICE_CERTIFICATE,DEVICE_NAME
+        DEVICE_NAME, APP_LOCATION, APP_BLE_CNN
     }
 
     override val preferenceName: String
         get() = APP_SHARED_PREFS
-
-    /**
-     * DEVICE MODEL
-     */
-
-    fun setDeviceCertificate(value: String) {
-        save(SharedPreKeyType.DEVICE_CERTIFICATE.toString(), value)
-    }
-
-    fun getDeviceCertificate() : String {
-        return get(SharedPreKeyType.DEVICE_CERTIFICATE.toString(), "").toString()
-    }
 
     fun setDeviceName(value: String) {
         save(SharedPreKeyType.DEVICE_NAME.toString(), value)
@@ -42,6 +30,25 @@ class ApplicationSession(val context: Context) : BaseSession(context) {
     fun getDeviceName() : String {
         return get(SharedPreKeyType.DEVICE_NAME.toString(), "").toString()
     }
+
+    fun setAppLocationPermission(value: Boolean){
+        save(SharedPreKeyType.APP_LOCATION.toString(), value)
+    }
+
+    fun getAppLocationPermission(): Boolean {
+        return `is`(SharedPreKeyType.APP_LOCATION.toString(), false)
+    }
+
+    fun setAppBleCNNPermission(value: Boolean) {
+        save(SharedPreKeyType.APP_BLE_CNN.toString(), value)
+    }
+
+    fun getAppBleCNNPermission(): Boolean{
+        return `is`(SharedPreKeyType.APP_BLE_CNN.toString(), false)
+    }
+
+
+
 
 }
 data class DeviceInfo(var name: String, var csn: String)

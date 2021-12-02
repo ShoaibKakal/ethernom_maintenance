@@ -16,6 +16,7 @@ import com.ethernom.maintenance.ao.SrvDesc
 import com.ethernom.maintenance.ao.link.LinkEvent
 import com.ethernom.maintenance.ao.link.LinkType
 import com.ethernom.maintenance.ao.link.WriteResponse
+import com.ethernom.maintenance.ui.commonAO
 import com.ethernom.maintenance.utils.Conversion
 import com.ethernom.maintenance.utils.hexa
 import java.io.IOException
@@ -25,7 +26,6 @@ import kotlin.collections.ArrayList
 @RequiresApi(Build.VERSION_CODES.M)
 class GATT(ctx: Context) {
     private val intent = Intent(BROADCAST_INTERRUPT)
-    private val application: MainApplication = ctx.applicationContext as MainApplication
 
     private val ETH_SERVICE_DISCOVER_UUID = "19490000-5537-4f5e-99ca-290f4fbff142"
     private val ETH_NEW_SERVICE_UUID = UUID.fromString("19500001-5537-4f5e-99ca-290f4fbff142")
@@ -196,7 +196,7 @@ class GATT(ctx: Context) {
         ld!!.ld!!.ble = result.device
 
         val eventBuffer = EventBuffer(eventId = LinkEvent.ADV_IND, srvDesc = ld!!)
-        application.commonAO!!.sendEvent(ld!!.aoService.id, eventBuffer)
+        commonAO!!.sendEvent(ld!!.aoService.id, eventBuffer)
 
         // send broadcast interrupt
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent)
@@ -205,7 +205,7 @@ class GATT(ctx: Context) {
     private fun onConnectionSuccess(mtu:Int) {
         ld!!.ld!!.mtu = mtu
         val eventBuffer = EventBuffer(eventId = LinkEvent.CONNECTION_RESPOND, srvDesc = ld!!)
-        application.commonAO!!.sendEvent(ld!!.aoService.id, eventBuffer)
+        commonAO!!.sendEvent(ld!!.aoService.id, eventBuffer)
 
         // send broadcast interrupt
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent)
@@ -216,7 +216,7 @@ class GATT(ctx: Context) {
         log("Data resp ${value.hexa()}")
 
         val eventBuffer = EventBuffer(eventId = LinkEvent.LL_RECEIVE_CB, srvDesc = ld!!, buffer = value)
-        application.commonAO!!.sendEvent(ld!!.aoService.id, eventBuffer)
+        commonAO!!.sendEvent(ld!!.aoService.id, eventBuffer)
 
         // send broadcast interrupt
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent)

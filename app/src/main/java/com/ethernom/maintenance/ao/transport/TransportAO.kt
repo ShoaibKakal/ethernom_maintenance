@@ -9,6 +9,7 @@ import com.ethernom.maintenance.MainApplication
 import com.ethernom.maintenance.ao.link.LinkAPI
 import com.ethernom.maintenance.ao.link.LinkType
 import com.ethernom.maintenance.ao.*
+import com.ethernom.maintenance.ui.commonAO
 import com.ethernom.maintenance.utils.ETH_TP_HEADER_SIZE
 import com.ethernom.maintenance.utils.TransportCmd
 import com.ethernom.maintenance.utils.Utils
@@ -19,7 +20,6 @@ import kotlin.collections.ArrayList
 @Suppress("DEPRECATION")
 class TransportAO (ctx:Context){
     private val tag: String = javaClass.simpleName
-    private val application: MainApplication = ctx.applicationContext as MainApplication
     private val intent = Intent(BROADCAST_INTERRUPT)
 
     /** Common AO Variable */
@@ -141,7 +141,7 @@ class TransportAO (ctx:Context){
         val td = tpDescArr.find { it.aoService.id == acb.id }
         // Send Event to App AO
         val ef = EventBuffer(eventId = AoEvent.TP_DISCOVERED, advPkt = data.advPkt)
-        application.commonAO!!.sendEvent(aoId = td!!.aoUser!!.id, buff = ef)
+        commonAO!!.sendEvent(aoId = td!!.aoUser!!.id, buff = ef)
         return true
     }
 
@@ -167,7 +167,7 @@ class TransportAO (ctx:Context){
         val td = tpDescArr.find { it.aoService.id == acb.id }
         // Send Event to App AO
         val ef = EventBuffer(eventId = AoEvent.TP_CONN_TO, srvDesc = td)
-        application.commonAO!!.sendEvent(aoId = td!!.aoUser!!.id, buff = ef)
+        commonAO!!.sendEvent(aoId = td!!.aoUser!!.id, buff = ef)
 
         return true
     }
@@ -204,7 +204,7 @@ class TransportAO (ctx:Context){
 
         // Send Event to App AO
         val ef = EventBuffer(eventId = AoEvent.TP_CONNECTING, srvDesc = td)
-        application.commonAO!!.sendEvent(aoId = td.aoUser!!.id, buff = ef)
+        commonAO!!.sendEvent(aoId = td.aoUser!!.id, buff = ef)
 
         clearBuffer()
         return true
@@ -225,7 +225,7 @@ class TransportAO (ctx:Context){
         // Log.d("TAG", "afConnectionConfirm ${td!!.ld!!.deviceName}")
 
         val ef = EventBuffer(eventId = AoEvent.TP_CONN_CRM, srvDesc = td)
-        application.commonAO!!.sendEvent(aoId = td!!.aoUser!!.id, buff = ef)
+        commonAO!!.sendEvent(aoId = td!!.aoUser!!.id, buff = ef)
         // Start Keep Alive
         startKeepAlive(td)
         timeout = true
@@ -241,11 +241,11 @@ class TransportAO (ctx:Context){
 
         // Send Event to Own AO
         val ef1 = EventBuffer(eventId = TpEvent.CLOSE, srvDesc =  td)
-        application.commonAO!!.sendEvent(aoId = acb.id, buff = ef1)
+        commonAO!!.sendEvent(aoId = acb.id, buff = ef1)
 
         // Send Event to App AO
         val ef = EventBuffer(eventId = AoEvent.TP_DISC, srvDesc =  td)
-        application.commonAO!!.sendEvent(aoId = td!!.aoUser!!.id, buff = ef)
+        commonAO!!.sendEvent(aoId = td!!.aoUser!!.id, buff = ef)
 
 
         return true
@@ -273,7 +273,7 @@ class TransportAO (ctx:Context){
         if(buffer[6] == TransportCmd.C2H_DISCONNECT_REQ) {
             // Send Event to Event Q of TP AO it self
             val ef = EventBuffer(eventId = TpEvent.DISCONNECT, srvDesc = td)
-            application.commonAO!!.sendEvent(aoId = td!!.aoService.id, buff = ef)
+            commonAO!!.sendEvent(aoId = td!!.aoService.id, buff = ef)
             clearBuffer()
             return true
         }
@@ -285,7 +285,7 @@ class TransportAO (ctx:Context){
         val payload = buffer.toByteArray().copyOfRange(ETH_TP_HEADER_SIZE, buffer.size)
         // Send Event to Event Q of App AO
         val ef = EventBuffer(eventId = AoEvent.TP_DATA_REC, buffer = payload, srvDesc = td)
-        application.commonAO!!.sendEvent(aoId = td!!.aoUser!!.id, buff = ef)
+        commonAO!!.sendEvent(aoId = td!!.aoUser!!.id, buff = ef)
         clearBuffer()
         return true
     }
@@ -402,7 +402,7 @@ class TransportAO (ctx:Context){
         if(timeout) {
             // Construct transport data & Send Event to Event Q Link AO
             llSend(kaTd!!, TransportCmd.H2C_KA, false, byteArrayOf())
-            application.commonAO!!.aoRunScheduler()
+            commonAO!!.aoRunScheduler()
             restart5SecTimeOut()
         }
 

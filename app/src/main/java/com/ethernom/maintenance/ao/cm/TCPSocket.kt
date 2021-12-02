@@ -9,6 +9,7 @@ import com.ethernom.maintenance.ao.AoEvent
 import com.ethernom.maintenance.ao.AoId
 import com.ethernom.maintenance.ao.BROADCAST_INTERRUPT
 import com.ethernom.maintenance.ao.EventBuffer
+import com.ethernom.maintenance.ui.commonAO
 import java.io.*
 import java.net.InetSocketAddress
 import java.net.Socket
@@ -21,7 +22,6 @@ class TCPSocket(ctx: Context) {
     var SERVER_PORT = 8080
 
     private var context = ctx
-    private val application: MainApplication = (context.applicationContext as MainApplication)
     private val intent = Intent(BROADCAST_INTERRUPT)
     private lateinit var tcpSocket:Socket
     private lateinit var output: DataOutputStream
@@ -49,7 +49,7 @@ class TCPSocket(ctx: Context) {
                 connected = true
 
                 val eventBuffer = EventBuffer(eventId = AoEvent.HTTP_DATA_REC)
-                application.commonAO!!.sendEvent(AoId.AO_CM2_ID, eventBuffer)
+                commonAO!!.sendEvent(AoId.AO_CM2_ID, eventBuffer)
                 // send broadcast interrupt
                 LocalBroadcastManager.getInstance(context).sendBroadcast(intent)
 
@@ -84,7 +84,7 @@ class TCPSocket(ctx: Context) {
                 if(size == -1) break
                 else if(size != 0) {
                     val eventBuffer = EventBuffer(eventId = AoEvent.HTTP_DATA_REC, buffer = data.copyOfRange(0, size))
-                    application.commonAO!!.sendEvent(AoId.AO_CM2_ID, eventBuffer)
+                    commonAO!!.sendEvent(AoId.AO_CM2_ID, eventBuffer)
                     // send broadcast interrupt
                     LocalBroadcastManager.getInstance(context).sendBroadcast(intent)
                 }

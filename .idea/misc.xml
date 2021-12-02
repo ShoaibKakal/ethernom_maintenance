@@ -13,9 +13,11 @@
         <entry key="..\:/ethernom/capsule/development/ethernom_maintenance/app/src/main/res/drawable/edit_text_border.xml" value="0.1814814814814815" />
         <entry key="..\:/ethernom/capsule/development/ethernom_maintenance/app/src/main/res/drawable/ic_add_black.xml" value="0.20925925925925926" />
         <entry key="..\:/ethernom/capsule/development/ethernom_maintenance/app/src/main/res/drawable/ic_baseline_qr_code_24.xml" value="0.19907407407407407" />
+        <entry key="..\:/ethernom/capsule/development/ethernom_maintenance/app/src/main/res/drawable/ic_cancel.xml" value="0.18333333333333332" />
         <entry key="..\:/ethernom/capsule/development/ethernom_maintenance/app/src/main/res/drawable/ic_eye.xml" value="0.21944444444444444" />
         <entry key="..\:/ethernom/capsule/development/ethernom_maintenance/app/src/main/res/drawable/ic_hide_eye.xml" value="0.21944444444444444" />
         <entry key="..\:/ethernom/capsule/development/ethernom_maintenance/app/src/main/res/drawable/ic_qr_code.xml" value="0.19907407407407407" />
+        <entry key="..\:/ethernom/capsule/development/ethernom_maintenance/app/src/main/res/drawable/ic_success.xml" value="0.19166666666666668" />
         <entry key="..\:/ethernom/capsule/development/ethernom_maintenance/app/src/main/res/drawable/selector_disable_ct.xml" value="0.19537037037037036" />
         <entry key="..\:/ethernom/capsule/development/ethernom_maintenance/app/src/main/res/drawable/selector_factory_reset.xml" value="0.19907407407407407" />
         <entry key="..\:/ethernom/capsule/development/ethernom_maintenance/app/src/main/res/drawable/selector_hide_password.xml" value="0.20925925925925926" />
@@ -33,7 +35,11 @@
         <entry key="..\:/ethernom/capsule/development/ethernom_maintenance/app/src/main/res/layout/activity_splash.xml" value="0.10182370820668693" />
         <entry key="..\:/ethernom/capsule/development/ethernom_maintenance/app/src/main/res/layout/activity_test.xml" value="0.12771739130434784" />
         <entry key="..\:/ethernom/capsule/development/ethernom_maintenance/app/src/main/res/layout/custom_toast.xml" value="0.12771739130434784" />
-        <entry key="..\:/ethernom/capsule/development/ethernom_maintenance/app/src/main/res/layout/dialog_message_loading.xml" value="0.7701612903225806" />
+        <entry key="..\:/ethernom/capsule/development/ethernom_maintenance/app/src/main/res/layout/dialog_failed.xml" value="0.14221014492753623" />
+        <entry key="..\:/ethernom/capsule/development/ethernom_maintenance/app/src/main/res/layout/dialog_in_progress.xml" value="0.21" />
+        <entry key="..\:/ethernom/capsule/development/ethernom_maintenance/app/src/main/res/layout/dialog_in_sucess.xml" value="0.14221014492753623" />
+        <entry key="..\:/ethernom/capsule/development/ethernom_maintenance/app/src/main/res/layout/dialog_message_loading.xml" value="0.19374247894103488" />
+        <entry key="..\:/ethernom/capsule/development/ethernom_maintenance/app/src/main/res/layout/dialog_timout.xml" value="0.14221014492753623" />
         <entry key="..\:/ethernom/capsule/development/ethernom_maintenance/app/src/main/res/layout/item_about.xml" value="0.15307971014492755" />
         <entry key="..\:/ethernom/capsule/development/ethernom_maintenance/app/src/main/res/layout/item_debug.xml" value="0.15307971014492755" />
         <entry key="..\:/ethernom/capsule/development/ethernom_maintenance/app/src/main/res/layout/item_debug_process.xml" value="0.15307971014492755" />

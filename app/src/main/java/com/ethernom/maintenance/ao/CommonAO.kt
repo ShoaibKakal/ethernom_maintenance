@@ -15,27 +15,39 @@ package com.ethernom.maintenance.ao
 import android.annotation.SuppressLint
 import android.content.Context
 import android.util.Log
-import com.ethernom.maintenance.MainApplication
+import com.ethernom.maintenance.ao.capsuleFactoryReset.CapsuleFactoryResetAO
 import com.ethernom.maintenance.ao.cm.CmAO
 import com.ethernom.maintenance.ao.cm.SvrBuffer
+import com.ethernom.maintenance.ao.debugProcess.DebugProcessAO
 import com.ethernom.maintenance.ao.link.LinkAO
 import com.ethernom.maintenance.ao.link.LinkDescriptor
-import com.ethernom.maintenance.ao.select.SelectAO
+import com.ethernom.maintenance.ao.login.LoginAO
+import com.ethernom.maintenance.ao.readQRCode.ReadQRCodeAO
 import com.ethernom.maintenance.ao.sri.SriAO
 import com.ethernom.maintenance.ao.transport.SocketDescriptor
 import com.ethernom.maintenance.ao.transport.TransportAO
+import com.ethernom.maintenance.model.BluetoothRequest
+import com.ethernom.maintenance.model.BluetoothResponse
+import com.ethernom.maintenance.model.DebugProcessModel
+import com.ethernom.maintenance.model.RequestFailureModel
+import com.ethernom.maintenance.ui.commonAO
 import kotlin.reflect.KFunction2
 
 @SuppressLint("NewApi")
 class CommonAO(ctx: Context) {
     private val tag: String = javaClass.simpleName
-    private var application: MainApplication = (ctx.applicationContext as MainApplication)
 
     lateinit var linkAO: LinkAO
     lateinit var transportAO: TransportAO
     private lateinit var cmAO: CmAO
     private lateinit var sriAO: SriAO
-    private lateinit var selectAO: SelectAO
+
+    private lateinit var capsuleFactoryResetAO: CapsuleFactoryResetAO
+    private lateinit var debugProcessAO: DebugProcessAO
+    private lateinit var readQRCodeAO: ReadQRCodeAO
+    private lateinit var loginAO: LoginAO
+
+
     private var aoScheduler: AOScheduler
 
     private val linkAOs: Array<ACB>
@@ -46,25 +58,34 @@ class CommonAO(ctx: Context) {
         get() = arrayOf(cmAO.cmAcb1, cmAO.cmAcb2)
     private val sriAOs: Array<ACB>
         get() = arrayOf(sriAO.sriAcb)
-    private val selectAOs: Array<ACB>
-        get() = arrayOf(selectAO.selectAcb)
+    private val capsuleFactoryResetAOs: Array<ACB>
+        get() = arrayOf(capsuleFactoryResetAO.capsuleFactoryResetAcb)
+    private val debugProcessAOs: Array<ACB>
+        get() = arrayOf(debugProcessAO.debugProcessAcb)
+    private val readQRCodeAOs: Array<ACB>
+        get() = arrayOf(readQRCodeAO.readQRCodeAcb)
+    private val loginAOs: Array<ACB>
+        get() = arrayOf(loginAO.loginAcb)
 
     init {
         initialAO(ctx)
-        aoScheduler = AOScheduler(ec = 0, acbTable = (linkAOs + transportAOs + cmAOs + sriAOs + selectAOs))
+        aoScheduler = AOScheduler(ec = 0, acbTable = (linkAOs + transportAOs + cmAOs + sriAOs + capsuleFactoryResetAOs + debugProcessAOs + readQRCodeAOs + loginAOs ))
 
         val ef = EventBuffer(eventId = AoEvent.COMMON_INIT)
         // Send Init Event for all Active Object
-        application.commonAO.apply {
+        commonAO.apply {
             sendEvent(aoId = AoId.AO_LL1_ID, buff = ef)
             sendEvent(aoId = AoId.AO_LL2_ID, buff = ef)
             sendEvent(aoId = AoId.AO_TP1_ID, buff = ef)
             sendEvent(aoId = AoId.AO_TP2_ID, buff = ef)
-            sendEvent(aoId = AoId.AO_APP_ID, buff = ef)
             sendEvent(aoId = AoId.AO_CM1_ID, buff = ef)
             sendEvent(aoId = AoId.AO_CM2_ID, buff = ef)
             sendEvent(aoId = AoId.AO_SRI_ID, buff = ef)
-//            sendEvent(aoId = AoId.AO_SL2_ID,  buff = ef)
+
+            sendEvent(aoId = AoId.AO_CFR_ID, buff = ef)
+            sendEvent(aoId = AoId.AO_DBP_ID, buff = ef)
+            sendEvent(aoId = AoId.AO_RQR_ID, buff = ef)
+            sendEvent(aoId = AoId.AO_LOG_ID, buff = ef)
         }
     }
 
@@ -73,7 +94,11 @@ class CommonAO(ctx: Context) {
         transportAO = TransportAO(ctx)
         cmAO = CmAO(ctx)
         sriAO = SriAO(ctx)
-        selectAO = SelectAO(ctx)
+
+        capsuleFactoryResetAO = CapsuleFactoryResetAO(ctx)
+        debugProcessAO = DebugProcessAO(ctx)
+        readQRCodeAO = ReadQRCodeAO(ctx)
+        loginAO = LoginAO(ctx)
     }
 
     fun sendEvent(aoId: Int, buff: EventBuffer): Boolean {
@@ -188,11 +213,13 @@ object AoId {
     const val AO_LL2_ID = 1
     const val AO_TP1_ID = 2
     const val AO_TP2_ID = 3
-    const val AO_APP_ID = 4
-    const val AO_CM1_ID = 5
-    const val AO_CM2_ID = 6
-    const val AO_SRI_ID = 7
-    const val AO_SL2_ID = 8
+    const val AO_CM1_ID = 4
+    const val AO_CM2_ID = 5
+    const val AO_SRI_ID = 6
+    const val AO_CFR_ID = 7
+    const val AO_DBP_ID = 8
+    const val AO_RQR_ID = 9
+    const val AO_LOG_ID = 10
 }
 
 /** 0 to 24 For Common Event */
@@ -207,17 +234,20 @@ object AoEvent {
     const val CM_DATA_REC = 7
     const val HTTP_DATA_REC = 8
 
-    // Event receive from HTTP
-    const val C2A_TIMESTAMP_REQ = 15
+    // Event receive capsule factory reset
+    const val C2A_CFR_RES = 9
+    const val HTTP_RESET_CERT_RES = 10
+    const val C2A_FRD_RES = 11
 
-    const val C2A_ONBOARD_RSP = 20
-    const val HTTP_SRV_CERT_RSP = 21
-    const val C2A_SAVE_CERT_RSP = 22
-    const val HTTP_VERIFY_CERT_RSP = 23
-    const val C2A_VERIFY_CERT_RSP = 24
+    // Event receive debug process
+    const val C2A_DBP_RES = 12
+    const val C2A_DPD_RES = 13
+    const val C2A_UCT_RES = 14
 
-    const val C2A_ONBOARD_COMPLETED = 25
-    const val C2A_DISCONNECT = 26
+    // Event receive Read QR Code
+    const val C2A_RQR_RES = 15
+
+
 }
 
 /** Index of all Service Descriptor */
@@ -242,7 +272,15 @@ data class EventBuffer(
     var buffer: ByteArray? = byteArrayOf(),
     var svrBuffer: SvrBuffer? = null,
     var csn: String = "",
-    var advPkt: LinkDescriptor? = null
+    var advPkt: LinkDescriptor? = null,
+    val requestFailure: RequestFailureModel? = null,
+    val deviceName: String? = "",
+    val serialNumber: String? = "",
+    val debugProcessModel: DebugProcessModel? = null,
+    val updateCTStatus: Boolean? = false,
+    val completedType: Int? = 0,
+    val checkBLERequest: BluetoothRequest? = null,
+    val checkBLEResponse: BluetoothResponse? = null
 )
 
 /** Active Object Event Queue */

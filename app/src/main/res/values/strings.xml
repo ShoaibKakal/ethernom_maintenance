@@ -20,6 +20,7 @@
     <string name="warning">Warning</string>
     <string name="turn_on_bluetooth_message_cred">Turn on Bluetooth and allow the Ethernom Contact Tracing to connect Bluetooth accessories. Do you want to enable it?</string>
     <string name="enable">Enable</string>
+    <string name="dismiss">Dismiss</string>
     <string name="loading">Loading</string>
 
     <string name="capsule_onboarding_completed">Capsule onboarding completed</string>
@@ -72,17 +73,39 @@
     <string name="capsule_reset_title">Special system factory reset</string>
     <string name="capsule_reset_in_progress">System configuration request special reset in progress.</string>
     <string name="capsule_reset_success">System configuration successfully.</string>
-    <string name="capsule_reset_failed">System configuration request special reset was failure. Please try again.</string>
+    <string name="capsule_not_onboard">Capsule not yet capsule onboard.</string>
+    <string name="capsule_not_yet_user_onboard">Capsule not yet user onboard.</string>
+    <string name="capsule_reset_timeout">System configuration request capsule factory reset timeout.</string>
+    <string name="capsule_reset_failed">System configuration request capsule factory reset failed.</string>
+
 
     <string name="debug_title">Debug Process Request</string>
     <string name="debug_in_progress">System configuration debug process in progress.</string>
     <string name="debug_success">System configuration successfully.</string>
-    <string name="debug_failed">System configuration debug process was failure. Please try again.</string>
+    <string name="debug_timeout">System configuration debug process timeout.</string>
+    <string name="debug_failed">System configuration debug process was failure.</string>
+    <string name="debug_update_ct">System configuration update CT timeout.</string>
 
     <string name="qr_code_title">QR Code Request</string>
     <string name="qr_code_in_progress">QR code request in progress</string>
     <string name="qr_code_success">QR code request successfully</string>
-    <string name="qr_code_failed">QR code request was failure. Please try again.</string>
+    <string name="qr_code_timeout">QR code request timeout.</string>
+    <string name="qr_code_failed">QR code request was failure.</string>
 
+    <!-- Loading -->
+    <string name="loading_connecting">Loading: Connecting</string>
+    <string name="retry">Retry</string>
+
+    <!-- BLE msg -->
+    <string name="bluetooth_permission_title">Allow Bluetooth Connect</string>
+    <string name="bluetooth_permission_message">This is needed to discover your nearby Bluetooth accessories. Please check your Bluetooth connect permission</string>
+    <string name="bluetooth_setting_message">This is needed to discover your nearby Bluetooth accessories. Please check your Bluetooth Setting.</string>
+    <string name="bluetooth_setting_title">Turn on Bluetooth Setting</string>
+
+    <!-- Location msg -->
+    <string name="location_permission_title">Allow Location Permission</string>
+    <string name="location_permission_message">This is needed to discover your nearby Bluetooth accessories. Please check your Location permission.</string>
+    <string name="location_service_title">Turn on Location Service</string>
+    <string name="location_service_message">This is needed to discover your nearby Bluetooth accessories. Please check your Bluetooth service</string>
 
 </resources>

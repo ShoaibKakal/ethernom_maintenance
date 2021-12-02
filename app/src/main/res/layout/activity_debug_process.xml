@@ -29,7 +29,7 @@
         android:layout_marginTop="@dimen/dimen_30dp"
         android:text="@string/debug_info"/>
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -39,13 +39,49 @@
             android:id="@+id/txt_batter_level"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/dimen_20dp"
+            android:layout_marginBottom="@dimen/dimen_10dp"
             android:gravity="center"
             android:text="@string/battery_level"
             android:textSize="@dimen/text_size_18sp"
             android:textStyle="bold" />
 
         <LinearLayout
+            android:id="@+id/ln_button"
+            android:layout_width="match_parent"
+            android:layout_marginBottom="@dimen/dimen_10dp"
+            android:orientation="vertical"
+            android:layout_alignParentBottom="true"
+            android:gravity="bottom"
+            android:layout_height="wrap_content">
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_update_ct"
+                android:layout_width="300dp"
+                android:layout_height="@dimen/dimen_50dp"
+                android:layout_gravity="center"
+                android:background="@drawable/selector_disable_ct"
+                android:text="@string/disable_ct"
+                android:textColor="@color/colorWhite"
+                android:textSize="@dimen/text_size_16sp" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_close"
+                android:layout_width="300dp"
+                android:layout_height="@dimen/dimen_50dp"
+                android:layout_gravity="center"
+                android:visibility="visible"
+                android:layout_marginTop="@dimen/dimen_10dp"
+                android:text="@string/close"
+                android:background="@drawable/selector_show_qr"
+                android:textColor="@color/colorWhite"
+                android:layout_marginBottom="@dimen/dimen_5dp"
+                android:textSize="@dimen/text_size_16sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_above="@id/ln_button"
+            android:layout_below="@id/txt_batter_level"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/dimen_10dp"
@@ -114,40 +150,11 @@
         </LinearLayout>
 
 
-    </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_marginBottom="@dimen/dimen_20dp"
-        android:orientation="vertical"
-        android:gravity="bottom"
-        android:layout_height="match_parent">
 
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btn_save_qr"
-            android:layout_width="300dp"
-            android:layout_height="@dimen/dimen_50dp"
-            android:layout_gravity="center"
-            android:layout_marginTop="@dimen/dimen_20dp"
-            android:background="@drawable/selector_disable_ct"
-            android:text="@string/disable_ct"
-            android:textColor="@color/colorWhite"
-            android:textSize="@dimen/text_size_16sp" />
+    </RelativeLayout>
 
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btn_show_qr"
-            android:layout_width="300dp"
-            android:layout_height="@dimen/dimen_50dp"
-            android:layout_gravity="center"
-            android:visibility="visible"
-            android:layout_marginTop="@dimen/dimen_10dp"
-            android:text="@string/close"
-            android:background="@drawable/selector_show_qr"
-            android:textColor="@color/colorWhite"
-            android:layout_marginBottom="@dimen/dimen_5dp"
-            android:textSize="@dimen/text_size_16sp" />
 
-    </LinearLayout>
 
 
 
