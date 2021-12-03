@@ -4,7 +4,7 @@ import com.ethernom.maintenance.ao.AoId
 import com.ethernom.maintenance.ao.EventBuffer
 import com.ethernom.maintenance.ui.commonAO
 
-object DebugProcessAPI {
+class DebugProcessAPI {
     fun debugProcessRequest(){
         val event = EventBuffer(eventId = DebugProcessEvent.DEBUG_PROCESS_REQ)
         commonAO!!.sendEvent(AoId.AO_DBP_ID, event)
