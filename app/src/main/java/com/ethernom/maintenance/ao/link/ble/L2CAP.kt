@@ -126,6 +126,7 @@ class L2CAP(ctx: Context) {
         ld!!.ld!!.mfgSN = csn
         ld!!.ld!!.uuid = result.scanRecord!!.serviceUuids[0].toString()
         ld!!.ld!!.ble = result.device
+        ld!!.ld!!.version = version
 
         val eventBuffer = EventBuffer(eventId = LinkEvent.ADV_IND, srvDesc = ld!!)
         commonAO!!.sendEvent(ld!!.aoService.id, eventBuffer)

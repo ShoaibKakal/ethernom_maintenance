@@ -238,7 +238,7 @@ class DebugProcessAO(ctx: Context) {
         updateCTTimeout = false
         Handler(Looper.getMainLooper()).postDelayed({
             sendBroadCast(DebugProcessBRAction.ACT_UPDATE_CT_RES)
-        }, 1000)
+        }, 100)
         return true
     }
 
@@ -258,7 +258,7 @@ class DebugProcessAO(ctx: Context) {
             val event = EventBuffer(eventId = DebugProcessEvent.DEBUG_PROCESS_COMPLETED, completedType = 1)
             commonAO!!.sendEvent(AoId.AO_DBP_ID, event)
             commonAO!!.aoRunScheduler()
-        }, 1000)
+        }, 100)
 
         return true
     }

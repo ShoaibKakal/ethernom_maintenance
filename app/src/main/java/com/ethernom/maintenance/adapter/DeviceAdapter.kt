@@ -7,14 +7,15 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.ethernom.maintenance.R
+import com.ethernom.maintenance.ao.link.LinkDescriptor
 import com.ethernom.maintenance.databinding.ItemDeviceBinding
 import com.ethernom.maintenance.model.DeviceModel
 
-class DeviceAdapter(ctx:Context, deviceList: MutableList<DeviceModel>, itemCallback: (DeviceModel, Int) -> Unit): RecyclerView.Adapter<DeviceAdapter.DeviceViewHolder>() {
+class DeviceAdapter(ctx:Context, itemCallback: (LinkDescriptor, Int) -> Unit): RecyclerView.Adapter<DeviceAdapter.DeviceViewHolder>() {
 
     private val context: Context = ctx
-    private val devices: MutableList<DeviceModel> = deviceList
-    private val itemClickCallback: (DeviceModel, Int) -> Unit = itemCallback
+    private val devices: MutableList<LinkDescriptor> = mutableListOf()
+    private val itemClickCallback: (LinkDescriptor, Int) -> Unit = itemCallback
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DeviceViewHolder {
         return DeviceViewHolder(ItemDeviceBinding.inflate(LayoutInflater.from(context), parent, false))
@@ -34,15 +35,15 @@ class DeviceAdapter(ctx:Context, deviceList: MutableList<DeviceModel>, itemCallb
         notifyDataSetChanged()
     }
 
-    fun addDevice(device: DeviceModel) {
+    fun addDevice(device: LinkDescriptor) {
         devices.add(device)
         notifyItemInserted(devices.size)
     }
 
     inner class DeviceViewHolder(private val itemBinding: ItemDeviceBinding): RecyclerView.ViewHolder(itemBinding.root){
-        fun bind(item: DeviceModel){
+        fun bind(item: LinkDescriptor){
             itemBinding.txtCardName.text = item.deviceName
-            itemBinding.txtCardSn.text = "SN:${item.manufactureSerialNumber}"
+            itemBinding.txtCardSn.text = "SN:${item.mfgSN}"
             itemBinding.root.setOnClickListener {
                 itemClickCallback.invoke(item, adapterPosition)
             }

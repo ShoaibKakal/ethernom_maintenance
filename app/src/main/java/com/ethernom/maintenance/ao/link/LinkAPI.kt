@@ -9,6 +9,7 @@ import com.ethernom.maintenance.ao.DescIdx
 import com.ethernom.maintenance.ao.EventBuffer
 import com.ethernom.maintenance.ao.SrvDesc
 import com.ethernom.maintenance.ui.commonAO
+import java.io.Serializable
 
 class LinkAPI(ctx:Context) {
     private val tag: String = javaClass.simpleName
@@ -73,6 +74,7 @@ data class LinkDescriptor(
     var uuid: String = "",
     var type: Byte = 0, // Link Type Can be [BLE, NFC, USB]
     var mtu: Int = 0, // Maximum transfer unit
+    var version: String = "",
     // Link Specification
     var ble: BluetoothDevice? = null
-)
+): Serializable

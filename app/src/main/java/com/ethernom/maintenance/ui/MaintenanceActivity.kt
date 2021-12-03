@@ -4,11 +4,11 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
-import android.widget.Toast
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.GridLayoutManager
 import com.ethernom.maintenance.R
@@ -18,6 +18,7 @@ import com.ethernom.maintenance.ao.capsuleFactoryReset.CapsuleFactoryResetBRActi
 import com.ethernom.maintenance.ao.cm.CmType
 import com.ethernom.maintenance.ao.debugProcess.DebugProcessAPI
 import com.ethernom.maintenance.ao.debugProcess.DebugProcessBRAction
+import com.ethernom.maintenance.ao.link.LinkDescriptor
 import com.ethernom.maintenance.ao.readQRCode.ReadQRCodeAPI
 import com.ethernom.maintenance.ao.readQRCode.ReadQRCodeBRAction
 import com.ethernom.maintenance.base.BaseActivity
@@ -25,11 +26,16 @@ import com.ethernom.maintenance.databinding.ActivityMaintenanceBinding
 import com.ethernom.maintenance.model.DebugProcessModel
 import com.ethernom.maintenance.model.RequestFailureModel
 import com.ethernom.maintenance.utils.AppConstant
-import com.ethernom.maintenance.utils.AppConstant.TIMER
+import com.ethernom.maintenance.utils.AppConstant.CAPSULE_VERSION
+import com.ethernom.maintenance.utils.AppConstant.DEVICE_NAME
 import com.ethernom.maintenance.utils.session.ApplicationSession
 import kotlin.system.exitProcess
 
 class MaintenanceActivity : BaseActivity<ActivityMaintenanceBinding>() {
+    private val tag = javaClass.simpleName
+    private val nextActivityTimeout : Long = 3000
+    private var deviceName : String = ""
+    private var capsuleVersion: String = ""
 
     override fun getViewBidingClass(): ActivityMaintenanceBinding {
         return ActivityMaintenanceBinding.inflate(layoutInflater)
@@ -37,8 +43,13 @@ class MaintenanceActivity : BaseActivity<ActivityMaintenanceBinding>() {
 
     override fun initView() {
         showToolbar(R.string.main_toolbar)
-        binding.tvUsername.text = "Device Name: ${ApplicationSession.getInstance(this).getDeviceName()}"
         initRecyclerView()
+        if(intent.extras!!.containsKey(DEVICE_NAME)){
+            deviceName = intent.getStringExtra(DEVICE_NAME)!!
+            capsuleVersion = intent.getStringExtra(CAPSULE_VERSION)!!
+            binding.tvUsername.text = "Device Name: $deviceName"
+            Log.d(tag, "capsuleVersion: $capsuleVersion")
+        }
         LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver, intentFilter)
     }
 
@@ -66,17 +77,21 @@ class MaintenanceActivity : BaseActivity<ActivityMaintenanceBinding>() {
             when(p1){
                 0 -> {
                     showDialogInProgress(R.string.capsule_reset_title, R.string.capsule_reset_in_progress)
-                    CapsuleFactoryResetAPI.capsuleFactoryResetRequest()
+                    CapsuleFactoryResetAPI().capsuleFactoryResetRequest()
                 }
                 1 -> {
                     showDialogInProgress(R.string.debug_title, R.string.debug_in_progress)
-                    DebugProcessAPI.debugProcessRequest()
+                    DebugProcessAPI().debugProcessRequest()
                 }
                 2 -> {
                     showDialogInProgress(R.string.qr_code_title, R.string.qr_code_in_progress)
-                    ReadQRCodeAPI.readQRCodeRequest()
+                    ReadQRCodeAPI().readQRCodeRequest()
                 }
-                3 -> startNextActivity(AboutActivity::class.java, false)
+                3 -> {
+                    val bundle = Bundle()
+                    bundle.putString(CAPSULE_VERSION, capsuleVersion)
+                    startNextActivity(AboutActivity::class.java, bundle, false)
+                }
             }
         }
     }
@@ -107,6 +122,7 @@ class MaintenanceActivity : BaseActivity<ActivityMaintenanceBinding>() {
     private val broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             hideLoading()
+            Log.d(tag, "onReceive: ${intent!!.action}")
             when(intent!!.action){
                 CapsuleFactoryResetBRAction.ACT_RESET_RSP -> {}
                 CapsuleFactoryResetBRAction.ACT_RESET_FAILURE -> {
@@ -125,7 +141,7 @@ class MaintenanceActivity : BaseActivity<ActivityMaintenanceBinding>() {
                     Handler(Looper.getMainLooper()).postDelayed({
                         if(!isClick)
                             startPreviousActivity(DiscoverActivity::class.java, true)
-                    }, 5000)
+                    }, nextActivityTimeout)
                 }
 
                 DebugProcessBRAction.ACT_DEBUG_PROCESS_RSP -> {}
@@ -142,9 +158,16 @@ class MaintenanceActivity : BaseActivity<ActivityMaintenanceBinding>() {
                         Log.d("debugProcess", "debugProcess: $debugDataRes")
                         val bundle = Bundle()
                         bundle.putSerializable(AppConstant.DEBUG_DATA_RES_KEY, debugDataRes)
-                        showDialogSuccess(R.string.debug_title, R.string.debug_success){}
-                        startNextActivity(DebugProcessActivity::class.java, bundle, true)
 
+                        var isClick = false
+                        showDialogSuccess(R.string.debug_title, R.string.debug_success){
+                            isClick = true
+                            startNextActivity(DebugProcessActivity::class.java, bundle, true)
+                        }
+                        Handler(Looper.getMainLooper()).postDelayed({
+                            if(!isClick)
+                                startNextActivity(DebugProcessActivity::class.java, bundle, true)
+                        }, nextActivityTimeout)
                     }
                 }
                 DebugProcessBRAction.ACT_TIMEOUT_UPDATE_CT -> {}
@@ -159,13 +182,22 @@ class MaintenanceActivity : BaseActivity<ActivityMaintenanceBinding>() {
                     }
                 }
                 ReadQRCodeBRAction.READ_QR_CODE_COMPLETED -> {
+                    Log.d("ReadQRCodeAO", "onReceive: READ_QR_CODE_COMPLETED")
                     val deviceName = intent.getStringExtra(AppConstant.DEVICE_KEY)
                     val sn = intent.getStringExtra(AppConstant.SERIAL_NUMBER_KEY)
                     val bundle = Bundle()
                     bundle.putString(AppConstant.DEVICE_KEY, deviceName)
                     bundle.putString(AppConstant.SERIAL_NUMBER_KEY, sn)
-                    showDialogSuccess(R.string.qr_code_title, R.string.qr_code_success){}
-                    startNextActivity(QRCodeActivity::class.java, bundle, true)
+
+                    var isClick = false
+                    showDialogSuccess(R.string.qr_code_title, R.string.qr_code_success){
+                        isClick = true
+                        startNextActivity(QRCodeActivity::class.java, bundle, true)
+                    }
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        if(!isClick)
+                            startNextActivity(QRCodeActivity::class.java, bundle, true)
+                    }, nextActivityTimeout)
                 }
             }
         }

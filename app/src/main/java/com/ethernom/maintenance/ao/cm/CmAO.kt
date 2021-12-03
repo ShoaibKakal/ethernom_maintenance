@@ -2,16 +2,21 @@ package com.ethernom.maintenance.ao.cm
 
 import android.content.Context
 import android.content.Intent
+import android.os.Bundle
 import android.util.Log
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.ethernom.maintenance.ao.transport.TransportAPI
 import com.ethernom.maintenance.ao.*
 import com.ethernom.maintenance.ao.cm.repository.UnregisterRepository
+import com.ethernom.maintenance.ao.link.LinkDescriptor
 import com.ethernom.maintenance.model.UnregisterRequestBody
 import com.ethernom.maintenance.model.UnregisterResponse
 import com.ethernom.maintenance.ui.commonAO
 import com.ethernom.maintenance.utils.AppConstant.BLUETOOTH_DEVICE
+import com.ethernom.maintenance.utils.AppConstant.CAPSULE_VERSION
+import com.ethernom.maintenance.utils.AppConstant.DEVICE_ADVERTISE
 import com.ethernom.maintenance.utils.AppConstant.DEVICE_NAME
+import com.ethernom.maintenance.utils.AppConstant.DEVICE_READY
 import com.ethernom.maintenance.utils.AppConstant.MANUFAC_SERIAL_NUMBER
 import com.ethernom.maintenance.utils.AppConstant.MTU
 import com.ethernom.maintenance.utils.AppConstant.TYPE
@@ -142,13 +147,18 @@ class CmAO(ctx: Context) {
     private fun af2_2Cm(acb: ACB, buffer: EventBuffer): Boolean {
         Log.d(tag, "CM TP Discovered call ${buffer.advPkt?.deviceName}")
         val intent = Intent(CmBRAction.ACT_TP_ADV_PKT)
-            .putExtra(DEVICE_NAME, buffer.advPkt?.deviceName)
-            .putExtra(MANUFAC_SERIAL_NUMBER, buffer.advPkt?.mfgSN)
-            .putExtra(UUID, buffer.advPkt?.uuid)
-            .putExtra(TYPE, buffer.advPkt?.type)
-            .putExtra(MTU, buffer.advPkt?.mtu)
-            .putExtra(BLUETOOTH_DEVICE, buffer.advPkt?.ble)
-
+        val ll = LinkDescriptor(
+            deviceName = buffer.advPkt?.deviceName!!,
+            mfgSN = buffer.advPkt?.mfgSN!!,
+            uuid = buffer.advPkt?.uuid!!,
+            type = buffer.advPkt?.type!!,
+            mtu = buffer.advPkt?.mtu!!,
+            version = buffer.advPkt!!.version,
+            ble = buffer.advPkt?.ble,
+        )
+        val bundle = Bundle()
+        bundle.putSerializable(DEVICE_ADVERTISE, ll)
+        intent.putExtras(bundle)
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent)
 
         return true
@@ -194,13 +204,10 @@ class CmAO(ctx: Context) {
     /** TP Connect Confirm Action Function */
     private fun af5Cm(acb: ACB, buffer: EventBuffer): Boolean {
         Log.d(tag, "CM TP Connect Confirm call")
-
-        val deviceName = buffer.srvDesc!!.ld!!.deviceName
-        val manufacture = buffer.srvDesc!!.ld!!.mfgSN
-
         val intent = Intent(CmBRAction.ACT_TP_CON_READY)
-        intent.putExtra(DEVICE_NAME, deviceName)
-        intent.putExtra(MANUFAC_SERIAL_NUMBER, manufacture)
+        val bundle = Bundle()
+        bundle.putSerializable(DEVICE_READY, buffer.srvDesc!!.ld)
+        intent.putExtras(bundle)
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent)
 
         return true

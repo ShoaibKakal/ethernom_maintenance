@@ -171,7 +171,8 @@ class LinkAO(ctx: Context) {
                 mfgSN = buffer.srvDesc!!.ld!!.mfgSN,
                 uuid = buffer.srvDesc!!.ld!!.uuid,
                 ble = buffer.srvDesc!!.ld!!.ble,
-                mtu = getMTU(buffer.srvDesc!!.ld!!.type)
+                mtu = getMTU(buffer.srvDesc!!.ld!!.type),
+                version = buffer.srvDesc!!.ld!!.version
             )
 
             Log.d("TAG", "BLE LINK EVENT ${discoveredPkt.ble}")

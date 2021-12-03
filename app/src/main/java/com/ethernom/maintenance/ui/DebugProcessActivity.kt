@@ -22,6 +22,7 @@ import kotlin.system.exitProcess
 class DebugProcessActivity : BaseActivity<ActivityDebugProcessBinding>() {
 
     private lateinit var mDebugProcessAdapter: DebugProcessAdapter
+    private lateinit var debugProcessAPI: DebugProcessAPI
     private var isUpdatedCT: Boolean = false
     private var mCTStatus: Boolean =false
 
@@ -30,6 +31,7 @@ class DebugProcessActivity : BaseActivity<ActivityDebugProcessBinding>() {
     }
 
     override fun initView() {
+        debugProcessAPI = DebugProcessAPI()
         showToolbarBackPress(R.string.debug_toolbar)
         initRecyclerView(mutableListOf())
         LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver, intentFilter)
@@ -76,7 +78,7 @@ class DebugProcessActivity : BaseActivity<ActivityDebugProcessBinding>() {
             showLoading("Loading: Update CT...")
             isUpdatedCT = true
             mCTStatus = !mCTStatus
-            DebugProcessAPI.updateCTRequest(mCTStatus)
+            debugProcessAPI.updateCTRequest(mCTStatus)
         }
 
         binding.btnClose.setOnClickListener {
@@ -84,7 +86,7 @@ class DebugProcessActivity : BaseActivity<ActivityDebugProcessBinding>() {
                 startPreviousActivity(DiscoverActivity::class.java, true)
             }
             showLoading("Loading: Update CT...")
-            DebugProcessAPI.closeUpdateCT()
+            debugProcessAPI.closeUpdateCT()
         }
     }
 

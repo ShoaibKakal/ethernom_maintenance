@@ -33,9 +33,14 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.LocationSettingsRequest
 import com.google.android.gms.location.LocationSettingsStatusCodes
 import android.content.Intent
+import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.provider.Settings
+import com.ethernom.maintenance.utils.AppConstant
+import com.ethernom.maintenance.utils.AppConstant.CAPSULE_VERSION
+import com.ethernom.maintenance.utils.AppConstant.DEVICE_ADVERTISE
+import com.ethernom.maintenance.utils.AppConstant.DEVICE_READY
 import com.ethernom.maintenance.utils.AppConstant.TIMER
 import kotlin.system.exitProcess
 
@@ -46,7 +51,7 @@ class DiscoverActivity : BaseActivity<ActivityDiscoverBinding>() {
     private lateinit var mDeviceAdapter: DeviceAdapter
     private lateinit var mAppSession: ApplicationSession
     private var dataLinkDescriptor = ArrayList<LinkDescriptor>()
-    private var deviceSelected: DeviceModel? = null
+    private var deviceSelected: LinkDescriptor? = null
     private val REQUEST_CHECK_LOCATION_SERVICE = 0x1
 
     private var locationService: Boolean = true
@@ -94,7 +99,7 @@ class DiscoverActivity : BaseActivity<ActivityDiscoverBinding>() {
     }
 
     private fun initRecyclerView(){
-        mDeviceAdapter = DeviceAdapter(this, mutableListOf(), deviceItemSelected)
+        mDeviceAdapter = DeviceAdapter(this, deviceItemSelected)
         binding.rcvDevice.apply {
             setHasFixedSize(true)
             layoutManager = LinearLayoutManager(this@DiscoverActivity)
@@ -103,10 +108,10 @@ class DiscoverActivity : BaseActivity<ActivityDiscoverBinding>() {
     }
 
     private var connectionTimeout = false
-    private val deviceItemSelected = object : (DeviceModel, Int) -> Unit {
-        override fun invoke(device: DeviceModel, position: Int) {
+    private val deviceItemSelected = object : (LinkDescriptor, Int) -> Unit {
+        override fun invoke(device: LinkDescriptor, position: Int) {
             showLoading(resources.getString(R.string.loading_connecting) + " to ${device.deviceName}...")
-            cmAPI!!.cmSelect(CmType.capsule, dataLinkDescriptor[position])
+            cmAPI!!.cmSelect(CmType.capsule, device)
             commonAO!!.aoRunScheduler()
             deviceSelected = device
 
@@ -292,25 +297,32 @@ class DiscoverActivity : BaseActivity<ActivityDiscoverBinding>() {
                 BROADCAST_INTERRUPT -> commonAO!!.aoRunScheduler()
                 // advertising
                 CmBRAction.ACT_TP_ADV_PKT -> {
-                    val name = dataIntent.getStringExtra(DEVICE_NAME)
-                    val mFSN = dataIntent.getStringExtra(MANUFAC_SERIAL_NUMBER)
-                    val uuid = dataIntent.getStringExtra(UUID)
-                    val type = dataIntent.getByteExtra(TYPE, 0)
-                    val mtu = dataIntent.getIntExtra(MTU, 0)
-                    val ble = dataIntent.getParcelableExtra<BluetoothDevice>(BLUETOOTH_DEVICE)
-                    val deviceModel = DeviceModel(0, name!!, mFSN!!, uuid!!)
-                    val llId = LinkDescriptor(name, mFSN, uuid, type, mtu, ble)
-                    Log.d(tag, "ACT_TP_ADV_PKT name:$name, sn:$mFSN")
-                    dataLinkDescriptor.add(llId)
-                    mDeviceAdapter.addDevice(deviceModel)
+//                    val name = dataIntent.getStringExtra(DEVICE_NAME)
+//                    val mFSN = dataIntent.getStringExtra(MANUFAC_SERIAL_NUMBER)
+//                    val uuid = dataIntent.getStringExtra(UUID)
+//                    val type = dataIntent.getByteExtra(TYPE, 0)
+//                    val mtu = dataIntent.getIntExtra(MTU, 0)
+//                    val ble = dataIntent.getParcelableExtra<BluetoothDevice>(BLUETOOTH_DEVICE)
+//                    val deviceModel = DeviceModel(0, name!!, mFSN!!, uuid!!)
+//                    val llId = LinkDescriptor(deviceName = name, mfgSN = mFSN, uuid = uuid, type = type, mtu = mtu, ble = ble)
+//                    Log.d(tag, "ACT_TP_ADV_PKT name:$name, sn:$mFSN")
+
+                    val ll = dataIntent.getSerializableExtra(DEVICE_ADVERTISE) as LinkDescriptor
+                    Log.d(tag, "ACT_TP_ADV_PKT $ll")
+                    mDeviceAdapter.addDevice(ll)
                 }
                 CmBRAction.ACT_TP_CON_READY -> {
                     Log.d(tag, "ACT_TP_CON_READY ")
                     hideLoading()
                     if(!connectionTimeout) return
                     connectionTimeout = false
-                    ApplicationSession.getInstance(this@DiscoverActivity).setDeviceName(deviceSelected!!.deviceName)
-                    startNextActivity(MaintenanceActivity::class.java, true)
+
+                    val llReady = dataIntent.getSerializableExtra(DEVICE_READY) as LinkDescriptor
+                    Log.d(tag, "$llReady")
+                    val bundle = Bundle()
+                    bundle.putString(DEVICE_NAME, llReady.deviceName)
+                    bundle.putString(CAPSULE_VERSION, llReady.version)
+                    startNextActivity(MaintenanceActivity::class.java, bundle,true)
                 }
             }
         }

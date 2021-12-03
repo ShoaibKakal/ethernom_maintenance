@@ -7,7 +7,10 @@ object AppConstant {
     const val UUID = "UUID"
     const val TYPE = "TYPE"
     const val MTU = "MTU"
+    const val CAPSULE_VERSION = "CAPSULE_VERSION"
     const val BLUETOOTH_DEVICE = "BLUETOOTH_DEVICE"
+    const val DEVICE_ADVERTISE = "DEVICE_ADVERTISE"
+    const val DEVICE_READY = "DEVICE_READY"
 
     const val START_ACTIVITY_ANIM_LEFT = 1
     const val START_ACTIVITY_ANIM_RIGHT = 2

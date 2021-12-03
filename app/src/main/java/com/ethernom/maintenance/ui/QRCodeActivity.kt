@@ -37,6 +37,7 @@ class QRCodeActivity : BaseActivity<ActivityQrcodeBinding>(){
             val deviceName = intent.getStringExtra(AppConstant.DEVICE_KEY)
             val sn = intent.getStringExtra(AppConstant.SERIAL_NUMBER_KEY)
             val data = "$deviceName,${sn!!.lowercase()}"
+            deviceCSN = sn
             binding.tvDeviceName.text = "Device Name:\n$deviceName"
             generateQR(data)
             handleButton()
