@@ -116,7 +116,6 @@
     <string name="bluetooth_device_turn_on">This is necessary to find a Bluetooth device near you. Do you want to turn it on?</string>
     <string name="turn_on">Turn on</string>
 
-
     <!-- Location msg -->
     <string name="location_permission_title">Allow location permissions</string>
     <string name="location_permission_message">Apps with permission can access this device\'s location</string>

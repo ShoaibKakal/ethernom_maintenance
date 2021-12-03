@@ -40,6 +40,10 @@ class DebugProcessActivity : BaseActivity<ActivityDebugProcessBinding>() {
         LocalBroadcastManager.getInstance(this).unregisterReceiver(broadcastReceiver)
     }
 
+    override fun onBackPressed() {
+        startPreviousActivity(DiscoverActivity::class.java, true)
+    }
+
 
     private fun initRecyclerView(capsuleOAs: MutableList<CapsuleOAModel>) {
         mDebugProcessAdapter = DebugProcessAdapter(this, capsuleOAs)
