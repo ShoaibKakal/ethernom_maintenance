@@ -81,12 +81,17 @@ class DiscoverActivity : BaseActivity<ActivityDiscoverBinding>() {
     private fun handleDiscover() {
         Log.d(tag, "${handleButtonMessage()}, ${locationService}, $bluetoothDevice")
         if (handleButtonMessage() && locationService && bluetoothDevice) {
-            Log.d(tag, "call to discover device!!!")
             mDeviceAdapter.clearAllDevice()
             dataLinkDescriptor.clear()
             cmAPI!!.cmReset(CmType.capsule)
-            cmAPI!!.cmDiscovery(CmType.capsule)
             commonAO!!.aoRunScheduler()
+
+            Handler().postDelayed({
+                Log.d(tag, "call to discover device!!!")
+                cmAPI!!.cmDiscovery(CmType.capsule)
+                commonAO!!.aoRunScheduler()
+            }, 2000)
+
         }
     }
 

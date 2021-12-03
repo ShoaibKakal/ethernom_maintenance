@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.util.Log
 import androidx.core.content.ContextCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -62,7 +63,7 @@ class DebugProcessActivity : BaseActivity<ActivityDebugProcessBinding>() {
             binding.tvUsername.text =
                 "Device Name: ${ApplicationSession.getInstance(this).getDeviceName()}"
             binding.txtBatterLevel.text =
-                resources.getString(R.string.battery_level) + " ${debugDataRes.bl}" + "V"
+                resources.getString(R.string.battery_level) + " ${String.format("%.2f",debugDataRes.bl)}" + "V"
             binding.btnUpdateCt.background = if (debugDataRes.ctStatus) ContextCompat.getDrawable(this, R.drawable.selector_disable_ct)
             else ContextCompat.getDrawable(this, R.drawable.selector_save_qr)
             binding.btnUpdateCt.text = if (debugDataRes.ctStatus) resources.getString(R.string.disable_ct)
