@@ -9,6 +9,8 @@ import android.bluetooth.BluetoothAdapter
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
+import android.provider.Settings
+import android.provider.Settings.SettingNotFoundException
 import android.text.Editable
 import android.util.Log
 import android.view.View
@@ -322,6 +324,16 @@ object Utils {
         var payload = ByteArray(0)
         payload += status
         return  payload
+    }
+
+    fun isLocationEnabled(context: Context): Boolean {
+        val locationMode: Int = try {
+            Settings.Secure.getInt(context.contentResolver, Settings.Secure.LOCATION_MODE)
+        } catch (e: SettingNotFoundException) {
+            e.printStackTrace()
+            return false
+        }
+        return locationMode != Settings.Secure.LOCATION_MODE_OFF
     }
 
 

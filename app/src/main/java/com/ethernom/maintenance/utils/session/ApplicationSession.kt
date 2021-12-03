@@ -17,11 +17,19 @@ class ApplicationSession(val context: Context) : BaseSession(context) {
         }
     }
     enum class SharedPreKeyType {
-        DEVICE_NAME, APP_LOCATION, APP_BLE_CNN
+        CAPSULE_VERSION, DEVICE_NAME, APP_LOCATION, APP_BLE_CNN
     }
 
     override val preferenceName: String
         get() = APP_SHARED_PREFS
+
+    fun setCapsuleVersion(value: String) {
+        save(SharedPreKeyType.CAPSULE_VERSION.toString(), value)
+    }
+
+    fun getCapsuleVersion() : String {
+        return get(SharedPreKeyType.CAPSULE_VERSION.toString(), "").toString()
+    }
 
     fun setDeviceName(value: String) {
         save(SharedPreKeyType.DEVICE_NAME.toString(), value)

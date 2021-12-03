@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_pressed="true">
+        <shape android:shape="rectangle" android:padding="90dp">
+            <solid android:color="@color/colorBtnClick"/>
+            <padding />
+            <corners android:radius="@dimen/dimen_50dp"/>
+
+        </shape>
+    </item>
+
+    <item>
+        <shape android:shape="rectangle" android:padding="90dp">
+            <solid android:color="@color/colorRed_A100"/>
+            <padding />
+            <corners android:radius="@dimen/dimen_50dp"/>
+        </shape>
+    </item>
+
+</selector>

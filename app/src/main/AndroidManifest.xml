@@ -20,9 +20,9 @@
     <application
         android:name=".MainApplication"
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/img_ethernom"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@drawable/img_ethernom"
         android:supportsRtl="true"
         android:usesCleartextTraffic="true"
         android:theme="@style/Theme.Ethernom_maintenance"
@@ -65,15 +65,6 @@
             </intent-filter>
         </activity>
         <activity android:name=".ui.AuthenticationActivity" />
-
-        <receiver
-            android:name=".broadcast.LocationBroadcast"
-            android:exported="false" >
-            <intent-filter>
-                <action android:name="android.location.PROVIDERS_CHANGED" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </receiver>
     </application>
 
 </manifest>

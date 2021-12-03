@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">ethernom_maintenance</string>
+    <string name="app_name">Ethernom Maintenance</string>
 
     <!--    Toast-->
     <string name="toast_success">SUCCESS :</string>
@@ -68,6 +68,13 @@
 
     <!-- About Activity -->
     <string name="about_toolbar">About</string>
+    <string name="capsule_version">Capsule Version : </string>
+    <string name="term_of_service">Term of service </string>
+    <string name="privacy_policy">Privacy Policy</string>
+    <string name="all_rights_reserved">All rights reserved.</string>
+    <string name="copyright">Copyright &#169;</string>
+    <string name="company_name">Ethernom, Inc.</string>
+    <string name="deliminator">,</string>
 
     <!-- Dialog -->
     <string name="capsule_reset_title">Special system factory reset</string>
@@ -77,7 +84,6 @@
     <string name="capsule_not_yet_user_onboard">Capsule not yet user onboard.</string>
     <string name="capsule_reset_timeout">System configuration request capsule factory reset timeout.</string>
     <string name="capsule_reset_failed">System configuration request capsule factory reset failed.</string>
-
 
     <string name="debug_title">Debug Process Request</string>
     <string name="debug_in_progress">System configuration debug process in progress.</string>
@@ -92,20 +98,29 @@
     <string name="qr_code_timeout">QR code request timeout.</string>
     <string name="qr_code_failed">QR code request was failure.</string>
 
+    <string name="advertise_device_title">Advertise Nearby Devices</string>
+    <string name="advertise_device_msg">Please press on your capsule devices (1 short press combination by 2 short press) to advertise bluetooth.</string>
+
+    <string name="connection_timeout_title">Connection Failed</string>
+    <string name="connection_timeout_msg">Connecting with Capsule has been timeout. Please try again.</string>
+
     <!-- Loading -->
     <string name="loading_connecting">Loading: Connecting</string>
     <string name="retry">Retry</string>
 
     <!-- BLE msg -->
-    <string name="bluetooth_permission_title">Allow Bluetooth Connect</string>
-    <string name="bluetooth_permission_message">This is needed to discover your nearby Bluetooth accessories. Please check your Bluetooth connect permission</string>
-    <string name="bluetooth_setting_message">This is needed to discover your nearby Bluetooth accessories. Please check your Bluetooth Setting.</string>
-    <string name="bluetooth_setting_title">Turn on Bluetooth Setting</string>
+    <string name="nearby_device_permission_title">Allow nearby devices permission</string>
+    <string name="nearby_device_permission_message">Apps with this permission can find, connect to, and determine the relative position fo nearby devices.</string>
+    <string name="bluetooth_device_title">Turn on the Bluetooth device</string>
+    <string name="bluetooth_device_message">This is necessary to find a Bluetooth device near you. Check your Bluetooth device.</string>
+    <string name="bluetooth_device_turn_on">This is necessary to find a Bluetooth device near you. Do you want to turn it on?</string>
+    <string name="turn_on">Turn on</string>
+
 
     <!-- Location msg -->
-    <string name="location_permission_title">Allow Location Permission</string>
-    <string name="location_permission_message">This is needed to discover your nearby Bluetooth accessories. Please check your Location permission.</string>
-    <string name="location_service_title">Turn on Location Service</string>
-    <string name="location_service_message">This is needed to discover your nearby Bluetooth accessories. Please check your Bluetooth service</string>
+    <string name="location_permission_title">Allow location permissions</string>
+    <string name="location_permission_message">Apps with permission can access this device\'s location</string>
+    <string name="location_service_title">Turn on the location service</string>
+    <string name="location_service_message">This is necessary to find a Bluetooth device near you. Check your Location service.</string>
 
 </resources>

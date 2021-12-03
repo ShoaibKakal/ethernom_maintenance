@@ -26,8 +26,6 @@ import com.ethernom.maintenance.ao.readQRCode.ReadQRCodeAO
 import com.ethernom.maintenance.ao.sri.SriAO
 import com.ethernom.maintenance.ao.transport.SocketDescriptor
 import com.ethernom.maintenance.ao.transport.TransportAO
-import com.ethernom.maintenance.model.BluetoothRequest
-import com.ethernom.maintenance.model.BluetoothResponse
 import com.ethernom.maintenance.model.DebugProcessModel
 import com.ethernom.maintenance.model.RequestFailureModel
 import com.ethernom.maintenance.ui.commonAO
@@ -278,9 +276,7 @@ data class EventBuffer(
     val serialNumber: String? = "",
     val debugProcessModel: DebugProcessModel? = null,
     val updateCTStatus: Boolean? = false,
-    val completedType: Int? = 0,
-    val checkBLERequest: BluetoothRequest? = null,
-    val checkBLEResponse: BluetoothResponse? = null
+    val completedType: Int? = 0
 )
 
 /** Active Object Event Queue */

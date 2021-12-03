@@ -22,6 +22,8 @@
         <entry key="..\:/ethernom/capsule/development/ethernom_maintenance/app/src/main/res/drawable/selector_factory_reset.xml" value="0.19907407407407407" />
         <entry key="..\:/ethernom/capsule/development/ethernom_maintenance/app/src/main/res/drawable/selector_hide_password.xml" value="0.20925925925925926" />
         <entry key="..\:/ethernom/capsule/development/ethernom_maintenance/app/src/main/res/drawable/selector_login.xml" value="0.21944444444444444" />
+        <entry key="..\:/ethernom/capsule/development/ethernom_maintenance/app/src/main/res/drawable/selector_open_setting.xml" value="0.17962962962962964" />
+        <entry key="..\:/ethernom/capsule/development/ethernom_maintenance/app/src/main/res/drawable/selector_question.xml" value="0.17962962962962964" />
         <entry key="..\:/ethernom/capsule/development/ethernom_maintenance/app/src/main/res/drawable/selector_save_qr.xml" value="0.19907407407407407" />
         <entry key="..\:/ethernom/capsule/development/ethernom_maintenance/app/src/main/res/drawable/selector_show_qr.xml" value="0.19907407407407407" />
         <entry key="..\:/ethernom/capsule/development/ethernom_maintenance/app/src/main/res/drawable/selector_toolbar_back.xml" value="0.19907407407407407" />
@@ -29,16 +31,18 @@
         <entry key="..\:/ethernom/capsule/development/ethernom_maintenance/app/src/main/res/layout/activity_about.xml" value="0.15307971014492755" />
         <entry key="..\:/ethernom/capsule/development/ethernom_maintenance/app/src/main/res/layout/activity_authentication.xml" value="0.2" />
         <entry key="..\:/ethernom/capsule/development/ethernom_maintenance/app/src/main/res/layout/activity_debug_process.xml" value="0.15307971014492755" />
-        <entry key="..\:/ethernom/capsule/development/ethernom_maintenance/app/src/main/res/layout/activity_discover.xml" value="0.16847826086956522" />
+        <entry key="..\:/ethernom/capsule/development/ethernom_maintenance/app/src/main/res/layout/activity_discover.xml" value="0.18294190358467244" />
         <entry key="..\:/ethernom/capsule/development/ethernom_maintenance/app/src/main/res/layout/activity_maintenance.xml" value="0.18" />
         <entry key="..\:/ethernom/capsule/development/ethernom_maintenance/app/src/main/res/layout/activity_qrcode.xml" value="0.15307971014492755" />
         <entry key="..\:/ethernom/capsule/development/ethernom_maintenance/app/src/main/res/layout/activity_splash.xml" value="0.10182370820668693" />
         <entry key="..\:/ethernom/capsule/development/ethernom_maintenance/app/src/main/res/layout/activity_test.xml" value="0.12771739130434784" />
         <entry key="..\:/ethernom/capsule/development/ethernom_maintenance/app/src/main/res/layout/custom_toast.xml" value="0.12771739130434784" />
+        <entry key="..\:/ethernom/capsule/development/ethernom_maintenance/app/src/main/res/layout/dialog_advertise_suggestion.xml" value="0.12454710144927536" />
         <entry key="..\:/ethernom/capsule/development/ethernom_maintenance/app/src/main/res/layout/dialog_failed.xml" value="0.14221014492753623" />
         <entry key="..\:/ethernom/capsule/development/ethernom_maintenance/app/src/main/res/layout/dialog_in_progress.xml" value="0.21" />
         <entry key="..\:/ethernom/capsule/development/ethernom_maintenance/app/src/main/res/layout/dialog_in_sucess.xml" value="0.14221014492753623" />
         <entry key="..\:/ethernom/capsule/development/ethernom_maintenance/app/src/main/res/layout/dialog_message_loading.xml" value="0.19374247894103488" />
+        <entry key="..\:/ethernom/capsule/development/ethernom_maintenance/app/src/main/res/layout/dialog_sucess.xml" value="0.12454710144927536" />
         <entry key="..\:/ethernom/capsule/development/ethernom_maintenance/app/src/main/res/layout/dialog_timout.xml" value="0.14221014492753623" />
         <entry key="..\:/ethernom/capsule/development/ethernom_maintenance/app/src/main/res/layout/item_about.xml" value="0.15307971014492755" />
         <entry key="..\:/ethernom/capsule/development/ethernom_maintenance/app/src/main/res/layout/item_debug.xml" value="0.15307971014492755" />

@@ -46,7 +46,6 @@ class SplashActivity : AppCompatActivity() {
         } else {
             requestPermission(checkPermission.toTypedArray())
         }
-        requestPermission(checkAppPermission().toTypedArray())
 
         // get app version name
         val versionName: String = this.packageManager.getPackageInfo(this.packageName, 0).versionName

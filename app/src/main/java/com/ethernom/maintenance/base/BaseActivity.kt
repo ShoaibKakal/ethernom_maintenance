@@ -1,9 +1,14 @@
 package com.ethernom.maintenance.base
 
+import android.Manifest
+import android.bluetooth.BluetoothAdapter
 import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.pm.PackageManager
 import android.location.LocationManager
+import android.os.Build
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
@@ -13,34 +18,27 @@ import android.widget.TextView
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import androidx.core.content.ContextCompat
 import androidx.viewbinding.ViewBinding
-import cn.pedant.SweetAlert.SweetAlertDialog
 import com.ethernom.maintenance.R
-import com.ethernom.maintenance.broadcast.LocationBroadcast
 import com.ethernom.maintenance.utils.AppConstant.START_ACTIVITY_ANIM_LEFT
 import com.ethernom.maintenance.utils.AppConstant.START_ACTIVITY_ANIM_RIGHT
 import com.ethernom.maintenance.utils.AppConstant.START_ACTIVITY_ANIM_TOP
+import com.ethernom.maintenance.utils.Utils
 import com.ethernom.maintenance.utils.customView.LoadingView
 import kotlinx.android.synthetic.main.toolbar_back_press.*
-import kotlinx.android.synthetic.main.toolbar_center_title.*
 import kotlinx.android.synthetic.main.toolbar_center_title.center_toolbar
 import kotlinx.android.synthetic.main.toolbar_center_title.toolbar_title
 
 abstract class BaseActivity<VB: ViewBinding>: AppCompatActivity() {
     lateinit var binding: VB
     var alertDialog: AlertDialog? = null
-    private val locationBr: BroadcastReceiver = LocationBroadcast()
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = getViewBidingClass()
         setContentView(binding.root)
         initView()
-
-        val filter1 = IntentFilter(LocationManager.PROVIDERS_CHANGED_ACTION)
-       registerReceiver(locationBr, filter1)
     }
 
     abstract fun getViewBidingClass(): VB
@@ -70,6 +68,20 @@ abstract class BaseActivity<VB: ViewBinding>: AppCompatActivity() {
         } else {
             super.onOptionsItemSelected(item)
         }
+    }
+
+    open fun checkAppPermission(): ArrayList<String> {
+        val appPermissions : ArrayList<String> = ArrayList()
+        if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            appPermissions.add(Manifest.permission.ACCESS_FINE_LOCATION)
+        }
+
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S &&
+            ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+            appPermissions.add(Manifest.permission.BLUETOOTH_CONNECT)
+            appPermissions.add(Manifest.permission.BLUETOOTH_SCAN)
+        }
+        return appPermissions
     }
 
     private val mLoadingViewParent: ViewGroup? = null
@@ -171,6 +183,26 @@ abstract class BaseActivity<VB: ViewBinding>: AppCompatActivity() {
         alertDialog!!.show()
     }
 
+    open fun showSuggestionDialog(@StringRes title: Int, @StringRes contentText: Int, @StringRes confirmText: Int, confirmButton: () -> Unit){
+        if(alertDialog != null) alertDialog!!.dismiss()
+        val dialogBuilder: AlertDialog.Builder = AlertDialog.Builder(this)
+        val inflater = this.layoutInflater
+        val dialogView: View = inflater.inflate(R.layout.dialog_suggestion, null)
+        dialogBuilder.setView(dialogView)
+        dialogBuilder.setCancelable(false)
+        dialogView.findViewById<TextView>(R.id.title).text = getString(title)
+        dialogView.findViewById<TextView>(R.id.content).text = getString(contentText)
+        dialogView.findViewById<Button>(R.id.btn_confirm).apply {
+            text = getString(confirmText)
+            setOnClickListener {
+                confirmButton.invoke()
+                alertDialog!!.dismiss()
+            }
+        }
+        alertDialog = dialogBuilder.create()
+        alertDialog!!.show()
+    }
+
     open fun showDialogTimeout(@StringRes title: Int, @StringRes contentText: Int, confirmButton: (Boolean) -> Unit){
         if(alertDialog != null) alertDialog!!.dismiss()
         val dialogBuilder: AlertDialog.Builder = AlertDialog.Builder(this)
@@ -189,6 +221,47 @@ abstract class BaseActivity<VB: ViewBinding>: AppCompatActivity() {
         }
         alertDialog = dialogBuilder.create()
         alertDialog!!.show()
+    }
+
+    // Broad cast function //
+    private var locationReceiverCallback : ((Boolean) -> Unit)? = null
+    open fun registerLocationBroadcast(locationCallback: (Boolean)-> Unit) {
+        // Register for broadcasts on Location state change
+        locationReceiverCallback = locationCallback
+        val filterLocation = IntentFilter(LocationManager.MODE_CHANGED_ACTION)
+        registerReceiver(locationReceiver, filterLocation)
+    }
+
+    open fun unRegisterLocationBroadcast() {
+        locationReceiverCallback = null
+        unregisterReceiver(locationReceiver)
+    }
+
+    private val locationReceiver = object : BroadcastReceiver(){
+        override fun onReceive(context: Context?, intent: Intent?) {
+            locationReceiverCallback!!.invoke(Utils.isLocationEnabled(context!!))
+        }
+    }
+
+    private var bluetoothReceiverCallback : ((Int) -> Unit)? = null
+    open fun registerBluetoothBroadcast(bluetoothCallback: (Int) -> Unit){
+        val filterBLe = IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED)
+        bluetoothReceiverCallback = bluetoothCallback
+        registerReceiver(bluetoothReceiver, filterBLe)
+    }
+
+    open fun unRegisterBluetoothReceiver(){
+        bluetoothReceiverCallback = null
+        unregisterReceiver(bluetoothReceiver)
+    }
+
+    private val bluetoothReceiver = object : BroadcastReceiver(){
+        override fun onReceive(context: Context?, intent: Intent?) {
+            if (intent!!.action.equals(BluetoothAdapter.ACTION_STATE_CHANGED)) {
+                bluetoothReceiverCallback!!.invoke(intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, BluetoothAdapter.ERROR))
+            }
+        }
+
     }
 
 

@@ -10,54 +10,50 @@
 
     <include layout="@layout/toolbar_center_title" />
 
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/btn_open_setting"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/colorRed_A100"
-        android:gravity="center"
         android:orientation="horizontal"
-        android:padding="@dimen/dimen_5dp"
-        android:visibility="gone"
-        android:weightSum="10">
-
-        <ImageView
-            android:layout_width="0dp"
-            android:layout_height="@dimen/dimen_30dp"
-            android:layout_gravity="center"
-            android:layout_marginEnd="@dimen/dimen_5dp"
-            android:layout_weight="1"
-            android:src="@drawable/ic_cancel_msg" />
+        android:visibility="gone">
 
         <LinearLayout
-            android:layout_width="0dp"
+            android:layout_toStartOf="@id/btn_message"
+            android:layout_width="match_parent"
+            android:padding="@dimen/dimen_10dp"
+            android:layout_marginEnd="@dimen/dimen_5dp"
             android:layout_height="wrap_content"
-            android:layout_weight="8"
             android:orientation="vertical">
 
             <TextView
                 android:id="@+id/tv_title"
+                android:text="@string/nearby_device_permission_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="@color/white"
-                android:textSize="@dimen/text_size_20sp"
+                android:textSize="@dimen/text_size_18sp"
                 android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/tv_message"
+                android:text="@string/nearby_device_permission_message"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="@color/white" />
         </LinearLayout>
 
+
+
         <ImageView
-            android:layout_width="0dp"
+            android:id="@+id/btn_message"
+            android:layout_width="30dp"
             android:layout_height="@dimen/dimen_30dp"
-            android:layout_gravity="center"
-            android:layout_weight="1"
-            android:paddingStart="@dimen/dimen_5dp"
+            android:background="@drawable/selector_open_setting"
+            android:layout_centerInParent="true"
+            android:layout_alignParentEnd="true"
             android:src="@drawable/ic_next" />
-    </LinearLayout>
+    </RelativeLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -89,13 +85,14 @@
         </LinearLayout>
 
         <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/questionMark"
+            android:id="@+id/btn_question"
             android:layout_width="@dimen/dimen_30dp"
             android:layout_height="@dimen/dimen_30dp"
             android:layout_alignParentEnd="true"
             android:layout_marginEnd="@dimen/dimen_10dp"
             android:gravity="center_vertical"
             android:text="@string/question"
+            android:background="@drawable/selector_question"
             android:textAlignment="center"
             android:textColor="@android:color/black"
             android:textSize="@dimen/text_size_20sp"
