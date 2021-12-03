@@ -11,7 +11,7 @@
         android:layout_height="220dp"
         android:scaleType="centerInside"
         android:layout_centerInParent="true"
-        android:src="@drawable/img_ethernom" />
+        android:src="@drawable/img_ethernom_maintenance" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/app_version"
