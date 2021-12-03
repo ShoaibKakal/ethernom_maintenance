@@ -104,6 +104,8 @@
     <string name="connection_timeout_title">Connection Failed</string>
     <string name="connection_timeout_msg">Connecting with Capsule has been timeout. Please try again.</string>
 
+    <string name="network_title">Could Not Connect</string>
+    <string name="network_msg">Make sure you are connected to Wi-Fi or your cellular network.</string>
     <!-- Loading -->
     <string name="loading_connecting">Loading: Connecting</string>
     <string name="retry">Retry</string>

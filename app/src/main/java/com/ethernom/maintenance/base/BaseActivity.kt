@@ -29,6 +29,12 @@ import com.ethernom.maintenance.utils.customView.LoadingView
 import kotlinx.android.synthetic.main.toolbar_back_press.*
 import kotlinx.android.synthetic.main.toolbar_center_title.center_toolbar
 import kotlinx.android.synthetic.main.toolbar_center_title.toolbar_title
+import android.net.NetworkInfo
+
+import android.net.ConnectivityManager
+
+
+
 
 abstract class BaseActivity<VB: ViewBinding>: AppCompatActivity() {
     lateinit var binding: VB
@@ -68,6 +74,12 @@ abstract class BaseActivity<VB: ViewBinding>: AppCompatActivity() {
         } else {
             super.onOptionsItemSelected(item)
         }
+    }
+
+    open fun isNetworkAvailable(): Boolean {
+        val connectivityManager = getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
+        val activeNetworkInfo = connectivityManager.activeNetworkInfo
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected
     }
 
     open fun checkAppPermission(): ArrayList<String> {

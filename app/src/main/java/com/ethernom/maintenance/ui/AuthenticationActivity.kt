@@ -1,14 +1,7 @@
 package com.ethernom.maintenance.ui
 
-import android.content.DialogInterface
-import android.content.Intent
-import android.location.LocationManager
-import android.provider.Settings
 import android.text.method.HideReturnsTransformationMethod
-import android.util.Log
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
-import androidx.core.content.ContextCompat
 import com.ethernom.maintenance.R
 import com.ethernom.maintenance.base.BaseActivity
 import com.ethernom.maintenance.databinding.ActivityAuthenticationBinding
@@ -22,8 +15,6 @@ class AuthenticationActivity: BaseActivity<ActivityAuthenticationBinding>() {
     override fun initView() {
         handleHidePassword()
         handleButtonLogin()
-        binding.edUsername.setText("admin")
-        binding.edPassword.setText("12345")
     }
 
     private fun handleHidePassword() {
@@ -51,14 +42,16 @@ class AuthenticationActivity: BaseActivity<ActivityAuthenticationBinding>() {
                 return@setOnClickListener
             }
 
-            Log.d("fxx", "${binding.edUsername.text!!.trim()}")
-            Log.d("fxx", "${binding.edPassword.text!!.trim()}")
+            if(!isNetworkAvailable()){
+                showSuggestionDialog(R.string.network_title, R.string.network_msg, R.string.dialog_ok){}
+                return@setOnClickListener
+            }
 
-//            if(binding.edUsername.text!!.trim() != "admin" || binding.edPassword.text!!.trim() != "12345") {
-//                Toast.makeText(this, "Username and Password were incorrect!", Toast.LENGTH_SHORT)
-//                    .show()
-//                return@setOnClickListener
-//            }
+            if(binding.edUsername.text!!.trim().toString() != "admin" || binding.edPassword.text!!.trim().toString() != "12345") {
+                Toast.makeText(this, "Username and Password were incorrect!", Toast.LENGTH_SHORT)
+                    .show()
+                return@setOnClickListener
+            }
 
             startNextActivity(DiscoverActivity::class.java, true)
         }

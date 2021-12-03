@@ -272,8 +272,6 @@ class DiscoverActivity : BaseActivity<ActivityDiscoverBinding>() {
                 handleDiscover()
             }
             if(!status) {
-                mDeviceAdapter.clearAllDevice()
-                dataLinkDescriptor.clear()
                 showErrorLayout(R.string.location_service_title, R.string.location_service_message)
             }
         }
@@ -297,16 +295,6 @@ class DiscoverActivity : BaseActivity<ActivityDiscoverBinding>() {
                 BROADCAST_INTERRUPT -> commonAO!!.aoRunScheduler()
                 // advertising
                 CmBRAction.ACT_TP_ADV_PKT -> {
-//                    val name = dataIntent.getStringExtra(DEVICE_NAME)
-//                    val mFSN = dataIntent.getStringExtra(MANUFAC_SERIAL_NUMBER)
-//                    val uuid = dataIntent.getStringExtra(UUID)
-//                    val type = dataIntent.getByteExtra(TYPE, 0)
-//                    val mtu = dataIntent.getIntExtra(MTU, 0)
-//                    val ble = dataIntent.getParcelableExtra<BluetoothDevice>(BLUETOOTH_DEVICE)
-//                    val deviceModel = DeviceModel(0, name!!, mFSN!!, uuid!!)
-//                    val llId = LinkDescriptor(deviceName = name, mfgSN = mFSN, uuid = uuid, type = type, mtu = mtu, ble = ble)
-//                    Log.d(tag, "ACT_TP_ADV_PKT name:$name, sn:$mFSN")
-
                     val ll = dataIntent.getSerializableExtra(DEVICE_ADVERTISE) as LinkDescriptor
                     Log.d(tag, "ACT_TP_ADV_PKT $ll")
                     mDeviceAdapter.addDevice(ll)

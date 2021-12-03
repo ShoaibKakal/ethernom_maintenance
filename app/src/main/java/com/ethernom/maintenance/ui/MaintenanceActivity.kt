@@ -76,6 +76,10 @@ class MaintenanceActivity : BaseActivity<ActivityMaintenanceBinding>() {
         override fun invoke(p1: Int) {
             when(p1){
                 0 -> {
+                    if(!isNetworkAvailable()){
+                        showSuggestionDialog(R.string.network_title, R.string.network_msg, R.string.dialog_ok){}
+                        return
+                    }
                     showDialogInProgress(R.string.capsule_reset_title, R.string.capsule_reset_in_progress)
                     CapsuleFactoryResetAPI().capsuleFactoryResetRequest()
                 }
