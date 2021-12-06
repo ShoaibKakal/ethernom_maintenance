@@ -115,7 +115,7 @@
     <string name="nearby_device_permission_message">Apps with this permission can find, connect to, and determine the relative position fo nearby devices.</string>
     <string name="bluetooth_device_title">Turn on the Bluetooth device</string>
     <string name="bluetooth_device_message">This is necessary to find a Bluetooth device near you. Check your Bluetooth device.</string>
-    <string name="bluetooth_device_turn_on">This is necessary to find a Bluetooth device near you. Do you want to turn it on?</string>
+    <string name="bluetooth_device_turn_on">This is necessary to find a Bluetooth device near you. Please turn it on.</string>
     <string name="turn_on">Turn on</string>
 
     <!-- Location msg -->
