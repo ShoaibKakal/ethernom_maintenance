@@ -3,7 +3,7 @@
     android:id="@+id/ln_row"
     android:layout_width="match_parent"
     android:layout_height="40dp"
-    android:background="@drawable/bg_row_capsule_white"
+    android:background="@drawable/bg_row_capsule_gray"
     android:orientation="horizontal">
 
     <TextView
