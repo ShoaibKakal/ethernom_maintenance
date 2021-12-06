@@ -1,6 +1,9 @@
 package com.ethernom.maintenance.ui
 
+import android.app.Activity
 import android.text.method.HideReturnsTransformationMethod
+import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import com.ethernom.maintenance.R
 import com.ethernom.maintenance.base.BaseActivity
@@ -36,6 +39,7 @@ class AuthenticationActivity: BaseActivity<ActivityAuthenticationBinding>() {
 
     private fun handleButtonLogin(){
         binding.btnLogin.setOnClickListener {
+            hideKeyboard(it)
             if(binding.edUsername.text!!.trim().isEmpty() || binding.edPassword.text!!.trim().isEmpty()) {
                 Toast.makeText(this, "Please enter your username and password!", Toast.LENGTH_SHORT)
                     .show()
@@ -56,5 +60,10 @@ class AuthenticationActivity: BaseActivity<ActivityAuthenticationBinding>() {
             startNextActivity(DiscoverActivity::class.java, true)
         }
 
+    }
+
+    fun hideKeyboard(view: View) {
+        val inputMethodManager = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+        inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
     }
 }
