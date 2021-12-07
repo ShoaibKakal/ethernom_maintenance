@@ -29,7 +29,7 @@
     <!-- Login Activity -->
     <string name="test_txt">Test Toolbar</string>
     <string name="authentication"><u>Authentication</u></string>
-    <string name="access_for_maintenance_device">Access for maintenance devices.</string>
+    <string name="access_for_maintenance_device">Access to maintain the capsule.</string>
     <string name="username">Username</string>
     <string name="password">Password</string>
     <string name="log_in">Log in</string>

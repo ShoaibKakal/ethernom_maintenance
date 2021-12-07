@@ -24,6 +24,7 @@ class DebugProcessAO(ctx: Context) {
     private val context: Context = ctx
     private var debugProcessTimeout: Boolean = false
     private var updateCTTimeout: Boolean = false
+    private lateinit var mHandler: Handler
 
     /* Common AO Variable */
     private var debugProcessFsm = arrayOf(
@@ -80,7 +81,8 @@ class DebugProcessAO(ctx: Context) {
         cmAPI!!.cmSend(CmType.capsule, data, null)
         debugProcessTimeout = true
 
-        Handler(Looper.getMainLooper()).postDelayed({
+        mHandler = Handler(Looper.getMainLooper())
+        mHandler.postDelayed({
             if(debugProcessTimeout){
                 debugProcessTimeout = false
                 val event = EventBuffer(eventId = DebugProcessEvent.TIMEOUT_CAPSULE)
@@ -101,7 +103,7 @@ class DebugProcessAO(ctx: Context) {
          * - Else
          * Send_Event(AO_DEBUG, DEBUG_PROCESS_FAILURE(Debug_Unavailable)
          **/
-        debugProcessTimeout = false
+        removeTimeout(debugProcessTimeout)
         val data = buffer.buffer
         // Get status response from buffer
         //  +---------------+-----------------+
@@ -218,7 +220,8 @@ class DebugProcessAO(ctx: Context) {
         val data = Utils.makeAPDUHeader(APPCmd.A2C_DBP_CT_REQ,payload )
         cmAPI!!.cmSend(CmType.capsule, data, null)
         updateCTTimeout = true
-        Handler(Looper.getMainLooper()).postDelayed({
+
+        mHandler.postDelayed({
             if(updateCTTimeout){
                 updateCTTimeout = false
                 sendBroadCast(DebugProcessBRAction.ACT_TIMEOUT_UPDATE_CT)
@@ -235,9 +238,10 @@ class DebugProcessAO(ctx: Context) {
          * - Set timer 10sec
          * - Send_event (AO_DEBUG, DEBUG_COMPLETED)
          **/
-        updateCTTimeout = false
+        removeTimeout(updateCTTimeout)
+        sendBroadCast(DebugProcessBRAction.ACT_UPDATE_CT_RES)
         Handler(Looper.getMainLooper()).postDelayed({
-            sendBroadCast(DebugProcessBRAction.ACT_UPDATE_CT_RES)
+
         }, 100)
         return true
     }
@@ -286,6 +290,11 @@ class DebugProcessAO(ctx: Context) {
         if(bundle != null) intentAction.putExtras(bundle)
         intentAction.action = action
         LocalBroadcastManager.getInstance(context).sendBroadcast(intentAction)
+    }
+
+    private fun removeTimeout(timer: Boolean){
+        if (!timer) return
+        mHandler.removeCallbacksAndMessages(null)
     }
 
     private fun hashMap(id: Int, state:Int):Pair<String, String> {

@@ -25,6 +25,7 @@ class CapsuleFactoryResetAO(ctx:Context) {
     private val context: Context = ctx
     private var timerCapsuleRequest: Boolean = false
     private var timerServerRequest: Boolean = false
+    private lateinit var mHandler: Handler
 
     /* Common AO Variable */
     private var capsuleFactoryResetFsm = arrayOf(
@@ -80,8 +81,10 @@ class CapsuleFactoryResetAO(ctx:Context) {
         cmAPI!!.cmSend(CmType.capsule, data, null)
 
         timerCapsuleRequest = true
-        Handler(Looper.getMainLooper()).postDelayed({
+        mHandler = Handler(Looper.getMainLooper())
+        mHandler.postDelayed({
             if(timerCapsuleRequest){
+                timerCapsuleRequest = false
                 val event = EventBuffer(eventId = CapsuleFactoryResetEvent.TIMEOUT_CAPSULE)
                 commonAO!!.sendEvent(aoId = AoId.AO_CFR_ID, event)
             }
@@ -100,7 +103,7 @@ class CapsuleFactoryResetAO(ctx:Context) {
         * - Else
         * Send_Event (AO_RESET, RESET_FAILURE{Reset_Unavailable})
         **/
-        timerCapsuleRequest = false
+        removeTimeout(timerCapsuleRequest)
         val data = buffer.buffer
         // Get status response from buffer
         //  +---------------+-----------------+
@@ -129,8 +132,9 @@ class CapsuleFactoryResetAO(ctx:Context) {
             val svrBuffer= SvrBuffer(SvrBufferType.unregisterReq, unregisterRequestBody = UnregisterRequestBody(cert = csn.hexa()))
             cmAPI!!.cmSend(CmType.server, null, svrBuffer)
             timerServerRequest = true
-            Handler(Looper.getMainLooper()).postDelayed({
+            mHandler.postDelayed({
                 if(timerServerRequest){
+                    timerServerRequest = false
                     val event = EventBuffer(eventId = CapsuleFactoryResetEvent.TIMEOUT_SERVER)
                     commonAO!!.sendEvent(aoId = AoId.AO_CFR_ID, event)
                 }
@@ -143,7 +147,7 @@ class CapsuleFactoryResetAO(ctx:Context) {
     private fun afTimeoutCapsule(acb: ACB, buffer: EventBuffer): Boolean {
         Log.d(tag, "afTimeoutCapsule")
         /** Send_Event (AO_RESET, RESET_FAILURE{capsule_timeout}) **/
-        timerCapsuleRequest = false
+        removeTimeout(timerServerRequest)
         val errorMsg = ErrorCode.factoryResetError[2]
         val event = EventBuffer(eventId = CapsuleFactoryResetEvent.RESET_FAILURE, requestFailure = RequestFailureModel(2, errorMsg!!))
         commonAO!!.sendEvent(AoId.AO_CFR_ID, event)
@@ -165,7 +169,7 @@ class CapsuleFactoryResetAO(ctx:Context) {
         * - cmSend(capsule,  Factory_Reset_Completed {token, param} )  to CM
         * - Set timer 5sec
         **/
-        timerServerRequest = false
+        removeTimeout(timerServerRequest)
         if(buffer.svrBuffer!!.responseFailed!!){
             val errorMsg = ErrorCode.factoryResetError[3]
             val event = EventBuffer(eventId = CapsuleFactoryResetEvent.RESET_FAILURE, requestFailure = RequestFailureModel(3, errorMsg!!))
@@ -186,7 +190,6 @@ class CapsuleFactoryResetAO(ctx:Context) {
     private fun afTimeoutServer(acb: ACB, buffer: EventBuffer): Boolean {
         Log.d(tag, "afTimeoutServer")
         /** Send_Event (AO_RESET, RESET_FAILURE{srv_timeout}) **/
-        timerServerRequest = false
         val errorMsg = ErrorCode.factoryResetError[2]
         val event = EventBuffer(eventId = CapsuleFactoryResetEvent.RESET_FAILURE, requestFailure = RequestFailureModel(2, errorMsg!!))
         commonAO!!.sendEvent(AoId.AO_CFR_ID, event)
@@ -205,6 +208,11 @@ class CapsuleFactoryResetAO(ctx:Context) {
         if(bundle != null) intentAction.putExtras(bundle)
         intentAction.action = action
         LocalBroadcastManager.getInstance(context).sendBroadcast(intentAction)
+    }
+
+    private fun removeTimeout(timer: Boolean){
+        if (!timer) return
+        mHandler.removeCallbacksAndMessages(null)
     }
 }
 

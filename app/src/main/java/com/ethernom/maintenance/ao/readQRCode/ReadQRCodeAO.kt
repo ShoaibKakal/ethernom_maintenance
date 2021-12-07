@@ -24,6 +24,7 @@ class ReadQRCodeAO(ctx: Context) {
     private val context: Context = ctx
     private val tag = javaClass.simpleName
     private var timeoutCapsule: Boolean = false
+    private lateinit var mHandler: Handler
 
     /* Common AO Variable */
     private var readQrCodeFsm = arrayOf(
@@ -76,14 +77,14 @@ class ReadQRCodeAO(ctx: Context) {
         cmAPI!!.cmSend(CmType.capsule, data, null)
 
         timeoutCapsule = true
-        Handler(Looper.getMainLooper()).postDelayed({
+        mHandler = Handler(Looper.getMainLooper())
+        mHandler.postDelayed({
             if(timeoutCapsule){
+                timeoutCapsule = false
                 val event = EventBuffer(eventId = CapsuleFactoryResetEvent.TIMEOUT_CAPSULE)
                 commonAO!!.sendEvent(aoId = AoId.AO_RQR_ID, event)
             }
-        }, AppConstant.TIMER)
-
-
+        }, TIMER)
         return true
     }
 
@@ -97,7 +98,7 @@ class ReadQRCodeAO(ctx: Context) {
          * - Else
          * Send_Event(AO_READ_QR, READ_QR_FAILURE(Read_QR_Unavailable))
          **/
-        timeoutCapsule = false
+        removeTimeout(timeoutCapsule)
         val data = buffer.buffer
         // Get status response from buffer
         //  +---------------+-----------------+
@@ -172,6 +173,11 @@ class ReadQRCodeAO(ctx: Context) {
         if(bundle != null) intentAction.putExtras(bundle)
         intentAction.action = action
         LocalBroadcastManager.getInstance(context).sendBroadcast(intentAction)
+    }
+
+    private fun removeTimeout(timer: Boolean){
+        if (!timer) return
+        mHandler.removeCallbacksAndMessages(null)
     }
 }
 
