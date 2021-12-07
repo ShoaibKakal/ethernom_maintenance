@@ -9,6 +9,8 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
+import androidx.annotation.StringRes
+import androidx.appcompat.app.AppCompatActivity
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.GridLayoutManager
 import com.ethernom.maintenance.R
@@ -33,10 +35,11 @@ import kotlin.system.exitProcess
 
 class MaintenanceActivity : BaseActivity<ActivityMaintenanceBinding>() {
     private val tag = javaClass.simpleName
-    private val nextActivityTimeout : Long = 3000
+    private val nextActivityTimeout : Long = 2500
     private var deviceName : String = ""
     private var capsuleVersion: String = ""
     private var isMenuItemClick: Boolean = false
+    private lateinit var mHandler: Handler
 
     override fun getViewBidingClass(): ActivityMaintenanceBinding {
         return ActivityMaintenanceBinding.inflate(layoutInflater)
@@ -50,6 +53,7 @@ class MaintenanceActivity : BaseActivity<ActivityMaintenanceBinding>() {
             capsuleVersion = intent.getStringExtra(CAPSULE_VERSION)!!
             binding.tvUsername.text = "Device Name: $deviceName"
             Log.d(tag, "capsuleVersion: $capsuleVersion")
+            mHandler = Handler(Looper.getMainLooper())
         }
         LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver, intentFilter)
     }
@@ -84,16 +88,16 @@ class MaintenanceActivity : BaseActivity<ActivityMaintenanceBinding>() {
                         showSuggestionDialog(R.string.network_title, R.string.network_msg, R.string.dialog_ok){}
                         return
                     }
-                    showDialogInProgress(R.string.capsule_reset_title, R.string.capsule_reset_in_progress)
                     CapsuleFactoryResetAPI().capsuleFactoryResetRequest()
+                    showDialogInProgress(R.string.capsule_reset_title, R.string.capsule_reset_in_progress)
                 }
                 1 -> {
-                    showDialogInProgress(R.string.debug_title, R.string.debug_in_progress)
                     DebugProcessAPI().debugProcessRequest()
+                    showDialogInProgress(R.string.debug_title, R.string.debug_in_progress)
                 }
                 2 -> {
-                    showDialogInProgress(R.string.qr_code_title, R.string.qr_code_in_progress)
                     ReadQRCodeAPI().readQRCodeRequest()
+                    showDialogInProgress(R.string.qr_code_title, R.string.qr_code_in_progress)
                 }
                 3 -> {
                     isMenuItemClick = false
@@ -142,15 +146,8 @@ class MaintenanceActivity : BaseActivity<ActivityMaintenanceBinding>() {
                     }
                 }
                 CapsuleFactoryResetBRAction.ACT_RESET_COMPLETED -> {
-                    var isClick = false
-                    showDialogSuccess(R.string.capsule_reset_title, R.string.capsule_reset_success){
-                        startPreviousActivity(DiscoverActivity::class.java, true)
-                        isClick = true
-                    }
-                    Handler(Looper.getMainLooper()).postDelayed({
-                        if(!isClick)
-                            startPreviousActivity(DiscoverActivity::class.java, true)
-                    }, nextActivityTimeout)
+                    requestComplete(R.string.capsule_reset_title, R.string.capsule_reset_success,
+                        DiscoverActivity::class.java, false)
                 }
 
                 DebugProcessBRAction.ACT_DEBUG_PROCESS_RSP -> {}
@@ -168,16 +165,8 @@ class MaintenanceActivity : BaseActivity<ActivityMaintenanceBinding>() {
                         val bundle = Bundle()
                         bundle.putSerializable(AppConstant.DEBUG_DATA_RES_KEY, debugDataRes)
                         bundle.putString(DEVICE_NAME, deviceName)
-
-                        var isClick = false
-                        showDialogSuccess(R.string.debug_title, R.string.debug_success){
-                            isClick = true
-                            startNextActivity(DebugProcessActivity::class.java, bundle, true)
-                        }
-                        Handler(Looper.getMainLooper()).postDelayed({
-                            if(!isClick)
-                                startNextActivity(DebugProcessActivity::class.java, bundle, true)
-                        }, nextActivityTimeout)
+                        requestComplete(R.string.debug_title, R.string.debug_success,
+                            DebugProcessActivity::class.java, true, bundle)
                     }
                 }
                 DebugProcessBRAction.ACT_TIMEOUT_UPDATE_CT -> {}
@@ -198,19 +187,34 @@ class MaintenanceActivity : BaseActivity<ActivityMaintenanceBinding>() {
                     val bundle = Bundle()
                     bundle.putString(AppConstant.DEVICE_KEY, deviceName)
                     bundle.putString(AppConstant.SERIAL_NUMBER_KEY, sn)
-
-                    var isClick = false
-                    showDialogSuccess(R.string.qr_code_title, R.string.qr_code_success){
-                        isClick = true
-                        startNextActivity(QRCodeActivity::class.java, bundle, true)
-                    }
-                    Handler(Looper.getMainLooper()).postDelayed({
-                        if(!isClick)
-                            startNextActivity(QRCodeActivity::class.java, bundle, true)
-                    }, nextActivityTimeout)
+                    requestComplete(R.string.qr_code_title, R.string.qr_code_success,
+                        QRCodeActivity::class.java, true, bundle)
                 }
             }
         }
+    }
+
+    private fun requestComplete(@StringRes title: Int, @StringRes msg: Int, activityClass: Class<out AppCompatActivity?>, isNextActivity: Boolean,bundle: Bundle? = null){
+        var isClick = false
+        showDialogSuccess(title, msg){
+            isClick = true
+            removeTimeout(isClick)
+            if(isNextActivity) startNextActivity(activityClass, bundle, true)
+            if(!isNextActivity) startPreviousActivity(activityClass, bundle, true)
+        }
+
+        mHandler.postDelayed({
+            if(!isClick){
+                if(alertDialog != null) alertDialog!!.dismiss()
+                if(isNextActivity) startNextActivity(activityClass, bundle, true)
+                if(!isNextActivity) startPreviousActivity(activityClass, bundle, true)
+            }
+        }, nextActivityTimeout)
+    }
+
+    private fun removeTimeout(timeout: Boolean) {
+        if(!timeout) return
+        mHandler.removeCallbacksAndMessages(null)
     }
 
 }

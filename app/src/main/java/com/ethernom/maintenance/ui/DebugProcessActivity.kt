@@ -44,7 +44,8 @@ class DebugProcessActivity : BaseActivity<ActivityDebugProcessBinding>() {
     }
 
     override fun onBackPressed() {
-        startPreviousActivity(DiscoverActivity::class.java, true)
+        showLoading("Loading: Update CT...")
+        debugProcessAPI.closeUpdateCT()
     }
 
 
@@ -83,9 +84,6 @@ class DebugProcessActivity : BaseActivity<ActivityDebugProcessBinding>() {
         }
 
         binding.btnClose.setOnClickListener {
-            if(isUpdatedCT) {
-                startPreviousActivity(DiscoverActivity::class.java, true)
-            }
             showLoading("Loading: Update CT...")
             debugProcessAPI.closeUpdateCT()
         }
