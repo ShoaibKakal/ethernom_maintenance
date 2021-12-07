@@ -147,11 +147,9 @@ class CommonAO(ctx: Context) {
                 val result = fsmEntry.af(acb, buff)//execute action function
                 if (result) {
                     acb.currentState = fsmEntry.nextState
+                    Log.d(tag, "==> AO:${acb.id} Event ${currentEvent}- state: ${acb.currentState}   - ${fsmEntry.nextState}")
                 } else if (result == null) {
-                    Log.d(
-                        tag,
-                        "Implementation problem on AO:${acb.id} - state:$currentState - event:$currentEvent"
-                    )
+                    Log.d(tag, "Implementation problem on AO:${acb.id} - state:$currentState - event:$currentEvent")
                 } // Implementation problem
                 break
             }

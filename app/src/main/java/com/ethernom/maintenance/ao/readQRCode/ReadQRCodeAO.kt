@@ -122,7 +122,6 @@ class ReadQRCodeAO(ctx: Context) {
 
             val event = EventBuffer(ReadQRCodeEvent.READ_QR_CODE_COMPLETED, deviceName = deviceName, serialNumber = sn)
             commonAO!!.sendEvent(AoId.AO_RQR_ID, event)
-            commonAO!!.aoRunScheduler()
         } else {
             // Payload format
             // +------------------+------------------+
