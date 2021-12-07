@@ -36,6 +36,7 @@ class MaintenanceActivity : BaseActivity<ActivityMaintenanceBinding>() {
     private val nextActivityTimeout : Long = 3000
     private var deviceName : String = ""
     private var capsuleVersion: String = ""
+    private var isMenuItemClick: Boolean = false
 
     override fun getViewBidingClass(): ActivityMaintenanceBinding {
         return ActivityMaintenanceBinding.inflate(layoutInflater)
@@ -74,6 +75,9 @@ class MaintenanceActivity : BaseActivity<ActivityMaintenanceBinding>() {
 
     private val menuItemSelected = object : (Int) -> Unit {
         override fun invoke(p1: Int) {
+            if(isMenuItemClick) return
+            isMenuItemClick = true
+            Log.d(tag, "Menu Item Selected!!!")
             when(p1){
                 0 -> {
                     if(!isNetworkAvailable()){
@@ -92,6 +96,7 @@ class MaintenanceActivity : BaseActivity<ActivityMaintenanceBinding>() {
                     ReadQRCodeAPI().readQRCodeRequest()
                 }
                 3 -> {
+                    isMenuItemClick = false
                     val bundle = Bundle()
                     bundle.putString(CAPSULE_VERSION, capsuleVersion)
                     startNextActivity(AboutActivity::class.java, bundle, false)
