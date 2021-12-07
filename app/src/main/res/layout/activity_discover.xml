@@ -11,7 +11,7 @@
     <include layout="@layout/toolbar_center_title" />
 
     <RelativeLayout
-        android:id="@+id/btn_open_setting"
+        android:id="@+id/layout_error"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/colorRed_A100"
