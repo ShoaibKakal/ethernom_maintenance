@@ -167,6 +167,7 @@ class MaintenanceActivity : BaseActivity<ActivityMaintenanceBinding>() {
                         Log.d("debugProcess", "debugProcess: $debugDataRes")
                         val bundle = Bundle()
                         bundle.putSerializable(AppConstant.DEBUG_DATA_RES_KEY, debugDataRes)
+                        bundle.putString(DEVICE_NAME, deviceName)
 
                         var isClick = false
                         showDialogSuccess(R.string.debug_title, R.string.debug_success){

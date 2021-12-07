@@ -61,7 +61,7 @@ class DebugProcessActivity : BaseActivity<ActivityDebugProcessBinding>() {
                 intent.getSerializableExtra(AppConstant.DEBUG_DATA_RES_KEY) as DebugProcessModel
             mDebugProcessAdapter.addAOs(debugDataRes.capsuleOAs)
             binding.tvUsername.text =
-                "Device Name: ${ApplicationSession.getInstance(this).getDeviceName()}"
+                "Device Name: ${intent.getStringExtra(AppConstant.DEVICE_NAME)}"
             binding.txtBatterLevel.text =
                 resources.getString(R.string.battery_level) + " ${String.format("%.2f",debugDataRes.bl)}" + "V"
             binding.btnUpdateCt.background = if (debugDataRes.ctStatus) ContextCompat.getDrawable(this, R.drawable.selector_disable_ct)
