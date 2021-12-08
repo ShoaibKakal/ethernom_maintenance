@@ -271,6 +271,8 @@ class DiscoverActivity : BaseActivity<ActivityDiscoverBinding>() {
 
     private val bluetoothReceiver = object : (Int) -> Unit {
         override fun invoke(bleState: Int) {
+            if(bleState == BluetoothAdapter.STATE_TURNING_OFF ||
+                bleState == BluetoothAdapter.STATE_TURNING_ON) return
             Log.d(tag, "ble state: $bleState")
             bluetoothSettingInitCheck = false
             binding.layoutError.visibility = View.GONE
