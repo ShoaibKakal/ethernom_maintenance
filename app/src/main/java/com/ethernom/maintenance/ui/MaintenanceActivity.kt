@@ -85,7 +85,9 @@ class MaintenanceActivity : BaseActivity<ActivityMaintenanceBinding>() {
             when(p1){
                 0 -> {
                     if(!isNetworkAvailable()){
-                        showSuggestionDialog(R.string.network_title, R.string.network_msg, R.string.dialog_ok){}
+                        showSuggestionDialog(R.string.network_title, R.string.network_msg, R.string.dialog_ok){
+                            isMenuItemClick = false
+                        }
                         return
                     }
                     CapsuleFactoryResetAPI().capsuleFactoryResetRequest()
