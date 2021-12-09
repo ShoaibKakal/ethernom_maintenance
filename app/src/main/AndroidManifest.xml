@@ -28,6 +28,11 @@
         android:theme="@style/Theme.Ethernom_maintenance"
         android:requestLegacyExternalStorage="true"
         tools:targetApi="m">
+        <activity android:name=".ao.link.ble.BLEDialogActivity"
+            android:exported="false"
+            android:screenOrientation="locked"
+            android:configChanges="keyboardHidden|orientation|screenSize|locale"/>
+
         <activity
             android:name=".ui.AboutActivity"
             android:exported="false"
