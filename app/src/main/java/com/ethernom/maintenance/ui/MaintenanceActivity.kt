@@ -4,7 +4,6 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -15,12 +14,12 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.GridLayoutManager
 import com.ethernom.maintenance.R
 import com.ethernom.maintenance.adapter.MainMenuAdapter
+import com.ethernom.maintenance.ao.BROADCAST_INTERRUPT
 import com.ethernom.maintenance.ao.capsuleFactoryReset.CapsuleFactoryResetAPI
 import com.ethernom.maintenance.ao.capsuleFactoryReset.CapsuleFactoryResetBRAction
 import com.ethernom.maintenance.ao.cm.CmType
 import com.ethernom.maintenance.ao.debugProcess.DebugProcessAPI
 import com.ethernom.maintenance.ao.debugProcess.DebugProcessBRAction
-import com.ethernom.maintenance.ao.link.LinkDescriptor
 import com.ethernom.maintenance.ao.readQRCode.ReadQRCodeAPI
 import com.ethernom.maintenance.ao.readQRCode.ReadQRCodeBRAction
 import com.ethernom.maintenance.base.BaseActivity
@@ -30,7 +29,6 @@ import com.ethernom.maintenance.model.RequestFailureModel
 import com.ethernom.maintenance.utils.AppConstant
 import com.ethernom.maintenance.utils.AppConstant.CAPSULE_VERSION
 import com.ethernom.maintenance.utils.AppConstant.DEVICE_NAME
-import com.ethernom.maintenance.utils.session.ApplicationSession
 import kotlin.system.exitProcess
 
 class MaintenanceActivity : BaseActivity<ActivityMaintenanceBinding>() {
@@ -40,6 +38,10 @@ class MaintenanceActivity : BaseActivity<ActivityMaintenanceBinding>() {
     private var capsuleVersion: String = ""
     private var isMenuItemClick: Boolean = false
     private lateinit var mHandler: Handler
+
+    private lateinit var mCapsuleFactoryResetAPI: CapsuleFactoryResetAPI
+    private lateinit var mDebugProcessAPI: DebugProcessAPI
+    private lateinit var mReadQrCodeAPI: ReadQRCodeAPI
 
     override fun getViewBidingClass(): ActivityMaintenanceBinding {
         return ActivityMaintenanceBinding.inflate(layoutInflater)
@@ -54,6 +56,8 @@ class MaintenanceActivity : BaseActivity<ActivityMaintenanceBinding>() {
             binding.tvUsername.text = "Device Name: $deviceName"
             Log.d(tag, "capsuleVersion: $capsuleVersion")
             mHandler = Handler(Looper.getMainLooper())
+
+            initializeObj()
         }
         LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver, intentFilter)
     }
@@ -67,6 +71,12 @@ class MaintenanceActivity : BaseActivity<ActivityMaintenanceBinding>() {
         super.onBackPressed()
         cmAPI!!.cmReset(CmType.capsule)
         startPreviousActivity(DiscoverActivity::class.java, true)
+    }
+
+    private fun initializeObj(){
+        mCapsuleFactoryResetAPI = CapsuleFactoryResetAPI()
+        mDebugProcessAPI = DebugProcessAPI()
+        mReadQrCodeAPI = ReadQRCodeAPI()
     }
 
     private fun initRecyclerView(){
@@ -90,15 +100,15 @@ class MaintenanceActivity : BaseActivity<ActivityMaintenanceBinding>() {
                         }
                         return
                     }
-                    CapsuleFactoryResetAPI().capsuleFactoryResetRequest()
+                    mCapsuleFactoryResetAPI.capsuleFactoryResetRequest()
                     showDialogInProgress(R.string.capsule_reset_title, R.string.capsule_reset_in_progress)
                 }
                 1 -> {
-                    DebugProcessAPI().debugProcessRequest()
+                    mDebugProcessAPI.debugProcessRequest()
                     showDialogInProgress(R.string.debug_title, R.string.debug_in_progress)
                 }
                 2 -> {
-                    ReadQRCodeAPI().readQRCodeRequest()
+                    mReadQrCodeAPI.readQRCodeRequest()
                     showDialogInProgress(R.string.qr_code_title, R.string.qr_code_in_progress)
                 }
                 3 -> {
@@ -114,6 +124,8 @@ class MaintenanceActivity : BaseActivity<ActivityMaintenanceBinding>() {
     private val intentFilter: IntentFilter
         get()  {
             val intentAction = IntentFilter()
+            intentAction.addAction(BROADCAST_INTERRUPT)
+
             //Capsule Factory Reset
             intentAction.addAction(CapsuleFactoryResetBRAction.ACT_RESET_RSP)
             intentAction.addAction(CapsuleFactoryResetBRAction.ACT_RESET_FAILURE)
@@ -139,6 +151,8 @@ class MaintenanceActivity : BaseActivity<ActivityMaintenanceBinding>() {
             hideLoading()
             Log.d(tag, "onReceive: ${intent!!.action}")
             when(intent!!.action){
+                BROADCAST_INTERRUPT -> commonAO!!.aoRunScheduler()
+
                 CapsuleFactoryResetBRAction.ACT_RESET_RSP -> {}
                 CapsuleFactoryResetBRAction.ACT_RESET_FAILURE -> {
                     val requestFailureModel = intent.getSerializableExtra(AppConstant.CAPSULE_FAILURE_KEY) as RequestFailureModel

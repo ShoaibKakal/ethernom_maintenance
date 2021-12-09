@@ -10,6 +10,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.ethernom.maintenance.R
 import com.ethernom.maintenance.adapter.DebugProcessAdapter
+import com.ethernom.maintenance.ao.BROADCAST_INTERRUPT
 import com.ethernom.maintenance.ao.debugProcess.DebugProcessAPI
 import com.ethernom.maintenance.ao.debugProcess.DebugProcessBRAction
 import com.ethernom.maintenance.base.BaseActivity
@@ -64,7 +65,7 @@ class DebugProcessActivity : BaseActivity<ActivityDebugProcessBinding>() {
             binding.tvUsername.text =
                 "Device Name: ${intent.getStringExtra(AppConstant.DEVICE_NAME)}"
             binding.txtBatterLevel.text =
-                resources.getString(R.string.battery_level) + " ${String.format("%.2f",debugDataRes.bl)}" + "V"
+                resources.getString(R.string.battery_level) + " ${String.format("%.3f",debugDataRes.bl)}" + "v"
             binding.btnUpdateCt.background = if (debugDataRes.ctStatus) ContextCompat.getDrawable(this, R.drawable.selector_disable_ct)
             else ContextCompat.getDrawable(this, R.drawable.selector_save_qr)
             binding.btnUpdateCt.text = if (debugDataRes.ctStatus) resources.getString(R.string.disable_ct)
@@ -92,6 +93,8 @@ class DebugProcessActivity : BaseActivity<ActivityDebugProcessBinding>() {
     private val intentFilter: IntentFilter
         get() {
             val intentAction = IntentFilter()
+            intentAction.addAction(BROADCAST_INTERRUPT)
+
             intentAction.addAction(DebugProcessBRAction.ACT_TIMEOUT_UPDATE_CT)
             intentAction.addAction(DebugProcessBRAction.ACT_UPDATE_CT_RES)
             intentAction.addAction(DebugProcessBRAction.ACT_DEBUG_PROCESS_COMPLETED)
@@ -101,6 +104,8 @@ class DebugProcessActivity : BaseActivity<ActivityDebugProcessBinding>() {
     private val broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             when (intent!!.action) {
+                BROADCAST_INTERRUPT -> commonAO!!.aoRunScheduler()
+
                 DebugProcessBRAction.ACT_TIMEOUT_UPDATE_CT -> {
                     hideLoading()
                     showDialogFailed(R.string.debug_title,R.string.debug_update_ct){
