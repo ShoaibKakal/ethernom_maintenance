@@ -40,6 +40,7 @@
                 android:text="@string/nearby_device_permission_message"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:textSize="@dimen/text_size_14sp"
                 android:textColor="@color/white" />
         </LinearLayout>
 
@@ -79,6 +80,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_marginStart="@dimen/dimen_10dp"
+                android:textSize="@dimen/text_size_16sp"
                 android:gravity="center_vertical"
                 android:text="@string/searching_nearby_device"
                 android:textColor="@android:color/black" />

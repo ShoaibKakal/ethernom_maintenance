@@ -41,6 +41,7 @@
         android:layout_marginTop="@dimen/dimen_15dp"
         android:background="@drawable/selector_disable_ct"
         android:text="@string/exit"
+        android:textSize="@dimen/text_size_16sp"
         android:textAllCaps="false"
         android:textColor="@color/white" />
 

@@ -43,6 +43,7 @@
             android:inputType="textEmailAddress"
             android:paddingStart="@dimen/dimen_10dp"
             android:paddingEnd="@dimen/dimen_10dp"
+            android:textSize="@dimen/text_size_18sp"
             tools:ignore="RtlSymmetry" />
 
         <RelativeLayout
@@ -81,6 +82,7 @@
                 android:inputType="textPassword"
                 android:paddingStart="@dimen/dimen_10dp"
                 android:paddingEnd="@dimen/dimen_5dp"
+                android:textSize="@dimen/text_size_18sp"
                 tools:ignore="RtlSymmetry" />
         </RelativeLayout>
 
@@ -89,6 +91,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/dimen_20dp"
+            android:textSize="@dimen/text_size_18sp"
+            android:textAllCaps="false"
             android:background="@drawable/selector_login"
             android:text="@string/log_in" />
 

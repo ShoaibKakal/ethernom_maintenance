@@ -28,6 +28,7 @@
             android:paddingStart="@dimen/dimen_30dp"
             android:paddingEnd="@dimen/dimen_30dp"
             android:text="@string/loading"
+            android:textSize="@dimen/text_size_16sp"
             android:textAlignment="center"
             android:textColor="@color/colorWhite" />
     </LinearLayout>

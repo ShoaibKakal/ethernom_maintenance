@@ -35,6 +35,7 @@
         android:background="@drawable/selector_save_qr"
         android:text="@string/okay"
         android:textAllCaps="false"
-        android:textColor="@color/white" />
+        android:textColor="@color/white"
+        android:textSize="@dimen/text_size_16sp" />
 
 </LinearLayout>

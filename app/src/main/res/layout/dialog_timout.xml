@@ -42,8 +42,9 @@
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:gravity="end"
-            android:layout_weight="1">
+            android:layout_weight="1"
+            android:gravity="end">
+
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btn_exit"
                 android:layout_width="wrap_content"
@@ -52,17 +53,19 @@
                 android:background="@drawable/selector_disable_ct"
                 android:text="@string/exit"
                 android:textAllCaps="false"
-                android:textColor="@color/white" />
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_size_16sp" />
         </LinearLayout>
 
         <View
             android:layout_width="@dimen/dimen_10dp"
-            android:layout_height="@dimen/dimen_20dp"/>
+            android:layout_height="@dimen/dimen_20dp" />
 
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1">
+
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btn_retry"
                 android:layout_width="wrap_content"
@@ -71,7 +74,8 @@
                 android:background="@drawable/selector_save_qr"
                 android:text="@string/retry"
                 android:textAllCaps="false"
-                android:textColor="@color/white" />
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_size_16sp" />
         </LinearLayout>
     </LinearLayout>
 
