@@ -9,6 +9,7 @@ import androidx.core.content.ContextCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.ethernom.maintenance.R
+import com.ethernom.maintenance.adapter.CapsuleStatusAdapter
 import com.ethernom.maintenance.adapter.DebugProcessAdapter
 import com.ethernom.maintenance.ao.BROADCAST_INTERRUPT
 import com.ethernom.maintenance.ao.debugProcess.DebugProcessAPI
@@ -16,14 +17,17 @@ import com.ethernom.maintenance.ao.debugProcess.DebugProcessBRAction
 import com.ethernom.maintenance.base.BaseActivity
 import com.ethernom.maintenance.databinding.ActivityDebugProcessBinding
 import com.ethernom.maintenance.model.CapsuleOAModel
+import com.ethernom.maintenance.model.CapsuleStatusModel
 import com.ethernom.maintenance.model.DebugProcessModel
 import com.ethernom.maintenance.utils.AppConstant
 import com.ethernom.maintenance.utils.session.ApplicationSession
+import java.lang.Long
 import kotlin.system.exitProcess
 
 class DebugProcessActivity : BaseActivity<ActivityDebugProcessBinding>() {
 
     private lateinit var mDebugProcessAdapter: DebugProcessAdapter
+    private lateinit var mCapsuleStatusAdapter: CapsuleStatusAdapter
     private lateinit var debugProcessAPI: DebugProcessAPI
     private var isUpdatedCT: Boolean = false
     private var mCTStatus: Boolean =false
@@ -58,22 +62,52 @@ class DebugProcessActivity : BaseActivity<ActivityDebugProcessBinding>() {
             adapter = mDebugProcessAdapter
         }
 
+        mCapsuleStatusAdapter = CapsuleStatusAdapter(this)
+        binding.rcvCtStatus.apply {
+            setHasFixedSize(true)
+            layoutManager = LinearLayoutManager(this@DebugProcessActivity)
+            adapter = mCapsuleStatusAdapter
+        }
+
+        loadData()
+    }
+
+    private fun loadData() {
         if (intent.extras!!.containsKey(AppConstant.DEBUG_DATA_RES_KEY)) {
             val debugDataRes: DebugProcessModel =
                 intent.getSerializableExtra(AppConstant.DEBUG_DATA_RES_KEY) as DebugProcessModel
+            val version = intent.getStringExtra(AppConstant.CAPSULE_VERSION)
             mDebugProcessAdapter.addAOs(debugDataRes.capsuleOAs)
             binding.tvUsername.text =
                 "Device Name: ${intent.getStringExtra(AppConstant.DEVICE_NAME)}"
-            binding.txtBatterLevel.text =
-                resources.getString(R.string.battery_level) + " ${String.format("%.3f",debugDataRes.bl)}" + "v"
-            binding.btnUpdateCt.background = if (debugDataRes.ctStatus) ContextCompat.getDrawable(this, R.drawable.selector_disable_ct)
+            val capsuleStatus = mutableListOf(
+                CapsuleStatusModel(ctStatus = "Version", ctValue = getVersion(version!!)),
+                CapsuleStatusModel(ctStatus = "Battery Level", ctValue = "${String.format("%.3f",debugDataRes.bl)}" + " V"),
+                CapsuleStatusModel(ctStatus = "CT Start", ctValue = debugDataRes.cts),
+                CapsuleStatusModel(ctStatus = "Proximity Alarm", ctValue = debugDataRes.pa),
+                CapsuleStatusModel(ctStatus = "User Onboard", ctValue = debugDataRes.uob),
+                CapsuleStatusModel(ctStatus = "Time Stamp", ctValue = debugDataRes.ts)
+            )
+            mCapsuleStatusAdapter.addCapsuleStatus(capsuleStatus)
+            binding.btnUpdateCt.background = if (debugDataRes.ct) ContextCompat.getDrawable(
+                this,
+                R.drawable.selector_disable_ct
+            )
             else ContextCompat.getDrawable(this, R.drawable.selector_save_qr)
-            binding.btnUpdateCt.text = if (debugDataRes.ctStatus) resources.getString(R.string.disable_ct)
-            else resources.getString(R.string.enable_ct)
-            mCTStatus = debugDataRes.ctStatus
+            binding.btnUpdateCt.text =
+                if (debugDataRes.ct) resources.getString(R.string.disable_ct)
+                else resources.getString(R.string.enable_ct)
+            mCTStatus = debugDataRes.ct
 
-            handleButton(debugDataRes.ctStatus)
+            handleButton(debugDataRes.ct)
         }
+    }
+
+    private fun getVersion (capsuleVersion: String): String {
+        val first = Long.parseLong(capsuleVersion.substring(0, 2), 16)
+        val second = Long.parseLong(capsuleVersion.substring(2, 4), 16)
+        val third = Long.parseLong(capsuleVersion.substring(4, 6), 16)
+        return "$first.$second.$third"
     }
 
     private fun handleButton(ctStatus: Boolean) {

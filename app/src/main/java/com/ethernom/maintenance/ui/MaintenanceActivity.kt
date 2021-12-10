@@ -29,6 +29,7 @@ import com.ethernom.maintenance.model.RequestFailureModel
 import com.ethernom.maintenance.utils.AppConstant
 import com.ethernom.maintenance.utils.AppConstant.CAPSULE_VERSION
 import com.ethernom.maintenance.utils.AppConstant.DEVICE_NAME
+import java.lang.Long.parseLong
 import kotlin.system.exitProcess
 
 class MaintenanceActivity : BaseActivity<ActivityMaintenanceBinding>() {
@@ -180,6 +181,7 @@ class MaintenanceActivity : BaseActivity<ActivityMaintenanceBinding>() {
                         Log.d("debugProcess", "debugProcess: $debugDataRes")
                         val bundle = Bundle()
                         bundle.putSerializable(AppConstant.DEBUG_DATA_RES_KEY, debugDataRes)
+                        bundle.putString(CAPSULE_VERSION, capsuleVersion)
                         bundle.putString(DEVICE_NAME, deviceName)
                         requestComplete(R.string.debug_title, R.string.debug_success,
                             DebugProcessActivity::class.java, true, bundle)

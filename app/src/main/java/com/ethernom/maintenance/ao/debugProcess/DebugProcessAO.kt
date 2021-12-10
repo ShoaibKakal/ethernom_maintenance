@@ -11,6 +11,7 @@ import com.ethernom.maintenance.ao.*
 import com.ethernom.maintenance.ao.cm.CmType
 import com.ethernom.maintenance.errorCode.ErrorCode
 import com.ethernom.maintenance.model.CapsuleOAModel
+import com.ethernom.maintenance.model.CapsuleStatusModel
 import com.ethernom.maintenance.model.DebugProcessModel
 import com.ethernom.maintenance.model.RequestFailureModel
 import com.ethernom.maintenance.ui.cmAPI
@@ -165,43 +166,14 @@ class DebugProcessAO(ctx: Context) {
     private fun afDebugProcessDataResponse(acb: ACB, buffer: EventBuffer): Boolean {
         Log.d(tag, "afDebugProcessDataResponse")
         /** Broadcast Receiver(battery_lvl, ct_status, ao_data) to UI for display **/
-        //  +---------------+----------------------+----------------------+------
-        //  | APP Header(4) | BL(4) | CT-STATUS(1) | AO(1)|CS(1)|EVENT(1) | .....
-        //  +---------------+----------------------+----------------------+------
+        //  +---------------+-------+--------------+---------------+--------------+--------------+----------------------+-----
+        //  | APP Header(4) | BL(4) | CT-STATUS(1) | CTS-STATUS(1) | PA-STATUS(1) | TS-STATUS(1) | AO(1)|CS(1)|EVENT(1) | ....
+        //  +---------------+-------+--------------+---------------+------+-------+--------------+----------------------+-----
         debugProcessTimeout = false
         val payload = buffer.buffer
         val payloadData = payload!!.copyOfRange(APDU_HEADER_SIZE, payload.size)
-        val batteryLevel = payloadData.copyOfRange(0, 4)
-        val ctStatusByte = payloadData.copyOfRange(4, 5)
-        val aoPayload = payloadData.copyOfRange(5, payloadData.size)
-
-        Log.d(tag, "BL: ${batteryLevel.hexa()}")
-        Log.d(tag, "CT: ${batteryLevel.hexa()}")
-        val dataList = ArrayList<CapsuleOAModel>()
-
-        var i = 0
-        while (i < aoPayload.size) {
-            val ao = aoPayload.copyOfRange(i, i + 1)
-            val cs = aoPayload.copyOfRange(i + 1, i + 2)
-            val event = aoPayload.copyOfRange(i + 2, i + 3)
-
-            val aoId = convertHexToDec(ao.hexa())
-            val csId = convertHexToDec(cs.hexa())
-            val eventId = convertHexToDec(event.hexa())
-            val res = hashMap(aoId.toInt(), csId.toInt())
-            val data = CapsuleOAModel(ao = res.first, cs = res.second, event = eventId)
-            dataList.add(data)
-            i += 3// increase for 3 byte
-        }
-
-        // convert Battery level to float
-        val asLong: Long = batteryLevel.hexa().toLong(16)
-        val asInt = asLong.toInt()
-        val blLevel = java.lang.Float.intBitsToFloat(asInt)
-
-        val ctStatus = ctStatusByte[0] == 0x01.toByte()
-
-        val debugPayload = DebugProcessModel(blLevel, ctStatus, dataList)
+        val debugPayload = debugProcessData(payloadData)
+        Log.d(tag, "debugPayload: $debugPayload")
         val bundle = Bundle()
         bundle.putSerializable(AppConstant.DEBUG_DATA_RES_KEY, debugPayload)
         sendBroadCast(DebugProcessBRAction.ACT_DEBUG_PROCESS_DATA_RSP, bundle)
@@ -295,6 +267,55 @@ class DebugProcessAO(ctx: Context) {
     private fun removeTimeout(timer: Boolean){
         if (!timer) return
         mHandler.removeCallbacksAndMessages(null)
+    }
+
+    private fun debugProcessData(dataPayload: ByteArray): DebugProcessModel{
+        val bl = dataPayload.copyOfRange(0, 4).hexa()
+        val ct = dataPayload.copyOfRange(4, 5)
+        val cts= dataPayload.copyOfRange(5, 6)
+        val pa = dataPayload.copyOfRange(6, 7)
+        val uob= dataPayload.copyOfRange(7, 8)
+        val ts = dataPayload.copyOfRange(8, 9)
+
+        // convert Battery level to float
+        val asLong: Long = bl.toLong(16)
+        val asInt = asLong.toInt()
+        val blLevel = java.lang.Float.intBitsToFloat(asInt)
+
+        val valueTrue = 0x01.toByte()
+        val ctValue = ct[0] == valueTrue
+        val ctsValue = if (cts[0] == valueTrue) "Yes" else "No"
+        val proximityAlarm = if (pa[0] == valueTrue) "Enable" else "Disable"
+        val uobValue = if (uob[0] == valueTrue) "Yes" else "No"
+        val tsValue = if (ts[0] == valueTrue) "Yes" else "No"
+
+        val aoPayload = dataPayload.copyOfRange(9, dataPayload.size)
+        val dataList = ArrayList<CapsuleOAModel>()
+
+        var i = 0
+        while (i < aoPayload.size) {
+            val ao = copyRange(aoPayload, i, i + 1)
+            val cs = copyRange(aoPayload, i + 1, i + 2)
+            val event = copyRange(aoPayload,i + 2, i + 3)
+
+            val aoId = convertHexToDec(ao.hexa())
+            val csId = convertHexToDec(cs.hexa())
+            val eventId = convertHexToDec(event.hexa())
+            val res = hashMap(aoId.toInt(), csId.toInt())
+            val data = CapsuleOAModel(ao = res.first, cs = res.second, event = eventId)
+            dataList.add(data)
+            i += 3// increase for 3 byte
+        }
+
+        return DebugProcessModel(bl = blLevel, ct = ctValue, cts = ctsValue, pa = proximityAlarm, uob = uobValue, ts = tsValue, capsuleOAs = dataList)
+    }
+
+    private fun copyRange(payload: ByteArray, fromIndex: Int, toIndex: Int) : ByteArray{
+        return try {
+            payload.copyOfRange(fromIndex, toIndex)
+        } catch (ex: IndexOutOfBoundsException){
+            ByteArray(100)
+        }
     }
 
     private fun hashMap(id: Int, state:Int):Pair<String, String> {
