@@ -4,12 +4,12 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.util.Log
 import androidx.core.content.ContextCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.ethernom.maintenance.R
 import com.ethernom.maintenance.adapter.CapsuleStatusAdapter
+import com.ethernom.maintenance.adapter.CapsuleAOAdapter
 import com.ethernom.maintenance.adapter.DebugProcessAdapter
 import com.ethernom.maintenance.ao.BROADCAST_INTERRUPT
 import com.ethernom.maintenance.ao.debugProcess.DebugProcessAPI
@@ -19,15 +19,13 @@ import com.ethernom.maintenance.databinding.ActivityDebugProcessBinding
 import com.ethernom.maintenance.model.CapsuleOAModel
 import com.ethernom.maintenance.model.CapsuleStatusModel
 import com.ethernom.maintenance.model.DebugProcessModel
+import com.ethernom.maintenance.model.DebugProcessSealed
 import com.ethernom.maintenance.utils.AppConstant
-import com.ethernom.maintenance.utils.session.ApplicationSession
 import java.lang.Long
 import kotlin.system.exitProcess
 
 class DebugProcessActivity : BaseActivity<ActivityDebugProcessBinding>() {
 
-    private lateinit var mDebugProcessAdapter: DebugProcessAdapter
-    private lateinit var mCapsuleStatusAdapter: CapsuleStatusAdapter
     private lateinit var debugProcessAPI: DebugProcessAPI
     private var isUpdatedCT: Boolean = false
     private var mCTStatus: Boolean =false
@@ -55,29 +53,20 @@ class DebugProcessActivity : BaseActivity<ActivityDebugProcessBinding>() {
 
 
     private fun initRecyclerView(capsuleOAs: MutableList<CapsuleOAModel>) {
-        mDebugProcessAdapter = DebugProcessAdapter(this, capsuleOAs)
+        val debugProcessAdapter = DebugProcessAdapter(this)
         binding.rcvDebugProcess.apply {
             setHasFixedSize(true)
             layoutManager = LinearLayoutManager(this@DebugProcessActivity)
-            adapter = mDebugProcessAdapter
+            adapter = debugProcessAdapter
         }
-
-        mCapsuleStatusAdapter = CapsuleStatusAdapter(this)
-        binding.rcvCtStatus.apply {
-            setHasFixedSize(true)
-            layoutManager = LinearLayoutManager(this@DebugProcessActivity)
-            adapter = mCapsuleStatusAdapter
-        }
-
-        loadData()
+        loadData(debugProcessAdapter)
     }
 
-    private fun loadData() {
+    private fun loadData(debugProcessAdapter: DebugProcessAdapter) {
         if (intent.extras!!.containsKey(AppConstant.DEBUG_DATA_RES_KEY)) {
             val debugDataRes: DebugProcessModel =
                 intent.getSerializableExtra(AppConstant.DEBUG_DATA_RES_KEY) as DebugProcessModel
             val version = intent.getStringExtra(AppConstant.CAPSULE_VERSION)
-            mDebugProcessAdapter.addAOs(debugDataRes.capsuleOAs)
             binding.tvUsername.text =
                 "Device Name: ${intent.getStringExtra(AppConstant.DEVICE_NAME)}"
             val capsuleStatus = mutableListOf(
@@ -88,16 +77,8 @@ class DebugProcessActivity : BaseActivity<ActivityDebugProcessBinding>() {
                 CapsuleStatusModel(ctStatus = "User Onboard", ctValue = debugDataRes.uob),
                 CapsuleStatusModel(ctStatus = "Time Stamp", ctValue = debugDataRes.ts)
             )
-            mCapsuleStatusAdapter.addCapsuleStatus(capsuleStatus)
-            binding.btnUpdateCt.background = if (debugDataRes.ct) ContextCompat.getDrawable(
-                this,
-                R.drawable.selector_disable_ct
-            )
-            else ContextCompat.getDrawable(this, R.drawable.selector_save_qr)
-            binding.btnUpdateCt.text =
-                if (debugDataRes.ct) resources.getString(R.string.disable_ct)
-                else resources.getString(R.string.enable_ct)
-            mCTStatus = debugDataRes.ct
+            debugProcessAdapter.addDataList(DebugProcessSealed.CapsuleStatus(capsuleStatusList = capsuleStatus))
+            debugProcessAdapter.addDataList(DebugProcessSealed.CapsuleAOs(capsuleAOList = debugDataRes.capsuleOAs))
 
             handleButton(debugDataRes.ct)
         }
@@ -111,6 +92,14 @@ class DebugProcessActivity : BaseActivity<ActivityDebugProcessBinding>() {
     }
 
     private fun handleButton(ctStatus: Boolean) {
+        binding.btnUpdateCt.background =
+            if (ctStatus) ContextCompat.getDrawable(this, R.drawable.selector_disable_ct)
+            else ContextCompat.getDrawable(this, R.drawable.selector_save_qr)
+        binding.btnUpdateCt.text =
+            if (ctStatus) resources.getString(R.string.disable_ct)
+            else resources.getString(R.string.enable_ct)
+        mCTStatus = ctStatus
+
         binding.btnUpdateCt.setOnClickListener {
             showLoading("Loading: Update CT...")
             isUpdatedCT = true

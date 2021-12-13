@@ -13,3 +13,8 @@ data class DebugProcessModel(
     val ts: String,
     val capsuleOAs: MutableList<CapsuleOAModel>
 ) : Serializable
+
+sealed class DebugProcessSealed{
+    data class CapsuleStatus(val capsuleStatusList: MutableList<CapsuleStatusModel>): DebugProcessSealed()
+    data class CapsuleAOs(val capsuleAOList: MutableList<CapsuleOAModel>): DebugProcessSealed()
+}

@@ -9,12 +9,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.ethernom.maintenance.R
 import com.ethernom.maintenance.databinding.ItemCtStatusBinding
 import com.ethernom.maintenance.model.CapsuleStatusModel
+import com.ethernom.maintenance.model.DebugProcessSealed
 
-class CapsuleStatusAdapter(ctx: Context) :
+class CapsuleStatusAdapter(ctx: Context, array: MutableList<CapsuleStatusModel>) :
     RecyclerView.Adapter<CapsuleStatusAdapter.CapsuleStatusViewHolder>() {
 
     private val context: Context = ctx
-    private val arrayList: MutableList<CapsuleStatusModel> = mutableListOf()
+    private val arrayList: MutableList<CapsuleStatusModel> = array
 
     inner class CapsuleStatusViewHolder(private val itemViewBinding: ItemCtStatusBinding) :
         RecyclerView.ViewHolder(itemViewBinding.root) {
