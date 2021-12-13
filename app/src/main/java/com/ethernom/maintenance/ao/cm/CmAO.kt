@@ -39,6 +39,7 @@ class CmAO(ctx: Context) {
         FSM(currentState = CmState.READY, event = CmEvent.TP_DISCOVERY, nextState = CmState.DISCOVERY, af = ::af2_1Cm),
         FSM(currentState = CmState.DISCOVERY, event = AoEvent.TP_DISCOVERED, nextState = CmState.DISCOVERY, af = ::af2_2Cm),
         FSM(currentState = CmState.DISCOVERY, event = CmEvent.TP_SELECT, nextState = CmState.TP_CONNECT, af = ::af2_3Cm),
+        FSM(currentState = CmState.DISCOVERY, event = CmEvent.DISCOVERY_RESET, nextState = CmState.READY, af = ::af13Cm),
 
         // TP
         FSM(currentState = CmState.READY, event = CmEvent.TP_CONNECT, nextState = CmState.TP_CONNECT, af = ::af2Cm),
@@ -320,6 +321,7 @@ object CmEvent {
     const val HTTP_START = 29
     const val HTTP_SEND = 30
     const val RESET = 31
+    const val DISCOVERY_RESET = 32
 }
 
 object CmBRAction {

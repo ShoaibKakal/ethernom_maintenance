@@ -1,6 +1,7 @@
 package com.ethernom.maintenance.ao.cm
 
 import android.content.Context
+import android.util.Log
 import com.ethernom.maintenance.MainApplication
 import com.ethernom.maintenance.ao.AoId
 import com.ethernom.maintenance.ao.CommonAO
@@ -14,6 +15,7 @@ class CmAPI(ctx: Context) {
     fun cmDiscovery(type: Int) {
         if (type == CmType.capsule) {
             // Send TP Connect Event to own Event Queue
+                Log.d(tag, "cmDiscovery API Call!!")
             val ef = EventBuffer(eventId = CmEvent.TP_DISCOVERY)
             commonAO!!.sendEvent(AoId.AO_CM1_ID, ef)
         }
@@ -54,6 +56,14 @@ class CmAPI(ctx: Context) {
             commonAO!!.sendEvent(AoId.AO_CM1_ID, ef)
         }
     }
+
+    fun cmResetDiscovery(type: Int) {
+        if(type == CmType.capsule){
+            val ef = EventBuffer(eventId = CmEvent.DISCOVERY_RESET)
+            commonAO!!.sendEvent(AoId.AO_CM1_ID, ef)
+        }
+    }
+
     fun cmReset(type: Int) {
         if (type == CmType.capsule) {
             // Send TP Reset Event to own Event Queue

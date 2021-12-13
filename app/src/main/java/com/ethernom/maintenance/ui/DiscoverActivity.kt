@@ -119,13 +119,12 @@ class DiscoverActivity : BaseActivity<ActivityDiscoverBinding>() {
                     appInBackground = false
                     return
                 }
-                cmAPI!!.cmReset(CmType.capsule)
+                cmAPI!!.cmResetDiscovery(CmType.capsule)
                 commonAO!!.aoRunScheduler()
                 Handler(Looper.getMainLooper()).postDelayed({
                     Log.d(tag, "Discover Nearby Device!!!")
                     binding.layoutError.visibility = View.GONE
                     mDeviceAdapter.clearAllDevice()
-                    cmAPI!!.cmReset(CmType.capsule)
                     cmAPI!!.cmDiscovery(CmType.capsule)
                     commonAO!!.aoRunScheduler()
                 }, 1000)
@@ -274,6 +273,7 @@ class DiscoverActivity : BaseActivity<ActivityDiscoverBinding>() {
             if(bleState == BluetoothAdapter.STATE_TURNING_OFF ||
                 bleState == BluetoothAdapter.STATE_TURNING_ON) return
             Log.d(tag, "ble state: $bleState")
+            mDeviceAdapter.clearAllDevice()
             bluetoothSettingInitCheck = false
             binding.layoutError.visibility = View.GONE
             checkAppPermissionAndSetting()
@@ -309,8 +309,18 @@ class DiscoverActivity : BaseActivity<ActivityDiscoverBinding>() {
                 CmBRAction.ACT_TP_ADV_PKT -> {
                     val ll = dataIntent.getSerializableExtra(DEVICE_ADVERTISE) as LinkDescriptor
                     Log.d(tag, "ACT_TP_ADV_PKT $ll")
+                    if(!Utils.isBluetoothEnable) return
                     mDeviceAdapter.addDevice(ll)
                 }
+                CmBRAction.ACT_TCP_CON_TIMEOUT -> {
+                    hideLoading()
+                    Log.d(tag, "ACT_TCP_CON_TIMEOUT")
+                    showDialogFailed(R.string.connection_timeout_title, R.string.connection_timeout_msg) {
+                        finish()
+                        exitProcess(0)
+                    }
+                }
+
                 CmBRAction.ACT_TP_CON_READY -> {
                     Log.d(tag, "ACT_TP_CON_READY ")
                     hideLoading()
