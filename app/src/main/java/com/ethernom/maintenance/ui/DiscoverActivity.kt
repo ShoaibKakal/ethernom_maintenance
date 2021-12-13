@@ -50,18 +50,30 @@ class DiscoverActivity : BaseActivity<ActivityDiscoverBinding>() {
     private var appInBackground: Boolean = false
     private var deviceItemClick: Boolean = false
 
+    private var connectionTimeout = false
+    private var refreshTimeout = false
+
+    private lateinit var mHandler: Handler
+
     override fun getViewBidingClass(): ActivityDiscoverBinding {
         return ActivityDiscoverBinding.inflate(layoutInflater)
     }
 
     override fun initView() {
         mAppSession = ApplicationSession.getInstance(this)
+        mHandler = Handler(Looper.getMainLooper())
+
         showToolbar(R.string.discover_toolbar_text)
         initRecyclerView()
         errorLayoutListener()
         registerAllBroadcast()
         binding.btnQuestion.setOnClickListener {
             showSuggestionDialog(R.string.advertise_device_title, R.string.advertise_device_msg, R.string.dialog_ok) {}
+        }
+
+        binding.swipeRefresh.setOnRefreshListener {
+            startDiscoveryDevice()
+            refreshTimeout = false
         }
     }
 
@@ -119,15 +131,7 @@ class DiscoverActivity : BaseActivity<ActivityDiscoverBinding>() {
                     appInBackground = false
                     return
                 }
-                cmAPI!!.cmResetDiscovery(CmType.capsule)
-                commonAO!!.aoRunScheduler()
-                Handler(Looper.getMainLooper()).postDelayed({
-                    Log.d(tag, "Discover Nearby Device!!!")
-                    binding.layoutError.visibility = View.GONE
-                    mDeviceAdapter.clearAllDevice()
-                    cmAPI!!.cmDiscovery(CmType.capsule)
-                    commonAO!!.aoRunScheduler()
-                }, 1000)
+                startDiscoveryDevice()
             }
         }
     }
@@ -220,6 +224,29 @@ class DiscoverActivity : BaseActivity<ActivityDiscoverBinding>() {
         }
     }
 
+    private fun startDiscoveryDevice() {
+        binding.layoutError.visibility = View.GONE
+        cmAPI!!.cmResetDiscovery(CmType.capsule)
+        commonAO!!.aoRunScheduler()
+        Handler(Looper.getMainLooper()).postDelayed({
+            Log.d(tag, "Discover Nearby Device!!!")
+            removeTimeout(refreshTimeout)
+            mDeviceAdapter.clearAllDevice()
+            cmAPI!!.cmDiscovery(CmType.capsule)
+            commonAO!!.aoRunScheduler()
+        }, 1000)
+    }
+
+    private fun refreshDiscoverDevice(){
+        if(refreshTimeout) return
+        mHandler.postDelayed({
+            Log.d(tag, "refreshDiscoverDevice")
+            refreshTimeout = false
+            binding.swipeRefresh.isRefreshing = true
+            startDiscoveryDevice()
+        }, 30000)
+    }
+
     private fun initRecyclerView() {
         mDeviceAdapter = DeviceAdapter(this, deviceItemSelected)
         binding.rcvDevice.apply {
@@ -229,30 +256,34 @@ class DiscoverActivity : BaseActivity<ActivityDiscoverBinding>() {
         }
     }
 
-    private var connectionTimeout = false
     private val deviceItemSelected = object : (LinkDescriptor, Int) -> Unit {
         override fun invoke(device: LinkDescriptor, position: Int) {
             if(deviceItemClick) return
-            deviceItemClick = !deviceItemClick
             showLoading(resources.getString(R.string.loading_connecting) + " to ${device.deviceName}...")
             cmAPI!!.cmSelect(CmType.capsule, device)
             commonAO!!.aoRunScheduler()
 
             connectionTimeout = true
-            Handler(Looper.getMainLooper()).postDelayed({
+            mHandler.postDelayed({
                 if (connectionTimeout) {
                     connectionTimeout = false
                     hideLoading()
-                    showDialogFailed(
-                        R.string.connection_timeout_title,
-                        R.string.connection_timeout_msg
-                    ) {
-                        finish()
-                        exitProcess(0)
+                    showDialogTimeout(R.string.connection_timeout_title, R.string.connection_timeout_msg) {
+                        if(it){
+                            startDiscoveryDevice()
+                        } else {
+                            finish()
+                            exitProcess(0)
+                        }
                     }
                 }
-            }, TIMER)
+            }, 15000)
         }
+    }
+
+    private fun removeTimeout(timeout: Boolean){
+        if(!timeout) return
+        mHandler.removeCallbacksAndMessages(null)
     }
 
     /**
@@ -273,6 +304,7 @@ class DiscoverActivity : BaseActivity<ActivityDiscoverBinding>() {
             if(bleState == BluetoothAdapter.STATE_TURNING_OFF ||
                 bleState == BluetoothAdapter.STATE_TURNING_ON) return
             Log.d(tag, "ble state: $bleState")
+            binding.swipeRefresh.isRefreshing = false
             mDeviceAdapter.clearAllDevice()
             bluetoothSettingInitCheck = false
             binding.layoutError.visibility = View.GONE
@@ -284,6 +316,7 @@ class DiscoverActivity : BaseActivity<ActivityDiscoverBinding>() {
     private val locationReceiver = object : (Boolean) -> Unit {
         override fun invoke(status: Boolean) {
             Log.d(tag, "location receiver: $status")
+            binding.swipeRefresh.isRefreshing = false
             locationServiceInitCheck = false
             binding.layoutError.visibility = View.GONE
             checkAppPermissionAndSetting()
@@ -307,26 +340,34 @@ class DiscoverActivity : BaseActivity<ActivityDiscoverBinding>() {
                 BROADCAST_INTERRUPT -> commonAO!!.aoRunScheduler()
                 // advertising
                 CmBRAction.ACT_TP_ADV_PKT -> {
+                    binding.swipeRefresh.isRefreshing = false
                     val ll = dataIntent.getSerializableExtra(DEVICE_ADVERTISE) as LinkDescriptor
                     Log.d(tag, "ACT_TP_ADV_PKT $ll")
                     if(!Utils.isBluetoothEnable) return
                     mDeviceAdapter.addDevice(ll)
+
+                    refreshDiscoverDevice()
+                    refreshTimeout = true
                 }
-                CmBRAction.ACT_TCP_CON_TIMEOUT -> {
+                CmBRAction.ACT_TP_CON_TIMEOUT -> {
                     hideLoading()
                     Log.d(tag, "ACT_TCP_CON_TIMEOUT")
-                    showDialogFailed(R.string.connection_timeout_title, R.string.connection_timeout_msg) {
-                        finish()
-                        exitProcess(0)
+                    removeTimeout(connectionTimeout)
+                    connectionTimeout = false
+                    showDialogTimeout(R.string.connection_timeout_title, R.string.connection_timeout_msg) {
+                        if(it){
+                            startDiscoveryDevice()
+                        } else {
+                            finish()
+                            exitProcess(0)
+                        }
                     }
                 }
 
                 CmBRAction.ACT_TP_CON_READY -> {
                     Log.d(tag, "ACT_TP_CON_READY ")
                     hideLoading()
-                    if (!connectionTimeout) return
-                    connectionTimeout = false
-
+                    removeTimeout(connectionTimeout)
                     val llReady = dataIntent.getSerializableExtra(DEVICE_READY) as LinkDescriptor
                     Log.d(tag, "$llReady")
                     val bundle = Bundle()

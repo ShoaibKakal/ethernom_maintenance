@@ -126,8 +126,6 @@ class LinkAO(ctx: Context) {
     private fun afDiscover(acb: ACB, buffer: EventBuffer): Boolean{
         Log.d(tag, "discover call ${acb.id}")
         discoveredList.clear()
-        linkDescArr[0].ld = LinkDescriptor()
-
         //  find link AO based on Ao id in link descriptor array
         val ld = linkDescArr.find { it.aoService.id == acb.id }
 

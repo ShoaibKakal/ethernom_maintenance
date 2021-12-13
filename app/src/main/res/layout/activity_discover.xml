@@ -106,9 +106,18 @@
         android:layout_height="@dimen/dimen_0_3dp"
         android:background="@color/colorGray" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rcv_device"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_refresh"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rcv_device"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+
 
 </androidx.appcompat.widget.LinearLayoutCompat>

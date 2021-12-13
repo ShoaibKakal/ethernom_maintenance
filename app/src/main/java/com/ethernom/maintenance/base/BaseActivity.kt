@@ -230,6 +230,7 @@ abstract class BaseActivity<VB: ViewBinding>: AppCompatActivity() {
         }
         dialogView.findViewById<Button>(R.id.btn_retry).setOnClickListener {
             confirmButton.invoke(true)
+            alertDialog!!.dismiss()
         }
         alertDialog = dialogBuilder.create()
         alertDialog!!.show()
