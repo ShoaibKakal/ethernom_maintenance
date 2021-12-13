@@ -69,9 +69,9 @@ class MaintenanceActivity : BaseActivity<ActivityMaintenanceBinding>() {
     }
 
     override fun onBackPressed() {
-        super.onBackPressed()
-        cmAPI!!.cmReset(CmType.capsule)
-        startPreviousActivity(DiscoverActivity::class.java, true)
+//        super.onBackPressed()
+//        cmAPI!!.cmReset(CmType.capsule)
+//        startPreviousActivity(DiscoverActivity::class.java, true)
     }
 
     private fun initializeObj(){
