@@ -284,10 +284,10 @@ class DebugProcessAO(ctx: Context) {
 
         val valueTrue = 0x01.toByte()
         val ctValue = ct[0] == valueTrue
-        val ctsValue = if (cts[0] == valueTrue) "Yes" else "No"
+        val ctsValue = if (cts[0] == valueTrue) "Started" else "Not Started yet"
         val proximityAlarm = if (pa[0] == valueTrue) "Enable" else "Disable"
-        val uobValue = if (uob[0] == valueTrue) "Yes" else "No"
-        val tsValue = if (ts[0] == valueTrue) "Yes" else "No"
+        val uobValue = if (uob[0] == valueTrue) "Registered" else "Unregistered"
+        val tsValue = if (ts[0] == valueTrue) "Synchronized" else "Unsynchronized"
 
         val aoPayload = dataPayload.copyOfRange(9, dataPayload.size)
         val dataList = ArrayList<CapsuleOAModel>()

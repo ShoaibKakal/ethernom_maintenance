@@ -53,7 +53,7 @@
     <string name="debug_info"><u>Debug Information</u></string>
     <string name="battery_level">Battery Level:</string>
     <string name="capsule_status">Capsule Status</string>
-    <string name="values">Values</string>
+    <string name="values">Value</string>
     <string name="ao">AO</string>
     <string name="cs">CS</string>
     <string name="ent">EVENT</string>

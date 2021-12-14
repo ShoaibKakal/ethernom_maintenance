@@ -37,7 +37,7 @@ class DebugProcessActivity : BaseActivity<ActivityDebugProcessBinding>() {
     override fun initView() {
         debugProcessAPI = DebugProcessAPI()
         showToolbarBackPress(R.string.debug_toolbar)
-        initRecyclerView(mutableListOf())
+        initRecyclerView()
         LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver, intentFilter)
     }
 
@@ -47,12 +47,12 @@ class DebugProcessActivity : BaseActivity<ActivityDebugProcessBinding>() {
     }
 
     override fun onBackPressed() {
-        showLoading("Loading: Update CT...")
+        showLoading("Loading...")
         debugProcessAPI.closeUpdateCT()
     }
 
 
-    private fun initRecyclerView(capsuleOAs: MutableList<CapsuleOAModel>) {
+    private fun initRecyclerView() {
         val debugProcessAdapter = DebugProcessAdapter(this)
         binding.rcvDebugProcess.apply {
             setHasFixedSize(true)
@@ -72,10 +72,10 @@ class DebugProcessActivity : BaseActivity<ActivityDebugProcessBinding>() {
             val capsuleStatus = mutableListOf(
                 CapsuleStatusModel(ctStatus = "Version", ctValue = getVersion(version!!)),
                 CapsuleStatusModel(ctStatus = "Battery Level", ctValue = "${String.format("%.3f",debugDataRes.bl)}" + " V"),
-                CapsuleStatusModel(ctStatus = "CT Start", ctValue = debugDataRes.cts),
-                CapsuleStatusModel(ctStatus = "Proximity Alarm", ctValue = debugDataRes.pa),
-                CapsuleStatusModel(ctStatus = "User Onboard", ctValue = debugDataRes.uob),
-                CapsuleStatusModel(ctStatus = "Sync Timestamp", ctValue = debugDataRes.ts)
+                CapsuleStatusModel(ctStatus = "Contact Tracing", ctValue = debugDataRes.cts),
+                CapsuleStatusModel(ctStatus = "Proximity Alarm Function", ctValue = debugDataRes.pa),
+                CapsuleStatusModel(ctStatus = "User Onbording", ctValue = debugDataRes.uob),
+                CapsuleStatusModel(ctStatus = "Timestamp", ctValue = debugDataRes.ts)
             )
             debugProcessAdapter.addDataList(DebugProcessSealed.CapsuleStatus(capsuleStatusList = capsuleStatus))
             debugProcessAdapter.addDataList(DebugProcessSealed.CapsuleAOs(capsuleAOList = debugDataRes.capsuleOAs))
