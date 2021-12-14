@@ -32,4 +32,12 @@ object ErrorCode {
             hashMap[3] = R.string.qr_code_failed
             return hashMap
         }
+
+    val loginError: HashMap<Int, Int>
+        get() {
+            val hashMap = HashMap<Int, Int>()
+            hashMap[0] = R.string.login_failed
+            hashMap[1] = R.string.login_timeout
+            return hashMap
+        }
 }

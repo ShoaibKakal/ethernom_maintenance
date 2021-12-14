@@ -29,6 +29,9 @@ object AppConstant {
     const val LOCATION_PER = 0x00.toByte()
     const val BLE_CNN_PER = 0x01.toByte()
 
+    const val LOGIN_SUCCESS = "Success"
+    const val LOGIN_FAILED = "Failed"
+
 
 
 }

@@ -5,6 +5,7 @@
     android:layout_height="wrap_content">
 
     <LinearLayout
+        android:id="@+id/ln"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center|top"
@@ -93,6 +94,7 @@
             android:layout_marginTop="@dimen/dimen_20dp"
             android:textSize="@dimen/text_size_18sp"
             android:textAllCaps="false"
+            android:layout_marginBottom="@dimen/dimen_10dp"
             android:background="@drawable/selector_login"
             android:text="@string/log_in" />
 

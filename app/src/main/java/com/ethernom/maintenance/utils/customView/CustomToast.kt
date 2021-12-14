@@ -37,9 +37,9 @@ class CustomToast {
                 textView.text = context.resources.getString(R.string.toast_warning)
             }
             COLOR.DANGER -> {
-                colorID = R.color.colorDanger
+                colorID = R.color.colorRed_A100
                 imageView.setImageResource(R.drawable.ic_fail_icon)
-                textView.text = context.resources.getString(R.string.toast_danger)
+                textView.text = context.resources.getString(R.string.log_in)
             }
         }
 

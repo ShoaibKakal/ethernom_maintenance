@@ -108,6 +108,9 @@
 
     <string name="network_title">Could Not Connect</string>
     <string name="network_msg">Make sure you are connected to Wi-Fi or your cellular network.</string>
+
+    <string name="login_failed">Username and password were incorrect</string>
+    <string name="login_timeout">Login request timeout. Please try again!</string>
     <!-- Loading -->
     <string name="loading_connecting">Loading: Connecting</string>
     <string name="retry">Retry</string>

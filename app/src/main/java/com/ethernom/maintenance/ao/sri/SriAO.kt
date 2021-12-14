@@ -69,6 +69,11 @@ class SriAO(ctx:Context) {
                     val ef = EventBuffer(eventId = AoEvent.HTTP_RESET_CERT_RES, svrBuffer = buffer.svrBuffer)
                     commonAO!!.sendEvent(AoId.AO_CFR_ID, ef) //!TODO Capsule Factory Reset AO
                 }
+
+                SvrBufferType.loginRes -> {
+                    val ef = EventBuffer(eventId = AoEvent.HTTP_LOGIN_RES, svrBuffer = buffer.svrBuffer)
+                    commonAO!!.sendEvent(AoId.AO_LOG_ID, ef) //!TODO Capsule Factory Reset AO
+                }
             }
         } else {
             when (buffer.buffer!![0]) {

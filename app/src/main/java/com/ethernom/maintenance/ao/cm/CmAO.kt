@@ -7,8 +7,11 @@ import android.util.Log
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.ethernom.maintenance.ao.transport.TransportAPI
 import com.ethernom.maintenance.ao.*
+import com.ethernom.maintenance.ao.cm.repository.LoginRepository
 import com.ethernom.maintenance.ao.cm.repository.UnregisterRepository
 import com.ethernom.maintenance.ao.link.LinkDescriptor
+import com.ethernom.maintenance.model.LoginRequestBody
+import com.ethernom.maintenance.model.LoginResponse
 import com.ethernom.maintenance.model.UnregisterRequestBody
 import com.ethernom.maintenance.model.UnregisterResponse
 import com.ethernom.maintenance.ui.commonAO
@@ -267,6 +270,10 @@ class CmAO(ctx: Context) {
             SvrBufferType.unregisterReq -> {
                 UnregisterRepository(context).unregisterRequest(buffer.svrBuffer!!.unregisterRequestBody!!)
             }
+
+            SvrBufferType.loginReq -> {
+                LoginRepository(context).loginRequest(buffer.svrBuffer!!.loginRequestBody!!)
+            }
         }
 
         return true
@@ -295,12 +302,16 @@ data class SvrBuffer(
     val type: Int = 0xff, // SvrBufferType
     val responseFailed: Boolean? = false,
     val unregisterRequestBody: UnregisterRequestBody? = null,
-    val unregisterResponse: UnregisterResponse? =null
+    val unregisterResponse: UnregisterResponse? =null,
+    val loginRequestBody: LoginRequestBody? = null,
+    val loginResponse: LoginResponse? = null
 )
 
 object SvrBufferType {
     const val unregisterReq = 0
     const val unregisterRes = 1
+    const val loginReq = 2
+    const val loginRes = 3
 }
 
 object CmState {

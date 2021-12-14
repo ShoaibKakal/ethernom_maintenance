@@ -27,6 +27,7 @@ import com.ethernom.maintenance.ao.sri.SriAO
 import com.ethernom.maintenance.ao.transport.SocketDescriptor
 import com.ethernom.maintenance.ao.transport.TransportAO
 import com.ethernom.maintenance.model.DebugProcessModel
+import com.ethernom.maintenance.model.LoginRequestBody
 import com.ethernom.maintenance.model.RequestFailureModel
 import com.ethernom.maintenance.ui.commonAO
 import kotlin.reflect.KFunction2
@@ -233,7 +234,7 @@ object AoEvent {
     // Event receive capsule factory reset
     const val C2A_CFR_RES = 9
     const val HTTP_RESET_CERT_RES = 10
-    const val C2A_FRD_RES = 11
+    const val HTTP_LOGIN_RES = 11
 
     // Event receive debug process
     const val C2A_DBP_RES = 12
@@ -274,7 +275,8 @@ data class EventBuffer(
     val serialNumber: String? = "",
     val debugProcessModel: DebugProcessModel? = null,
     val updateCTStatus: Boolean? = false,
-    val completedType: Int? = 0
+    val completedType: Int? = 0,
+    val loginRequestBody: LoginRequestBody? = null
 )
 
 /** Active Object Event Queue */
