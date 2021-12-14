@@ -11,85 +11,105 @@
 
     <include layout="@layout/toolbar_back_press" />
 
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="@dimen/dimen_30dp"
-        android:text="@string/qr_info"
-        android:textSize="@dimen/text_size_20sp"
-        android:textStyle="bold" />
-
-    <androidx.cardview.widget.CardView
-        android:id="@+id/qrBlock"
-        android:layout_width="250dp"
-        android:layout_height="250dp"
-        android:layout_gravity="center"
-        android:layout_margin="@dimen/dimen_10dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginBottom="16dp"
-        app:cardCornerRadius="10dp">
-
-        <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/imageQR"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scaleType="centerCrop"
-                android:src="@drawable/ic_qr_code"
-                tools:ignore="ContentDescription" />
-
-        </RelativeLayout>
-    </androidx.cardview.widget.CardView>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="@dimen/dimen_30dp"
-        android:gravity="center"
-        android:id="@+id/tv_device_name"
-        android:textSize="@dimen/text_size_20sp"
-        android:textStyle="bold" />
-
-
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="@dimen/dimen_20dp"
-        android:gravity="bottom"
-        android:orientation="vertical">
+        android:layout_marginBottom="@dimen/dimen_10dp">
 
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btn_save_qr"
-            android:layout_width="300dp"
-            android:layout_height="@dimen/dimen_50dp"
-            android:layout_gravity="center"
-            android:layout_marginTop="@dimen/dimen_20dp"
-            android:background="@drawable/selector_save_qr"
-            android:text="@string/save_qr_code"
-            android:textAllCaps="false"
-            android:textColor="@color/colorWhite"
-            android:textSize="@dimen/text_size_16sp" />
+        <LinearLayout
+            android:id="@+id/ln_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:orientation="vertical">
 
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btn_show_qr"
-            android:layout_width="300dp"
-            android:layout_height="@dimen/dimen_50dp"
-            android:layout_gravity="center"
-            android:layout_marginTop="@dimen/dimen_10dp"
-            android:layout_marginBottom="@dimen/dimen_5dp"
-            android:textAllCaps="false"
-            android:background="@drawable/selector_show_qr"
-            android:text="@string/show_qr_folder"
-            android:textColor="@color/colorWhite"
-            android:textSize="@dimen/text_size_16sp"
-            android:visibility="gone" />
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_save_qr"
+                android:layout_width="300dp"
+                android:layout_height="@dimen/dimen_50dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="@dimen/dimen_10dp"
+                android:background="@drawable/selector_save_qr"
+                android:text="@string/save_qr_code"
+                android:textAllCaps="false"
+                android:layout_marginBottom="@dimen/dimen_5dp"
+                android:textColor="@color/colorWhite"
+                android:textSize="@dimen/text_size_16sp" />
 
-    </LinearLayout>
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_show_qr"
+                android:layout_width="300dp"
+                android:layout_height="@dimen/dimen_50dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="@dimen/dimen_5dp"
+                android:layout_marginBottom="@dimen/dimen_5dp"
+                android:textAllCaps="false"
+                android:background="@drawable/selector_show_qr"
+                android:text="@string/show_qr_folder"
+                android:textColor="@color/colorWhite"
+                android:textSize="@dimen/text_size_16sp"
+                android:visibility="gone" />
+
+        </LinearLayout>
+
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@id/ln_btn">
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="@dimen/dimen_30dp"
+                    android:text="@string/qr_info"
+                    android:textSize="@dimen/text_size_20sp"
+                    android:textStyle="bold" />
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/qrBlock"
+                    android:layout_width="250dp"
+                    android:layout_height="250dp"
+                    android:layout_gravity="center"
+                    android:layout_margin="@dimen/dimen_10dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="16dp"
+                    app:cardCornerRadius="10dp">
+
+                    <RelativeLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:id="@+id/imageQR"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/ic_qr_code"
+                            tools:ignore="ContentDescription" />
+
+                    </RelativeLayout>
+                </androidx.cardview.widget.CardView>
+
+                <TextView
+                    android:id="@+id/tv_device_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="@dimen/dimen_30dp"
+                    android:gravity="center"
+                    android:textSize="@dimen/text_size_20sp"
+                    android:textStyle="bold" />
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+        </androidx.core.widget.NestedScrollView>
+
+    </RelativeLayout>
 
 </LinearLayout>
