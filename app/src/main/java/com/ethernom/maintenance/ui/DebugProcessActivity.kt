@@ -75,7 +75,7 @@ class DebugProcessActivity : BaseActivity<ActivityDebugProcessBinding>() {
                 CapsuleStatusModel(ctStatus = "CT Start", ctValue = debugDataRes.cts),
                 CapsuleStatusModel(ctStatus = "Proximity Alarm", ctValue = debugDataRes.pa),
                 CapsuleStatusModel(ctStatus = "User Onboard", ctValue = debugDataRes.uob),
-                CapsuleStatusModel(ctStatus = "Time Stamp", ctValue = debugDataRes.ts)
+                CapsuleStatusModel(ctStatus = "Sync Timestamp", ctValue = debugDataRes.ts)
             )
             debugProcessAdapter.addDataList(DebugProcessSealed.CapsuleStatus(capsuleStatusList = capsuleStatus))
             debugProcessAdapter.addDataList(DebugProcessSealed.CapsuleAOs(capsuleAOList = debugDataRes.capsuleOAs))
