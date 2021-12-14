@@ -16,10 +16,7 @@ import com.ethernom.maintenance.ao.debugProcess.DebugProcessAPI
 import com.ethernom.maintenance.ao.debugProcess.DebugProcessBRAction
 import com.ethernom.maintenance.base.BaseActivity
 import com.ethernom.maintenance.databinding.ActivityDebugProcessBinding
-import com.ethernom.maintenance.model.CapsuleOAModel
-import com.ethernom.maintenance.model.CapsuleStatusModel
-import com.ethernom.maintenance.model.DebugProcessModel
-import com.ethernom.maintenance.model.DebugProcessSealed
+import com.ethernom.maintenance.model.*
 import com.ethernom.maintenance.utils.AppConstant
 import java.lang.Long
 import kotlin.system.exitProcess
@@ -131,7 +128,8 @@ class DebugProcessActivity : BaseActivity<ActivityDebugProcessBinding>() {
 
                 DebugProcessBRAction.ACT_TIMEOUT_UPDATE_CT -> {
                     hideLoading()
-                    showDialogFailed(R.string.debug_title,R.string.debug_update_ct){
+                    val requestFailureModel = intent.getSerializableExtra(AppConstant.CAPSULE_FAILURE_KEY) as RequestFailureModel
+                    showDialogFailed(R.string.debug_title,requestFailureModel.errorMessage, requestFailureModel.errorCode){
                         finish()
                         exitProcess(0)
                     }

@@ -20,6 +20,7 @@ object ErrorCode {
             hashMap[1] = R.string.capsule_not_yet_user_onboard
             hashMap[2] = R.string.debug_timeout
             hashMap[3] = R.string.debug_failed
+            hashMap[4] = R.string.debug_update_ct
             return hashMap
         }
 

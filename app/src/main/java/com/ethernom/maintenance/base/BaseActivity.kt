@@ -29,7 +29,6 @@ import com.ethernom.maintenance.utils.customView.LoadingView
 import kotlinx.android.synthetic.main.toolbar_back_press.*
 import kotlinx.android.synthetic.main.toolbar_center_title.center_toolbar
 import kotlinx.android.synthetic.main.toolbar_center_title.toolbar_title
-import android.net.NetworkInfo
 
 import android.net.ConnectivityManager
 
@@ -177,14 +176,14 @@ abstract class BaseActivity<VB: ViewBinding>: AppCompatActivity() {
         alertDialog!!.show()
     }
 
-    open fun showDialogFailed(@StringRes title: Int, @StringRes contentText: Int, confirmButton: () -> Unit){
+    open fun showDialogFailed(@StringRes title: Int, @StringRes contentText: Int, errorCode: Int, confirmButton: () -> Unit){
         if(alertDialog != null) alertDialog!!.dismiss()
         val dialogBuilder: AlertDialog.Builder = AlertDialog.Builder(this)
         val inflater = this.layoutInflater
         val dialogView: View = inflater.inflate(R.layout.dialog_failed, null)
         dialogBuilder.setView(dialogView)
         dialogBuilder.setCancelable(false)
-        dialogView.findViewById<TextView>(R.id.title).text = getString(title)
+        dialogView.findViewById<TextView>(R.id.title).text = getString(title) + "\n(Code:$errorCode)"
         dialogView.findViewById<TextView>(R.id.content).text = getString(contentText)
         dialogView.findViewById<Button>(R.id.btn_confirm).setOnClickListener {
             confirmButton.invoke()

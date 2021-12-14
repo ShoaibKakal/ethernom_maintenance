@@ -157,7 +157,7 @@ class MaintenanceActivity : BaseActivity<ActivityMaintenanceBinding>() {
                 CapsuleFactoryResetBRAction.ACT_RESET_RSP -> {}
                 CapsuleFactoryResetBRAction.ACT_RESET_FAILURE -> {
                     val requestFailureModel = intent.getSerializableExtra(AppConstant.CAPSULE_FAILURE_KEY) as RequestFailureModel
-                    showDialogFailed(R.string.capsule_reset_title, requestFailureModel.errorMessage){
+                    showDialogFailed(R.string.capsule_reset_title, requestFailureModel.errorMessage, requestFailureModel.errorCode){
                         finish()
                         exitProcess(0)
                     }
@@ -170,7 +170,7 @@ class MaintenanceActivity : BaseActivity<ActivityMaintenanceBinding>() {
                 DebugProcessBRAction.ACT_DEBUG_PROCESS_RSP -> {}
                 DebugProcessBRAction.ACT_DEBUG_PROCESS_FAILURE -> {
                     val requestFailureModel = intent.getSerializableExtra(AppConstant.CAPSULE_FAILURE_KEY) as RequestFailureModel
-                    showDialogFailed(R.string.debug_title, requestFailureModel.errorMessage){
+                    showDialogFailed(R.string.debug_title, requestFailureModel.errorMessage, requestFailureModel.errorCode){
                         finish()
                         exitProcess(0)
                     }
@@ -193,7 +193,7 @@ class MaintenanceActivity : BaseActivity<ActivityMaintenanceBinding>() {
                 ReadQRCodeBRAction.READ_QR_CODE_RESPONSE -> {}
                 ReadQRCodeBRAction.READ_QR_CODE_FAILURE -> {
                     val requestFailureModel = intent.getSerializableExtra(AppConstant.CAPSULE_FAILURE_KEY) as RequestFailureModel
-                    showDialogFailed(R.string.qr_code_title, requestFailureModel.errorMessage){
+                    showDialogFailed(R.string.qr_code_title, requestFailureModel.errorMessage, requestFailureModel.errorCode){
                         finish()
                         exitProcess(0)
                     }

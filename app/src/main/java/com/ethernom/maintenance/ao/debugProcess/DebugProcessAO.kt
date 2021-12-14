@@ -17,6 +17,7 @@ import com.ethernom.maintenance.model.RequestFailureModel
 import com.ethernom.maintenance.ui.cmAPI
 import com.ethernom.maintenance.ui.commonAO
 import com.ethernom.maintenance.utils.*
+import com.ethernom.maintenance.utils.AppConstant.CAPSULE_FAILURE_KEY
 import com.ethernom.maintenance.utils.AppConstant.TIMER
 import com.ethernom.maintenance.utils.Conversion.convertHexToDec
 
@@ -242,7 +243,10 @@ class DebugProcessAO(ctx: Context) {
     private fun afTimeoutUpdateCT(acb: ACB, buffer: EventBuffer): Boolean {
         Log.d(tag, "afTimeoutUpdateCT")
         /** Broadcast Receiver(update CT timeout) to UI **/
-        sendBroadCast(DebugProcessBRAction.ACT_TIMEOUT_UPDATE_CT)
+        val errorRequest = ErrorCode.debugProcessError[4]
+        val bundle = Bundle()
+        bundle.putSerializable(CAPSULE_FAILURE_KEY, errorRequest)
+        sendBroadCast(DebugProcessBRAction.ACT_TIMEOUT_UPDATE_CT, bundle)
         return true
     }
 
