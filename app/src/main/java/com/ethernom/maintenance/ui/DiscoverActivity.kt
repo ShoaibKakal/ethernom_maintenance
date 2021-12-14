@@ -265,11 +265,12 @@ class DiscoverActivity : BaseActivity<ActivityDiscoverBinding>() {
 
             connectionTimeout = true
             mHandler.postDelayed({
-                if (connectionTimeout) {
+                if (connectionTimeout && !appInBackground) {
                     connectionTimeout = false
                     hideLoading()
                     showDialogTimeout(R.string.connection_timeout_title, R.string.connection_timeout_msg) {
                         if(it){
+                            mDeviceAdapter.clearAllDevice()
                             startDiscoveryDevice()
                         } else {
                             finish()
@@ -354,8 +355,10 @@ class DiscoverActivity : BaseActivity<ActivityDiscoverBinding>() {
                     Log.d(tag, "ACT_TCP_CON_TIMEOUT")
                     removeTimeout(connectionTimeout)
                     connectionTimeout = false
+                    if(!appInBackground) return
                     showDialogTimeout(R.string.connection_timeout_title, R.string.connection_timeout_msg) {
                         if(it){
+                            mDeviceAdapter.clearAllDevice()
                             startDiscoveryDevice()
                         } else {
                             finish()
