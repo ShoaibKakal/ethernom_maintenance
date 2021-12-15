@@ -4,30 +4,21 @@
     <!--    Toast-->
     <string name="toast_success">SUCCESS :</string>
     <string name="toast_warning">WARNING :</string>
-    <string name="toast_danger">DANGER :</string>
     <string name="okay">Okay</string>
     <string name="exit">Exit</string>
-    <string name="connection_successfully">Connection Successfully</string>
     <string name="back">Back</string>
-    <string name="phone_number">Phone Number</string>
-    <string name="setting">Setting</string>
-    <string name="set_up">Setup</string>
-    <string name="goople_mode">Goople Mode</string>
-    <string name="name">Name</string>
 
     <!-- Splash Activity -->
     <string name="app_version">Version:</string>
     <string name="warning">Warning</string>
     <string name="turn_on_bluetooth_message_cred">Turn on Bluetooth and allow the Ethernom Contact Tracing to connect Bluetooth accessories. Do you want to enable it?</string>
     <string name="enable">Enable</string>
-    <string name="dismiss">Dismiss</string>
     <string name="loading">Loading</string>
 
     <string name="capsule_onboarding_completed">Capsule onboarding completed</string>
     <string name="searching_nearby_device">Searching nearby device...</string>
 
     <!-- Login Activity -->
-    <string name="test_txt">Test Toolbar</string>
     <string name="authentication"><u>Authentication</u></string>
     <string name="access_for_maintenance_device">Access to maintain the capsule.</string>
     <string name="username">Username</string>
@@ -51,7 +42,6 @@
     <!-- Debug Process Activity -->
     <string name="debug_toolbar">Debug Process</string>
     <string name="debug_info"><u>Debug Information</u></string>
-    <string name="battery_level">Battery Level:</string>
     <string name="capsule_status">Capsule Status</string>
     <string name="values">Value</string>
     <string name="ao">AO</string>
