@@ -32,6 +32,13 @@ object AppConstant {
     const val LOGIN_SUCCESS = "Success"
     const val LOGIN_FAILED = "Failed"
 
+    const val DIALOG_TITLE = "DIALOG_TITLE"
+    const val DIALOG_CONTENT = "DIALOG_CONTENT"
+    const val DIALOG_ICON = "DIALOG_ICON"
+    const val DIALOG_BTN = "DIALOG_BTN"
+    const val DIALOG_TYPE = "DIALOG_TYPE"
+    const val ERROR_CODE = "ERROR_CODE"
+
 
 
 }

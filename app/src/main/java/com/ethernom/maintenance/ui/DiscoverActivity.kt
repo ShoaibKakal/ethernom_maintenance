@@ -23,11 +23,11 @@ import com.ethernom.maintenance.ao.cm.CmType
 import com.ethernom.maintenance.ao.link.LinkDescriptor
 import com.ethernom.maintenance.base.BaseActivity
 import com.ethernom.maintenance.databinding.ActivityDiscoverBinding
+import com.ethernom.maintenance.model.DialogEnum
 import com.ethernom.maintenance.utils.AppConstant.CAPSULE_VERSION
 import com.ethernom.maintenance.utils.AppConstant.DEVICE_ADVERTISE
 import com.ethernom.maintenance.utils.AppConstant.DEVICE_NAME
 import com.ethernom.maintenance.utils.AppConstant.DEVICE_READY
-import com.ethernom.maintenance.utils.AppConstant.TIMER
 import com.ethernom.maintenance.utils.Utils
 import com.ethernom.maintenance.utils.session.ApplicationSession
 import com.google.android.gms.common.api.GoogleApiClient
@@ -68,7 +68,7 @@ class DiscoverActivity : BaseActivity<ActivityDiscoverBinding>() {
         errorLayoutListener()
         registerAllBroadcast()
         binding.btnQuestion.setOnClickListener {
-            showSuggestionDialog(R.string.advertise_device_title, R.string.advertise_device_msg, R.string.dialog_ok) {}
+            showConfirmDialogFragment(DialogEnum.ADVERTISE.type){}
         }
 
         binding.swipeRefresh.setOnRefreshListener {
@@ -112,7 +112,7 @@ class DiscoverActivity : BaseActivity<ActivityDiscoverBinding>() {
             bleSetting -> {
                 if (bluetoothSettingInitCheck) {
                     binding.layoutError.visibility = View.GONE
-                    showSuggestionDialog(R.string.bluetooth_device_title, R.string.bluetooth_device_turn_on, R.string.turn_on) {
+                    showConfirmDialogFragment(DialogEnum.BLUETOOTH.type){
                         BluetoothAdapter.getDefaultAdapter()?.enable()
                     }
                 } else {
@@ -265,13 +265,13 @@ class DiscoverActivity : BaseActivity<ActivityDiscoverBinding>() {
 
             connectionTimeout = true
             mHandler.postDelayed({
-                if (connectionTimeout && !appInBackground) {
+                if (connectionTimeout) {
                     connectionTimeout = false
                     hideLoading()
-                    showDialogTimeout(R.string.connection_timeout_title, R.string.connection_timeout_msg) {
+                    showTimeoutDialogFragment( DialogEnum.CONNECT_TIMEOUT.type) {
                         if(it){
                             mDeviceAdapter.clearAllDevice()
-                            startDiscoveryDevice()
+                            checkAppPermissionAndSetting()
                         } else {
                             finish()
                             exitProcess(0)
@@ -310,7 +310,7 @@ class DiscoverActivity : BaseActivity<ActivityDiscoverBinding>() {
             bluetoothSettingInitCheck = false
             binding.layoutError.visibility = View.GONE
             checkAppPermissionAndSetting()
-            if (alertDialog != null) alertDialog!!.dismiss()
+            if (dialogFragment != null) dialogFragment!!.dismiss()
         }
     }
 
@@ -355,11 +355,10 @@ class DiscoverActivity : BaseActivity<ActivityDiscoverBinding>() {
                     Log.d(tag, "ACT_TCP_CON_TIMEOUT")
                     removeTimeout(connectionTimeout)
                     connectionTimeout = false
-                    if(!appInBackground) return
-                    showDialogTimeout(R.string.connection_timeout_title, R.string.connection_timeout_msg) {
+                    showTimeoutDialogFragment(DialogEnum.CONNECT_TIMEOUT.type) {
                         if(it){
                             mDeviceAdapter.clearAllDevice()
-                            startDiscoveryDevice()
+                            checkAppPermissionAndSetting()
                         } else {
                             finish()
                             exitProcess(0)

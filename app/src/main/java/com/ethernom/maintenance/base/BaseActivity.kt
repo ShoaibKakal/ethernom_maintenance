@@ -11,12 +11,8 @@ import android.location.LocationManager
 import android.os.Build
 import android.os.Bundle
 import android.view.MenuItem
-import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.TextView
 import androidx.annotation.StringRes
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.viewbinding.ViewBinding
@@ -31,19 +27,32 @@ import kotlinx.android.synthetic.main.toolbar_center_title.center_toolbar
 import kotlinx.android.synthetic.main.toolbar_center_title.toolbar_title
 
 import android.net.ConnectivityManager
-
-
+import androidx.annotation.DrawableRes
+import androidx.fragment.app.DialogFragment
+import com.ethernom.maintenance.dialog.*
+import com.ethernom.maintenance.utils.AppConstant
 
 
 abstract class BaseActivity<VB: ViewBinding>: AppCompatActivity() {
     lateinit var binding: VB
-    var alertDialog: AlertDialog? = null
+    var dialogFragment: DialogFragment? = null
+    private var isBackground: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = getViewBidingClass()
         setContentView(binding.root)
         initView()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        isBackground = false
+    }
+
+    override fun onPause() {
+        super.onPause()
+        isBackground = true
     }
 
     abstract fun getViewBidingClass(): VB
@@ -144,95 +153,45 @@ abstract class BaseActivity<VB: ViewBinding>: AppCompatActivity() {
         }
     }
 
-    open fun showDialogInProgress(@StringRes title: Int, @StringRes contentText: Int){
-        if(alertDialog != null) alertDialog!!.dismiss()
-        val dialogBuilder: AlertDialog.Builder = AlertDialog.Builder(this)
-        val inflater = this.layoutInflater
-        val dialogView: View = inflater.inflate(R.layout.dialog_in_progress, null)
-        dialogBuilder.setView(dialogView)
-        dialogBuilder.setCancelable(false)
-        dialogView.findViewById<TextView>(R.id.title).text = getString(title)
-            dialogView.findViewById<TextView>(R.id.content).text = getString(contentText)
-
-        alertDialog = dialogBuilder.create()
-        alertDialog!!.show()
+    open fun showInProgressDialogFragment(dialogType: Byte){
+        if(isBackground) return
+        if(dialogFragment != null) dialogFragment!!.dismiss()
+        val bundle = Bundle()
+        bundle.putByte(AppConstant.DIALOG_TYPE, dialogType)
+        dialogFragment = InProgressDialog()
+        dialogFragment!!.arguments = bundle
+        dialogFragment!!.show(supportFragmentManager.beginTransaction(), null)
     }
 
-    open fun showDialogSuccess(@StringRes title: Int, @StringRes contentText: Int, confirmButton: () -> Unit){
-        if(alertDialog != null) alertDialog!!.dismiss()
-        val dialogBuilder: AlertDialog.Builder = AlertDialog.Builder(this)
-        val inflater = this.layoutInflater
-        val dialogView: View = inflater.inflate(R.layout.dialog_sucess, null)
-        dialogBuilder.setView(dialogView)
-        dialogBuilder.setCancelable(false)
-        dialogView.findViewById<TextView>(R.id.title).text = getString(title)
-        dialogView.findViewById<TextView>(R.id.content).text = getString(contentText)
-        dialogView.findViewById<Button>(R.id.btn_confirm).setOnClickListener {
-            confirmButton.invoke()
-            alertDialog!!.dismiss()
-        }
-
-        alertDialog = dialogBuilder.create()
-        alertDialog!!.show()
+    open fun showConfirmDialogFragment(dialogType: Byte, confirmCallback: () -> Unit){
+        if(isBackground) return
+        if(dialogFragment != null) dialogFragment!!.dismiss()
+        val bundle = Bundle()
+        bundle.putByte(AppConstant.DIALOG_TYPE, dialogType)
+        dialogFragment = ConfirmDialog(confirmCallback)
+        dialogFragment!!.arguments = bundle
+        dialogFragment!!.show(supportFragmentManager.beginTransaction(), null)
     }
 
-    open fun showDialogFailed(@StringRes title: Int, @StringRes contentText: Int, errorCode: Int, confirmButton: () -> Unit){
-        if(alertDialog != null) alertDialog!!.dismiss()
-        val dialogBuilder: AlertDialog.Builder = AlertDialog.Builder(this)
-        val inflater = this.layoutInflater
-        val dialogView: View = inflater.inflate(R.layout.dialog_failed, null)
-        dialogBuilder.setView(dialogView)
-        dialogBuilder.setCancelable(false)
-        dialogView.findViewById<TextView>(R.id.title).text = getString(title) + "\n(Code:$errorCode)"
-        dialogView.findViewById<TextView>(R.id.content).text = getString(contentText)
-        dialogView.findViewById<Button>(R.id.btn_confirm).setOnClickListener {
-            confirmButton.invoke()
-            alertDialog!!.dismiss()
-        }
-
-        alertDialog = dialogBuilder.create()
-        alertDialog!!.show()
+    open fun showFailedDialogFragment(dialogType: Byte, errorCode: Int, confirmCallback: () -> Unit){
+        if(isBackground) return
+        if(dialogFragment != null) dialogFragment!!.dismiss()
+        val bundle = Bundle()
+        bundle.putByte(AppConstant.DIALOG_TYPE, dialogType)
+        bundle.putInt(AppConstant.ERROR_CODE, errorCode)
+        dialogFragment = ConfirmDialog(confirmCallback)
+        dialogFragment!!.arguments = bundle
+        dialogFragment!!.show(supportFragmentManager.beginTransaction(), null)
     }
 
-    open fun showSuggestionDialog(@StringRes title: Int, @StringRes contentText: Int, @StringRes confirmText: Int, confirmButton: () -> Unit){
-        if(alertDialog != null) alertDialog!!.dismiss()
-        val dialogBuilder: AlertDialog.Builder = AlertDialog.Builder(this)
-        val inflater = this.layoutInflater
-        val dialogView: View = inflater.inflate(R.layout.dialog_suggestion, null)
-        dialogBuilder.setView(dialogView)
-        dialogBuilder.setCancelable(false)
-        dialogView.findViewById<TextView>(R.id.title).text = getString(title)
-        dialogView.findViewById<TextView>(R.id.content).text = getString(contentText)
-        dialogView.findViewById<Button>(R.id.btn_confirm).apply {
-            text = getString(confirmText)
-            setOnClickListener {
-                confirmButton.invoke()
-                alertDialog!!.dismiss()
-            }
-        }
-        alertDialog = dialogBuilder.create()
-        alertDialog!!.show()
-    }
-
-    open fun showDialogTimeout(@StringRes title: Int, @StringRes contentText: Int, confirmButton: (Boolean) -> Unit){
-        if(alertDialog != null) alertDialog!!.dismiss()
-        val dialogBuilder: AlertDialog.Builder = AlertDialog.Builder(this)
-        val inflater = this.layoutInflater
-        val dialogView: View = inflater.inflate(R.layout.dialog_timout, null)
-        dialogBuilder.setView(dialogView)
-        dialogBuilder.setCancelable(false)
-        dialogView.findViewById<TextView>(R.id.title).text = getString(title)
-        dialogView.findViewById<TextView>(R.id.content).text = getString(contentText)
-        dialogView.findViewById<Button>(R.id.btn_exit).setOnClickListener {
-            confirmButton.invoke(false)
-            alertDialog!!.dismiss()
-        }
-        dialogView.findViewById<Button>(R.id.btn_retry).setOnClickListener {
-            confirmButton.invoke(true)
-            alertDialog!!.dismiss()
-        }
-        alertDialog = dialogBuilder.create()
-        alertDialog!!.show()
+    open fun showTimeoutDialogFragment(dialogType: Byte, confirmCallback: (Boolean) -> Unit) {
+        if(isBackground) return
+        if(dialogFragment != null) dialogFragment!!.dismiss()
+        dialogFragment = TimeoutDialog(confirmCallback)
+        val bundle = Bundle()
+        bundle.putByte(AppConstant.DIALOG_TYPE, dialogType)
+        dialogFragment!!.arguments = bundle
+        dialogFragment!!.show(supportFragmentManager.beginTransaction(), null)
     }
 
     // Broad cast function //

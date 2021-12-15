@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!--set image to be shown on circular image view-->
+    <item
+        android:bottom="@dimen/dimen_40dp"
+        android:drawable="@drawable/ic_bluetooth_disabled"
+        android:left="@dimen/dimen_40dp"
+        android:right="@dimen/dimen_40dp"
+        android:top="@dimen/dimen_40dp" />
+    <item android:drawable="@drawable/img_oval" />
+
+</layer-list>

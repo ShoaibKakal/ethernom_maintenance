@@ -17,7 +17,6 @@ import com.ethernom.maintenance.adapter.MainMenuAdapter
 import com.ethernom.maintenance.ao.BROADCAST_INTERRUPT
 import com.ethernom.maintenance.ao.capsuleFactoryReset.CapsuleFactoryResetAPI
 import com.ethernom.maintenance.ao.capsuleFactoryReset.CapsuleFactoryResetBRAction
-import com.ethernom.maintenance.ao.cm.CmType
 import com.ethernom.maintenance.ao.debugProcess.DebugProcessAPI
 import com.ethernom.maintenance.ao.debugProcess.DebugProcessBRAction
 import com.ethernom.maintenance.ao.readQRCode.ReadQRCodeAPI
@@ -25,11 +24,11 @@ import com.ethernom.maintenance.ao.readQRCode.ReadQRCodeBRAction
 import com.ethernom.maintenance.base.BaseActivity
 import com.ethernom.maintenance.databinding.ActivityMaintenanceBinding
 import com.ethernom.maintenance.model.DebugProcessModel
+import com.ethernom.maintenance.model.DialogEnum
 import com.ethernom.maintenance.model.RequestFailureModel
 import com.ethernom.maintenance.utils.AppConstant
 import com.ethernom.maintenance.utils.AppConstant.CAPSULE_VERSION
 import com.ethernom.maintenance.utils.AppConstant.DEVICE_NAME
-import java.lang.Long.parseLong
 import kotlin.system.exitProcess
 
 class MaintenanceActivity : BaseActivity<ActivityMaintenanceBinding>() {
@@ -96,21 +95,21 @@ class MaintenanceActivity : BaseActivity<ActivityMaintenanceBinding>() {
             when(p1){
                 0 -> {
                     if(!isNetworkAvailable()){
-                        showSuggestionDialog(R.string.network_title, R.string.network_msg, R.string.dialog_ok){
+                        showConfirmDialogFragment(DialogEnum.NETWORK.type){
                             isMenuItemClick = false
                         }
                         return
                     }
                     mCapsuleFactoryResetAPI.capsuleFactoryResetRequest()
-                    showDialogInProgress(R.string.capsule_reset_title, R.string.capsule_reset_in_progress)
+                    showInProgressDialogFragment(DialogEnum.RESET_PROGRESS.type)
                 }
                 1 -> {
                     mDebugProcessAPI.debugProcessRequest()
-                    showDialogInProgress(R.string.debug_title, R.string.debug_in_progress)
+                    showInProgressDialogFragment(DialogEnum.DEBUG_PROGRESS.type)
                 }
                 2 -> {
                     mReadQrCodeAPI.readQRCodeRequest()
-                    showDialogInProgress(R.string.qr_code_title, R.string.qr_code_in_progress)
+                    showInProgressDialogFragment(DialogEnum.QR_PROGRESS.type)
                 }
                 3 -> {
                     isMenuItemClick = false
@@ -157,7 +156,7 @@ class MaintenanceActivity : BaseActivity<ActivityMaintenanceBinding>() {
                 CapsuleFactoryResetBRAction.ACT_RESET_RSP -> {}
                 CapsuleFactoryResetBRAction.ACT_RESET_FAILURE -> {
                     val requestFailureModel = intent.getSerializableExtra(AppConstant.CAPSULE_FAILURE_KEY) as RequestFailureModel
-                    showDialogFailed(R.string.capsule_reset_title, requestFailureModel.errorMessage, requestFailureModel.errorCode){
+                    showFailedDialogFragment(DialogEnum.RESET_FAILED.type, requestFailureModel.errorCode){
                         finish()
                         exitProcess(0)
                     }
@@ -170,7 +169,7 @@ class MaintenanceActivity : BaseActivity<ActivityMaintenanceBinding>() {
                 DebugProcessBRAction.ACT_DEBUG_PROCESS_RSP -> {}
                 DebugProcessBRAction.ACT_DEBUG_PROCESS_FAILURE -> {
                     val requestFailureModel = intent.getSerializableExtra(AppConstant.CAPSULE_FAILURE_KEY) as RequestFailureModel
-                    showDialogFailed(R.string.debug_title, requestFailureModel.errorMessage, requestFailureModel.errorCode){
+                    showConfirmDialogFragment(DialogEnum.DEBUG_FAILED.type){
                         finish()
                         exitProcess(0)
                     }
@@ -193,10 +192,11 @@ class MaintenanceActivity : BaseActivity<ActivityMaintenanceBinding>() {
                 ReadQRCodeBRAction.READ_QR_CODE_RESPONSE -> {}
                 ReadQRCodeBRAction.READ_QR_CODE_FAILURE -> {
                     val requestFailureModel = intent.getSerializableExtra(AppConstant.CAPSULE_FAILURE_KEY) as RequestFailureModel
-                    showDialogFailed(R.string.qr_code_title, requestFailureModel.errorMessage, requestFailureModel.errorCode){
+                    showFailedDialogFragment(DialogEnum.QR_FAILED.type, requestFailureModel.errorCode){
                         finish()
                         exitProcess(0)
                     }
+
                 }
                 ReadQRCodeBRAction.READ_QR_CODE_COMPLETED -> {
                     Log.d("ReadQRCodeAO", "onReceive: READ_QR_CODE_COMPLETED")
@@ -214,7 +214,7 @@ class MaintenanceActivity : BaseActivity<ActivityMaintenanceBinding>() {
 
     private fun requestComplete(@StringRes title: Int, @StringRes msg: Int, activityClass: Class<out AppCompatActivity?>, isNextActivity: Boolean,bundle: Bundle? = null){
         var isClick = false
-        showDialogSuccess(title, msg){
+        showConfirmDialogFragment(DialogEnum.DEBUG_SUCCESS.type){
             isClick = true
             removeTimeout(isClick)
             if(isNextActivity) startNextActivity(activityClass, bundle, true)
@@ -223,7 +223,7 @@ class MaintenanceActivity : BaseActivity<ActivityMaintenanceBinding>() {
 
         mHandler.postDelayed({
             if(!isClick){
-                if(alertDialog != null) alertDialog!!.dismiss()
+                if(dialogFragment != null) dialogFragment!!.dismiss()
                 if(isNextActivity) startNextActivity(activityClass, bundle, true)
                 if(!isNextActivity) startPreviousActivity(activityClass, bundle, true)
             }

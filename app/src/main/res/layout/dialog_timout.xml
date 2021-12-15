@@ -3,14 +3,15 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="@dimen/dimen_20dp">
+    android:background="@drawable/bg_rounded_grey"
+    android:padding="@dimen/dimen_10dp">
 
     <ImageView
         android:id="@+id/imv_logo"
         android:layout_width="50dip"
         android:layout_height="50dip"
         android:layout_gravity="center"
-        android:src="@drawable/ic_cancel" />
+        android:src="@drawable/img_timeout" />
 
     <TextView
         android:id="@+id/title"
@@ -48,11 +49,13 @@
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btn_exit"
                 android:layout_width="wrap_content"
-                android:layout_height="@dimen/dimen_40dp"
+                android:layout_height="@dimen/dimen_35dp"
                 android:layout_gravity="center"
                 android:background="@drawable/selector_disable_ct"
                 android:text="@string/exit"
                 android:textAllCaps="false"
+                android:layout_marginTop="3dp"
+                android:layout_marginBottom="3dp"
                 android:textColor="@color/white"
                 android:textSize="@dimen/text_size_16sp" />
         </LinearLayout>
@@ -69,17 +72,16 @@
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btn_retry"
                 android:layout_width="wrap_content"
-                android:layout_height="@dimen/dimen_40dp"
+                android:layout_height="@dimen/dimen_35dp"
                 android:layout_gravity="center"
                 android:background="@drawable/selector_save_qr"
                 android:text="@string/retry"
                 android:textAllCaps="false"
+                android:layout_marginTop="3dp"
+                android:layout_marginBottom="3dp"
                 android:textColor="@color/white"
                 android:textSize="@dimen/text_size_16sp" />
         </LinearLayout>
     </LinearLayout>
 
-    <View
-        android:layout_width="wrap_content"
-        android:layout_height="@dimen/dimen_5dp" />
 </LinearLayout>

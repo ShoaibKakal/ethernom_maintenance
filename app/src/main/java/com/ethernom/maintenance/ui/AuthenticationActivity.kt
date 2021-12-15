@@ -16,6 +16,7 @@ import com.ethernom.maintenance.ao.login.LoginAPI
 import com.ethernom.maintenance.ao.login.LoginBRAction
 import com.ethernom.maintenance.base.BaseActivity
 import com.ethernom.maintenance.databinding.ActivityAuthenticationBinding
+import com.ethernom.maintenance.model.DialogEnum
 import com.ethernom.maintenance.model.RequestFailureModel
 import com.ethernom.maintenance.utils.AppConstant
 import com.ethernom.maintenance.utils.COLOR
@@ -72,7 +73,7 @@ class AuthenticationActivity: BaseActivity<ActivityAuthenticationBinding>() {
             }
 
             if(!isNetworkAvailable()){
-                showSuggestionDialog(R.string.network_title, R.string.network_msg, R.string.dialog_ok){}
+                showConfirmDialogFragment(DialogEnum.NETWORK.type){}
                 return@setOnClickListener
             }
 

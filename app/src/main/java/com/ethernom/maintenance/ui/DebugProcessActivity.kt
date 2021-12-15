@@ -8,8 +8,6 @@ import androidx.core.content.ContextCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.ethernom.maintenance.R
-import com.ethernom.maintenance.adapter.CapsuleStatusAdapter
-import com.ethernom.maintenance.adapter.CapsuleAOAdapter
 import com.ethernom.maintenance.adapter.DebugProcessAdapter
 import com.ethernom.maintenance.ao.BROADCAST_INTERRUPT
 import com.ethernom.maintenance.ao.debugProcess.DebugProcessAPI
@@ -129,7 +127,7 @@ class DebugProcessActivity : BaseActivity<ActivityDebugProcessBinding>() {
                 DebugProcessBRAction.ACT_TIMEOUT_UPDATE_CT -> {
                     hideLoading()
                     val requestFailureModel = intent.getSerializableExtra(AppConstant.CAPSULE_FAILURE_KEY) as RequestFailureModel
-                    showDialogFailed(R.string.debug_title,requestFailureModel.errorMessage, requestFailureModel.errorCode){
+                    showFailedDialogFragment(DialogEnum.UPDATE_CT_FAILED.type, requestFailureModel.errorCode){
                         finish()
                         exitProcess(0)
                     }
