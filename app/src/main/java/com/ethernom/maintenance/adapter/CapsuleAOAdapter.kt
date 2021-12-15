@@ -4,13 +4,10 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
-import com.ethernom.maintenance.R
 import com.ethernom.maintenance.databinding.ItemDebugProcessBgBinding
 import com.ethernom.maintenance.databinding.ItemDebugProcessBinding
 import com.ethernom.maintenance.model.CapsuleOAModel
-import java.lang.IllegalArgumentException
 
 class CapsuleAOAdapter(ctx: Context, array: MutableList<CapsuleOAModel>) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {

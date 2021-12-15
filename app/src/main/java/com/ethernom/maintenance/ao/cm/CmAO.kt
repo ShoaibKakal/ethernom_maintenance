@@ -5,25 +5,18 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import com.ethernom.maintenance.ao.transport.TransportAPI
 import com.ethernom.maintenance.ao.*
 import com.ethernom.maintenance.ao.cm.repository.LoginRepository
 import com.ethernom.maintenance.ao.cm.repository.UnregisterRepository
 import com.ethernom.maintenance.ao.link.LinkDescriptor
+import com.ethernom.maintenance.ao.transport.TransportAPI
 import com.ethernom.maintenance.model.LoginRequestBody
 import com.ethernom.maintenance.model.LoginResponse
 import com.ethernom.maintenance.model.UnregisterRequestBody
 import com.ethernom.maintenance.model.UnregisterResponse
 import com.ethernom.maintenance.ui.commonAO
-import com.ethernom.maintenance.utils.AppConstant.BLUETOOTH_DEVICE
-import com.ethernom.maintenance.utils.AppConstant.CAPSULE_VERSION
 import com.ethernom.maintenance.utils.AppConstant.DEVICE_ADVERTISE
-import com.ethernom.maintenance.utils.AppConstant.DEVICE_NAME
 import com.ethernom.maintenance.utils.AppConstant.DEVICE_READY
-import com.ethernom.maintenance.utils.AppConstant.MANUFAC_SERIAL_NUMBER
-import com.ethernom.maintenance.utils.AppConstant.MTU
-import com.ethernom.maintenance.utils.AppConstant.TYPE
-import com.ethernom.maintenance.utils.AppConstant.UUID
 import com.ethernom.maintenance.utils.Port
 import com.ethernom.maintenance.utils.hexa
 

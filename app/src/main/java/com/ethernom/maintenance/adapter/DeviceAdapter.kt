@@ -4,12 +4,9 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
-import com.ethernom.maintenance.R
 import com.ethernom.maintenance.ao.link.LinkDescriptor
 import com.ethernom.maintenance.databinding.ItemDeviceBinding
-import com.ethernom.maintenance.model.DeviceModel
 
 class DeviceAdapter(ctx:Context, itemCallback: (LinkDescriptor, Int) -> Unit): RecyclerView.Adapter<DeviceAdapter.DeviceViewHolder>() {
 

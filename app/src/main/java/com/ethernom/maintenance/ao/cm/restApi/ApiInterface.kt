@@ -4,7 +4,9 @@ import com.ethernom.maintenance.model.LoginRequestBody
 import com.ethernom.maintenance.model.LoginResponse
 import com.ethernom.maintenance.model.UnregisterResponse
 import retrofit2.Call
-import retrofit2.http.*
+import retrofit2.http.Body
+import retrofit2.http.POST
+import retrofit2.http.Query
 
 interface ApiInterface {
 

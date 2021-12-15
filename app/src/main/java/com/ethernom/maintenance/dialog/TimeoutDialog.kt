@@ -2,7 +2,7 @@ package com.ethernom.maintenance.dialog
 
 import android.view.ViewGroup
 import com.ethernom.maintenance.base.BaseDialog
-import com.ethernom.maintenance.databinding.*
+import com.ethernom.maintenance.databinding.DialogTimoutBinding
 import com.ethernom.maintenance.model.DialogEnum
 import com.ethernom.maintenance.utils.AppConstant
 

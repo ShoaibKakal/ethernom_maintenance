@@ -11,7 +11,6 @@ import com.ethernom.maintenance.ao.*
 import com.ethernom.maintenance.ao.cm.CmType
 import com.ethernom.maintenance.errorCode.ErrorCode
 import com.ethernom.maintenance.model.CapsuleOAModel
-import com.ethernom.maintenance.model.CapsuleStatusModel
 import com.ethernom.maintenance.model.DebugProcessModel
 import com.ethernom.maintenance.model.RequestFailureModel
 import com.ethernom.maintenance.ui.cmAPI

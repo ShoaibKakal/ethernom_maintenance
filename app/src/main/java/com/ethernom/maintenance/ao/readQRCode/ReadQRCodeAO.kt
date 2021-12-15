@@ -8,10 +8,8 @@ import android.os.Looper
 import android.util.Log
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.ethernom.maintenance.ao.*
-import com.ethernom.maintenance.ao.capsuleFactoryReset.CapsuleFactoryResetBRAction
 import com.ethernom.maintenance.ao.capsuleFactoryReset.CapsuleFactoryResetEvent
 import com.ethernom.maintenance.ao.cm.CmType
-import com.ethernom.maintenance.ao.debugProcess.DebugProcessState
 import com.ethernom.maintenance.errorCode.ErrorCode
 import com.ethernom.maintenance.model.RequestFailureModel
 import com.ethernom.maintenance.ui.cmAPI

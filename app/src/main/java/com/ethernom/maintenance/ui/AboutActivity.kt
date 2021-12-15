@@ -1,13 +1,10 @@
 package com.ethernom.maintenance.ui
 
-import android.util.Log
 import android.view.View
 import com.ethernom.maintenance.R
 import com.ethernom.maintenance.base.BaseActivity
 import com.ethernom.maintenance.databinding.ActivityAboutBinding
 import com.ethernom.maintenance.utils.AppConstant
-import com.ethernom.maintenance.utils.hexa
-import com.ethernom.maintenance.utils.session.ApplicationSession
 import java.lang.Long.parseLong
 import java.util.*
 

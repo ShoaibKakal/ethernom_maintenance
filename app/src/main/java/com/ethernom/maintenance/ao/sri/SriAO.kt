@@ -2,9 +2,8 @@ package com.ethernom.maintenance.ao.sri
 
 import android.content.Context
 import android.util.Log
-import com.ethernom.maintenance.MainApplication
-import com.ethernom.maintenance.ao.cm.SvrBufferType
 import com.ethernom.maintenance.ao.*
+import com.ethernom.maintenance.ao.cm.SvrBufferType
 import com.ethernom.maintenance.ui.commonAO
 import com.ethernom.maintenance.utils.APPCmd
 import com.ethernom.maintenance.utils.hexa

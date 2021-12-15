@@ -3,7 +3,6 @@ package com.ethernom.maintenance.ao.link
 import android.bluetooth.BluetoothDevice
 import android.content.Context
 import android.util.Log
-import com.ethernom.maintenance.MainApplication
 import com.ethernom.maintenance.ao.ACB
 import com.ethernom.maintenance.ao.DescIdx
 import com.ethernom.maintenance.ao.EventBuffer

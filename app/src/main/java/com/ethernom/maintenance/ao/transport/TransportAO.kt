@@ -5,10 +5,9 @@ import android.content.Context
 import android.content.Intent
 import android.os.Handler
 import android.util.Log
-import com.ethernom.maintenance.MainApplication
+import com.ethernom.maintenance.ao.*
 import com.ethernom.maintenance.ao.link.LinkAPI
 import com.ethernom.maintenance.ao.link.LinkType
-import com.ethernom.maintenance.ao.*
 import com.ethernom.maintenance.ui.commonAO
 import com.ethernom.maintenance.utils.ETH_TP_HEADER_SIZE
 import com.ethernom.maintenance.utils.TransportCmd

@@ -2,28 +2,19 @@ package com.ethernom.maintenance.ui
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.bluetooth.BluetoothAdapter
-import android.content.BroadcastReceiver
-import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.app.ActivityCompat
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import com.ethernom.maintenance.ao.BROADCAST_INTERRUPT
+import com.ethernom.maintenance.R
 import com.ethernom.maintenance.ao.CommonAO
 import com.ethernom.maintenance.ao.cm.CmAPI
-import com.ethernom.maintenance.R
 import com.ethernom.maintenance.databinding.ActivitySplashBinding
-import com.ethernom.maintenance.utils.Utils
 
 
 var commonAO: CommonAO? = null

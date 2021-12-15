@@ -9,11 +9,6 @@ import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.DialogFragment
 import androidx.viewbinding.ViewBinding
-import android.view.Gravity
-
-import android.view.WindowManager
-
-
 
 
 abstract class BaseDialog<VB: ViewBinding>: DialogFragment() {

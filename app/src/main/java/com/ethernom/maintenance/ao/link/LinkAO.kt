@@ -7,14 +7,12 @@ import android.os.Handler
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import com.ethernom.maintenance.MainApplication
-import com.ethernom.maintenance.ao.transport.TpEvent
 import com.ethernom.maintenance.ao.*
 import com.ethernom.maintenance.ao.link.ble.BLEDialogActivity
 import com.ethernom.maintenance.ao.link.ble.L2CAP
+import com.ethernom.maintenance.ao.transport.TpEvent
 import com.ethernom.maintenance.ui.commonAO
 import com.ethernom.maintenance.utils.Utils
-import kotlin.collections.ArrayList
 
 @RequiresApi(Build.VERSION_CODES.Q)
 class LinkAO(ctx: Context) {

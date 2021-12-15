@@ -2,12 +2,11 @@ package com.ethernom.maintenance.ao.transport
 
 import android.content.Context
 import android.util.Log
-import com.ethernom.maintenance.MainApplication
-import com.ethernom.maintenance.ao.link.LinkDescriptor
 import com.ethernom.maintenance.ao.ACB
 import com.ethernom.maintenance.ao.DescIdx
 import com.ethernom.maintenance.ao.EventBuffer
 import com.ethernom.maintenance.ao.SrvDesc
+import com.ethernom.maintenance.ao.link.LinkDescriptor
 import com.ethernom.maintenance.ui.commonAO
 
 class TransportAPI(ctx: Context) {

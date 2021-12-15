@@ -8,6 +8,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.location.LocationManager
+import android.net.ConnectivityManager
 import android.os.Build
 import android.os.Bundle
 import android.view.MenuItem
@@ -15,8 +16,13 @@ import android.view.ViewGroup
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.DialogFragment
 import androidx.viewbinding.ViewBinding
 import com.ethernom.maintenance.R
+import com.ethernom.maintenance.dialog.ConfirmDialog
+import com.ethernom.maintenance.dialog.InProgressDialog
+import com.ethernom.maintenance.dialog.TimeoutDialog
+import com.ethernom.maintenance.utils.AppConstant
 import com.ethernom.maintenance.utils.AppConstant.START_ACTIVITY_ANIM_LEFT
 import com.ethernom.maintenance.utils.AppConstant.START_ACTIVITY_ANIM_RIGHT
 import com.ethernom.maintenance.utils.AppConstant.START_ACTIVITY_ANIM_TOP
@@ -25,12 +31,6 @@ import com.ethernom.maintenance.utils.customView.LoadingView
 import kotlinx.android.synthetic.main.toolbar_back_press.*
 import kotlinx.android.synthetic.main.toolbar_center_title.center_toolbar
 import kotlinx.android.synthetic.main.toolbar_center_title.toolbar_title
-
-import android.net.ConnectivityManager
-import androidx.annotation.DrawableRes
-import androidx.fragment.app.DialogFragment
-import com.ethernom.maintenance.dialog.*
-import com.ethernom.maintenance.utils.AppConstant
 
 
 abstract class BaseActivity<VB: ViewBinding>: AppCompatActivity() {

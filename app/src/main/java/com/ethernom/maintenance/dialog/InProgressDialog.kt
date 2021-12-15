@@ -1,7 +1,6 @@
 package com.ethernom.maintenance.dialog
 
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import com.ethernom.maintenance.base.BaseDialog
 import com.ethernom.maintenance.databinding.DialogInProgressBinding
 import com.ethernom.maintenance.model.DialogEnum

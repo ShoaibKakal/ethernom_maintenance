@@ -4,13 +4,14 @@ import android.content.Context
 import android.content.Intent
 import android.util.Log
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import com.ethernom.maintenance.MainApplication
 import com.ethernom.maintenance.ao.AoEvent
 import com.ethernom.maintenance.ao.AoId
 import com.ethernom.maintenance.ao.BROADCAST_INTERRUPT
 import com.ethernom.maintenance.ao.EventBuffer
 import com.ethernom.maintenance.ui.commonAO
-import java.io.*
+import java.io.DataInputStream
+import java.io.DataOutputStream
+import java.io.IOException
 import java.net.InetSocketAddress
 import java.net.Socket
 import java.net.SocketAddress

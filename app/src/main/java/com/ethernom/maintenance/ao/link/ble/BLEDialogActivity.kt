@@ -12,11 +12,10 @@ import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import com.ethernom.maintenance.MainApplication
+import com.ethernom.maintenance.R
 import com.ethernom.maintenance.ao.BROADCAST_INTERRUPT
 import com.ethernom.maintenance.ao.EventBuffer
 import com.ethernom.maintenance.ao.link.LinkEvent
-import com.ethernom.maintenance.R
 import com.ethernom.maintenance.ui.commonAO
 import kotlin.system.exitProcess
 

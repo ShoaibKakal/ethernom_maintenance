@@ -1,7 +1,6 @@
 package com.ethernom.maintenance
 
 import android.app.Application
-import com.ethernom.maintenance.ao.CommonAO
 import com.ethernom.maintenance.ao.cm.CmAPI
 
 class MainApplication: Application() {
