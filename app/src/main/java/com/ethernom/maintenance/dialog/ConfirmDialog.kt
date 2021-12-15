@@ -50,9 +50,7 @@ class ConfirmDialog(private val confirmCallback: () -> Unit) : BaseDialog<Dialog
                     else -> throw IllegalArgumentException("Invalid dialog type!!!")
                 }
             binding!!.apply {
-                this.title.text =
-                    if (dialogModel.contentCode == -1) dialogModel.title
-                    else "${dialogModel.title}\n(Code: ${dialogModel.contentCode})"
+                this.title.text = dialogModel.title
                 this.content.text = dialogModel.content
                 this.imvLogo.setImageResource(dialogModel.iconId!!)
                 this.btnConfirm.text = dialogModel.button
