@@ -42,7 +42,7 @@ class DebugProcessActivity : BaseActivity<ActivityDebugProcessBinding>() {
     }
 
     override fun onBackPressed() {
-        showLoading("Loading...")
+        showLoading("Loading: Disconnect...")
         debugProcessAPI.closeUpdateCT()
     }
 
@@ -103,7 +103,7 @@ class DebugProcessActivity : BaseActivity<ActivityDebugProcessBinding>() {
         }
 
         binding.btnClose.setOnClickListener {
-            showLoading("Loading: Update CT...")
+            showLoading("Loading: Disconnect...")
             debugProcessAPI.closeUpdateCT()
         }
     }

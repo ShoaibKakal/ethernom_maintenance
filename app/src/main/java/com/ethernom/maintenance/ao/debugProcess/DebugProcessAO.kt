@@ -229,6 +229,7 @@ class DebugProcessAO(ctx: Context) {
         val payload = ByteArray(0)
         val data = Utils.makeAPDUHeader(APPCmd.A2C_DBP_COM,payload )
         cmAPI!!.cmSend(CmType.capsule, data, null)
+        cmAPI!!.cmReset(CmType.capsule)
 
         Handler(Looper.getMainLooper()).postDelayed({
             val event = EventBuffer(eventId = DebugProcessEvent.DEBUG_PROCESS_COMPLETED, completedType = 1)

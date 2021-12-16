@@ -117,7 +117,7 @@ class ReadQRCodeAO(ctx: Context) {
             val payload = ByteArray(0)
             val dataPayload = Utils.makeAPDUHeader(APPCmd.A2C_RQR_COM, payload)
             cmAPI!!.cmSend(CmType.capsule, dataPayload, null)
-
+            cmAPI!!.cmReset(CmType.capsule)
             val event = EventBuffer(ReadQRCodeEvent.READ_QR_CODE_COMPLETED, deviceName = deviceName, serialNumber = sn)
             commonAO!!.sendEvent(AoId.AO_RQR_ID, event)
         } else {
