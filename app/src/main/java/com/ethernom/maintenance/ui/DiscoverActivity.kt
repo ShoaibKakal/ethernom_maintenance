@@ -72,8 +72,7 @@ class DiscoverActivity : BaseActivity<ActivityDiscoverBinding>() {
         }
 
         binding.swipeRefresh.setOnRefreshListener {
-            startDiscoveryDevice()
-            refreshTimeout = false
+            checkAppPermissionAndSetting()
         }
     }
 
@@ -230,21 +229,23 @@ class DiscoverActivity : BaseActivity<ActivityDiscoverBinding>() {
         commonAO!!.aoRunScheduler()
         Handler(Looper.getMainLooper()).postDelayed({
             Log.d(tag, "Discover Nearby Device!!!")
-            removeTimeout(refreshTimeout)
             mDeviceAdapter.clearAllDevice()
             cmAPI!!.cmDiscovery(CmType.capsule)
             commonAO!!.aoRunScheduler()
         }, 1000)
     }
 
-    private fun refreshDiscoverDevice(){
+    private fun refresh30secDiscovery(){
         if(refreshTimeout) return
-        mHandler.postDelayed({
-            Log.d(tag, "refreshDiscoverDevice")
-            refreshTimeout = false
-            binding.swipeRefresh.isRefreshing = true
-            startDiscoveryDevice()
-        }, 30000)
+        refreshTimeout = true
+        mHandler.postDelayed(refreshRunnable,30000)
+    }
+
+    private val refreshRunnable : Runnable = Runnable {
+        Log.d(tag, "refreshDiscoverDevice")
+        refreshTimeout = false
+        binding.swipeRefresh.isRefreshing = true
+        startDiscoveryDevice()
     }
 
     private fun initRecyclerView() {
@@ -259,6 +260,8 @@ class DiscoverActivity : BaseActivity<ActivityDiscoverBinding>() {
     private val deviceItemSelected = object : (LinkDescriptor, Int) -> Unit {
         override fun invoke(device: LinkDescriptor, position: Int) {
             if(deviceItemClick) return
+            refreshTimeout = true
+            removeTimeout(refreshTimeout)
             showLoading(resources.getString(R.string.loading_connecting) + " to ${device.deviceName}...")
             cmAPI!!.cmSelect(CmType.capsule, device)
             commonAO!!.aoRunScheduler()
@@ -347,8 +350,10 @@ class DiscoverActivity : BaseActivity<ActivityDiscoverBinding>() {
                     if(!Utils.isBluetoothEnable) return
                     mDeviceAdapter.addDevice(ll)
 
-                    refreshDiscoverDevice()
-                    refreshTimeout = true
+                    refresh30secDiscovery()
+                }
+                CmBRAction.ACT_TP_CON_REQUEST -> {
+                    Log.d(tag, "ACT_TP_CON_REQUEST")
                 }
                 CmBRAction.ACT_TP_CON_TIMEOUT -> {
                     hideLoading()
@@ -370,6 +375,7 @@ class DiscoverActivity : BaseActivity<ActivityDiscoverBinding>() {
                     Log.d(tag, "ACT_TP_CON_READY ")
                     hideLoading()
                     removeTimeout(connectionTimeout)
+                    removeTimeout(true)
                     val llReady = dataIntent.getSerializableExtra(DEVICE_READY) as LinkDescriptor
                     Log.d(tag, "$llReady")
                     val bundle = Bundle()
