@@ -39,7 +39,7 @@ class DeviceAdapter(ctx:Context, itemCallback: (LinkDescriptor, Int) -> Unit): R
 
     inner class DeviceViewHolder(private val itemBinding: ItemDeviceBinding): RecyclerView.ViewHolder(itemBinding.root){
         fun bind(item: LinkDescriptor){
-            itemBinding.txtCardName.text = item.deviceName
+            itemBinding.txtCardName.text = if(item.deviceName.isNotEmpty()) item.deviceName else "N/A"
             itemBinding.txtCardSn.text = "SN:${item.mfgSN}"
             itemBinding.root.setOnClickListener {
                 itemClickCallback.invoke(item, adapterPosition)
