@@ -169,7 +169,7 @@ class MaintenanceActivity : BaseActivity<ActivityMaintenanceBinding>() {
                 DebugProcessBRAction.ACT_DEBUG_PROCESS_RSP -> {}
                 DebugProcessBRAction.ACT_DEBUG_PROCESS_FAILURE -> {
                     val requestFailureModel = intent.getSerializableExtra(AppConstant.CAPSULE_FAILURE_KEY) as RequestFailureModel
-                    showConfirmDialogFragment(DialogEnum.DEBUG_FAILED.type){
+                    showFailedDialogFragment(DialogEnum.DEBUG_FAILED.type, requestFailureModel.errorCode){
                         finish()
                         exitProcess(0)
                     }
