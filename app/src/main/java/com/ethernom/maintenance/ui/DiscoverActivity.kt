@@ -23,6 +23,7 @@ import com.ethernom.maintenance.ao.cm.CmType
 import com.ethernom.maintenance.ao.link.LinkDescriptor
 import com.ethernom.maintenance.base.BaseActivity
 import com.ethernom.maintenance.databinding.ActivityDiscoverBinding
+import com.ethernom.maintenance.model.AppRequestState
 import com.ethernom.maintenance.model.DialogEnum
 import com.ethernom.maintenance.utils.AppConstant.CAPSULE_VERSION
 import com.ethernom.maintenance.utils.AppConstant.DEVICE_ADVERTISE
@@ -35,6 +36,7 @@ import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.LocationSettingsRequest
 import com.google.android.gms.location.LocationSettingsStatusCodes
+import java.lang.IllegalArgumentException
 import kotlin.system.exitProcess
 
 
@@ -54,6 +56,7 @@ class DiscoverActivity : BaseActivity<ActivityDiscoverBinding>() {
     private var refreshTimeout = false
 
     private lateinit var mHandler: Handler
+    private var requestStateType: Pair<Byte, Bundle?> = Pair(0x00, null)
 
     override fun getViewBidingClass(): ActivityDiscoverBinding {
         return ActivityDiscoverBinding.inflate(layoutInflater)
@@ -79,6 +82,7 @@ class DiscoverActivity : BaseActivity<ActivityDiscoverBinding>() {
     override fun onResume() {
         super.onResume()
         appInBackground = false
+        handleUiAction()
         checkAppPermissionAndSetting()
     }
 
@@ -93,6 +97,10 @@ class DiscoverActivity : BaseActivity<ActivityDiscoverBinding>() {
         localBroadcastManager.unregisterReceiver(appsReceiver)
         unRegisterBluetoothReceiver()
         unRegisterLocationBroadcast()
+    }
+
+    override fun onBackPressed() {
+        exitApplication()
     }
 
     private fun checkAppPermissionAndSetting() {
@@ -271,15 +279,8 @@ class DiscoverActivity : BaseActivity<ActivityDiscoverBinding>() {
                 if (connectionTimeout) {
                     connectionTimeout = false
                     hideLoading()
-                    showTimeoutDialogFragment( DialogEnum.CONNECT_TIMEOUT.type) {
-                        if(it){
-                            mDeviceAdapter.clearAllDevice()
-                            checkAppPermissionAndSetting()
-                        } else {
-                            finish()
-                            exitProcess(0)
-                        }
-                    }
+                    requestStateType = Pair(AppRequestState.ACT_TP_CON_TIMEOUT.type, null)
+                    handleUiAction()
                 }
             }, 15000)
         }
@@ -313,7 +314,7 @@ class DiscoverActivity : BaseActivity<ActivityDiscoverBinding>() {
             bluetoothSettingInitCheck = false
             binding.layoutError.visibility = View.GONE
             checkAppPermissionAndSetting()
-            if (dialogFragment != null) dialogFragment!!.dismiss()
+            dismissDialogFragment()
         }
     }
 
@@ -360,15 +361,8 @@ class DiscoverActivity : BaseActivity<ActivityDiscoverBinding>() {
                     Log.d(tag, "ACT_TCP_CON_TIMEOUT")
                     removeTimeout(connectionTimeout)
                     connectionTimeout = false
-                    showTimeoutDialogFragment(DialogEnum.CONNECT_TIMEOUT.type) {
-                        if(it){
-                            mDeviceAdapter.clearAllDevice()
-                            checkAppPermissionAndSetting()
-                        } else {
-                            finish()
-                            exitProcess(0)
-                        }
-                    }
+                    requestStateType = Pair(AppRequestState.ACT_TP_CON_TIMEOUT.type, null)
+                    handleUiAction()
                 }
 
                 CmBRAction.ACT_TP_CON_READY -> {
@@ -381,10 +375,35 @@ class DiscoverActivity : BaseActivity<ActivityDiscoverBinding>() {
                     val bundle = Bundle()
                     bundle.putString(DEVICE_NAME, llReady.deviceName)
                     bundle.putString(CAPSULE_VERSION, llReady.version)
-                    startNextActivity(MaintenanceActivity::class.java, bundle, true)
+                    requestStateType = Pair(AppRequestState.ACT_TP_CON_READY.type, bundle)
+                    handleUiAction()
                 }
             }
         }
+    }
+
+    override fun handleUiAction() {
+        if(appInBackground) return
+        when (requestStateType.first) {
+            AppRequestState.ACT_TP_CON_TIMEOUT.type -> {
+                showTimeoutDialogFragment(DialogEnum.CONNECT_TIMEOUT.type) {
+                    if(it){
+                        mDeviceAdapter.clearAllDevice()
+                        cmAPI!!.cmReset(CmType.capsule)
+                        checkAppPermissionAndSetting()
+                    } else {
+                        exitApplication()
+                    }
+                }
+            }
+            AppRequestState.ACT_TP_CON_READY.type -> {
+                startNextActivity(MaintenanceActivity::class.java, requestStateType.second, true)
+            }
+            else -> {
+                Log.d(tag, "Invalid App State ${requestStateType.first}")
+            }
+        }
+        requestStateType = Pair(0x00, null)
     }
 
 

@@ -16,7 +16,10 @@ import com.ethernom.maintenance.R
 import com.ethernom.maintenance.ao.BROADCAST_INTERRUPT
 import com.ethernom.maintenance.ao.EventBuffer
 import com.ethernom.maintenance.ao.link.LinkEvent
+import com.ethernom.maintenance.dialog.ConfirmDialog
+import com.ethernom.maintenance.model.DialogEnum
 import com.ethernom.maintenance.ui.commonAO
+import com.ethernom.maintenance.utils.AppConstant
 import kotlin.system.exitProcess
 
 @RequiresApi(Build.VERSION_CODES.Q)
@@ -35,20 +38,17 @@ class BLEDialogActivity : AppCompatActivity() {
         val filter = IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED)
         registerReceiver(bluetoothStateChange, filter)
 
-        bleMessageDialog()
-    }
-
-    private fun bleMessageDialog() {
-        val builder: AlertDialog.Builder = AlertDialog.Builder(this)
-        builder.setTitle(resources.getString(R.string.warning))
-        builder.setMessage(resources.getString(R.string.turn_on_bluetooth_message_cred))
-        builder.setCancelable(true)
-        builder.setPositiveButton(resources.getString(R.string.enable)) { dialog, _ ->
-            dialog.cancel()
+        showBleDialogFragment(DialogEnum.BLUETOOTH.type){
             turnOnBluetooth()
         }
-        bleAlertDialog = builder.create()
-        bleAlertDialog.show()
+    }
+
+    private fun showBleDialogFragment(dialogType: Byte, confirmCallback: () -> Unit){
+        val bundle = Bundle()
+        bundle.putByte(AppConstant.DIALOG_TYPE, dialogType)
+        val dialogFragment = ConfirmDialog(confirmCallback)
+        dialogFragment.arguments = bundle
+        dialogFragment.show(supportFragmentManager.beginTransaction(), null)
     }
 
     private fun turnOnBluetooth(): Boolean {

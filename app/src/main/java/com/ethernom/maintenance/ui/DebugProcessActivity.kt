@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.os.Bundle
 import androidx.core.content.ContextCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -34,6 +35,11 @@ class DebugProcessActivity : BaseActivity<ActivityDebugProcessBinding>() {
         showToolbarBackPress(R.string.debug_toolbar)
         initRecyclerView()
         LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver, intentFilter)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        handleUiAction()
     }
 
     override fun onDestroy() {
@@ -127,10 +133,10 @@ class DebugProcessActivity : BaseActivity<ActivityDebugProcessBinding>() {
                 DebugProcessBRAction.ACT_TIMEOUT_UPDATE_CT -> {
                     hideLoading()
                     val requestFailureModel = intent.getSerializableExtra(AppConstant.CAPSULE_FAILURE_KEY) as RequestFailureModel
-                    showFailedDialogFragment(DialogEnum.UPDATE_CT_FAILED.type, requestFailureModel.errorCode){
-                        finish()
-                        exitProcess(0)
-                    }
+                    val bundle = Bundle()
+                    bundle.putInt(AppConstant.ERROR_CODE, requestFailureModel.errorCode)
+                    setAppStateRequest(AppRequestState.ACT_TIMEOUT_UPDATE_CT.type, bundle)
+                    handleUiAction()
                 }
                 DebugProcessBRAction.ACT_UPDATE_CT_RES -> {
                     hideLoading()
@@ -141,10 +147,9 @@ class DebugProcessActivity : BaseActivity<ActivityDebugProcessBinding>() {
                 }
                 DebugProcessBRAction.ACT_DEBUG_PROCESS_COMPLETED -> {
                     hideLoading()
-                    if(intent.extras!!.containsKey(AppConstant.COMPLETE_TYPE_KEY)){
-                        if(intent.getIntExtra(AppConstant.COMPLETE_TYPE_KEY, 0) == 1) {
-                            startPreviousActivity(DiscoverActivity::class.java, true)
-                        }
+                    if(intent.getIntExtra(AppConstant.COMPLETE_TYPE_KEY, 0) == 1) {
+                        setAppStateRequest(AppRequestState.ACT_DEBUG_PROCESS_COMPLETED.type, null)
+                        handleUiAction()
                     }
                 }
 

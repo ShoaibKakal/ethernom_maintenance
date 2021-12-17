@@ -23,6 +23,7 @@ import com.ethernom.maintenance.ao.readQRCode.ReadQRCodeAPI
 import com.ethernom.maintenance.ao.readQRCode.ReadQRCodeBRAction
 import com.ethernom.maintenance.base.BaseActivity
 import com.ethernom.maintenance.databinding.ActivityMaintenanceBinding
+import com.ethernom.maintenance.model.AppRequestState
 import com.ethernom.maintenance.model.DebugProcessModel
 import com.ethernom.maintenance.model.DialogEnum
 import com.ethernom.maintenance.model.RequestFailureModel
@@ -33,11 +34,9 @@ import kotlin.system.exitProcess
 
 class MaintenanceActivity : BaseActivity<ActivityMaintenanceBinding>() {
     private val tag = javaClass.simpleName
-    private val nextActivityTimeout : Long = 2500
     private var deviceName : String = ""
     private var capsuleVersion: String = ""
     private var isMenuItemClick: Boolean = false
-    private lateinit var mHandler: Handler
 
     private lateinit var mCapsuleFactoryResetAPI: CapsuleFactoryResetAPI
     private lateinit var mDebugProcessAPI: DebugProcessAPI
@@ -55,11 +54,15 @@ class MaintenanceActivity : BaseActivity<ActivityMaintenanceBinding>() {
             capsuleVersion = intent.getStringExtra(CAPSULE_VERSION)!!
             binding.tvUsername.text = "Device Name: $deviceName"
             Log.d(tag, "capsuleVersion: $capsuleVersion")
-            mHandler = Handler(Looper.getMainLooper())
 
             initializeObj()
         }
         LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver, intentFilter)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        handleUiAction()
     }
 
     override fun onDestroy() {
@@ -149,30 +152,30 @@ class MaintenanceActivity : BaseActivity<ActivityMaintenanceBinding>() {
     private val broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             hideLoading()
-            Log.d(tag, "onReceive: ${intent!!.action}")
             when(intent!!.action){
                 BROADCAST_INTERRUPT -> commonAO!!.aoRunScheduler()
 
                 CapsuleFactoryResetBRAction.ACT_RESET_RSP -> {}
                 CapsuleFactoryResetBRAction.ACT_RESET_FAILURE -> {
                     val requestFailureModel = intent.getSerializableExtra(AppConstant.CAPSULE_FAILURE_KEY) as RequestFailureModel
-                    showFailedDialogFragment(DialogEnum.RESET_FAILED.type, requestFailureModel.errorCode){
-                        finish()
-                        exitProcess(0)
-                    }
+                    Log.d(tag, "requestFailureModel ${requestFailureModel.errorCode}")
+                    val bundle = Bundle()
+                    bundle.putInt(AppConstant.ERROR_CODE, requestFailureModel.errorCode)
+                    setAppStateRequest(AppRequestState.ACT_RESET_FAILURE.type, bundle)
+                    handleUiAction()
                 }
                 CapsuleFactoryResetBRAction.ACT_RESET_COMPLETED -> {
-                    requestComplete(R.string.capsule_reset_title, R.string.capsule_reset_success,
-                        DiscoverActivity::class.java, false)
+                    setAppStateRequest(AppRequestState.ACT_RESET_COMPLETED.type, null)
+                    handleUiAction()
                 }
 
                 DebugProcessBRAction.ACT_DEBUG_PROCESS_RSP -> {}
                 DebugProcessBRAction.ACT_DEBUG_PROCESS_FAILURE -> {
                     val requestFailureModel = intent.getSerializableExtra(AppConstant.CAPSULE_FAILURE_KEY) as RequestFailureModel
-                    showFailedDialogFragment(DialogEnum.DEBUG_FAILED.type, requestFailureModel.errorCode){
-                        finish()
-                        exitProcess(0)
-                    }
+                    val bundle = Bundle()
+                    bundle.putInt(AppConstant.ERROR_CODE, requestFailureModel.errorCode)
+                    setAppStateRequest(AppRequestState.ACT_DEBUG_PROCESS_FAILURE.type, bundle)
+                    handleUiAction()
                 }
                 DebugProcessBRAction.ACT_DEBUG_PROCESS_DATA_RSP -> {
                     if(intent.extras!!.containsKey(AppConstant.DEBUG_DATA_RES_KEY)){
@@ -182,8 +185,8 @@ class MaintenanceActivity : BaseActivity<ActivityMaintenanceBinding>() {
                         bundle.putSerializable(AppConstant.DEBUG_DATA_RES_KEY, debugDataRes)
                         bundle.putString(CAPSULE_VERSION, capsuleVersion)
                         bundle.putString(DEVICE_NAME, deviceName)
-                        requestComplete(R.string.debug_title, R.string.debug_success,
-                            DebugProcessActivity::class.java, true, bundle)
+                        setAppStateRequest(AppRequestState.ACT_DEBUG_PROCESS_DATA_RSP.type, bundle)
+                        handleUiAction()
                     }
                 }
                 DebugProcessBRAction.ACT_TIMEOUT_UPDATE_CT -> {}
@@ -192,11 +195,10 @@ class MaintenanceActivity : BaseActivity<ActivityMaintenanceBinding>() {
                 ReadQRCodeBRAction.READ_QR_CODE_RESPONSE -> {}
                 ReadQRCodeBRAction.READ_QR_CODE_FAILURE -> {
                     val requestFailureModel = intent.getSerializableExtra(AppConstant.CAPSULE_FAILURE_KEY) as RequestFailureModel
-                    showFailedDialogFragment(DialogEnum.QR_FAILED.type, requestFailureModel.errorCode){
-                        finish()
-                        exitProcess(0)
-                    }
-
+                    val bundle = Bundle()
+                    bundle.putInt(AppConstant.ERROR_CODE, requestFailureModel.errorCode)
+                    setAppStateRequest(AppRequestState.READ_QR_CODE_FAILURE.type, bundle)
+                    handleUiAction()
                 }
                 ReadQRCodeBRAction.READ_QR_CODE_COMPLETED -> {
                     Log.d("ReadQRCodeAO", "onReceive: READ_QR_CODE_COMPLETED")
@@ -205,34 +207,11 @@ class MaintenanceActivity : BaseActivity<ActivityMaintenanceBinding>() {
                     val bundle = Bundle()
                     bundle.putString(AppConstant.DEVICE_KEY, deviceName)
                     bundle.putString(AppConstant.SERIAL_NUMBER_KEY, sn)
-                    requestComplete(R.string.qr_code_title, R.string.qr_code_success,
-                        QRCodeActivity::class.java, true, bundle)
+                    setAppStateRequest(AppRequestState.READ_QR_CODE_COMPLETED.type, bundle)
+                    handleUiAction()
                 }
             }
         }
-    }
-
-    private fun requestComplete(@StringRes title: Int, @StringRes msg: Int, activityClass: Class<out AppCompatActivity?>, isNextActivity: Boolean,bundle: Bundle? = null){
-        var isClick = false
-        showConfirmDialogFragment(DialogEnum.DEBUG_SUCCESS.type){
-            isClick = true
-            removeTimeout(isClick)
-            if(isNextActivity) startNextActivity(activityClass, bundle, true)
-            if(!isNextActivity) startPreviousActivity(activityClass, bundle, true)
-        }
-
-        mHandler.postDelayed({
-            if(!isClick){
-                if(dialogFragment != null) dialogFragment!!.dismiss()
-                if(isNextActivity) startNextActivity(activityClass, bundle, true)
-                if(!isNextActivity) startPreviousActivity(activityClass, bundle, true)
-            }
-        }, nextActivityTimeout)
-    }
-
-    private fun removeTimeout(timeout: Boolean) {
-        if(!timeout) return
-        mHandler.removeCallbacksAndMessages(null)
     }
 
 }

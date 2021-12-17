@@ -11,6 +11,9 @@ import android.location.LocationManager
 import android.net.ConnectivityManager
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.util.Log
 import android.view.MenuItem
 import android.view.ViewGroup
 import androidx.annotation.StringRes
@@ -22,21 +25,33 @@ import com.ethernom.maintenance.R
 import com.ethernom.maintenance.dialog.ConfirmDialog
 import com.ethernom.maintenance.dialog.InProgressDialog
 import com.ethernom.maintenance.dialog.TimeoutDialog
+import com.ethernom.maintenance.model.AppRequestState
+import com.ethernom.maintenance.model.DialogEnum
+import com.ethernom.maintenance.ui.DebugProcessActivity
+import com.ethernom.maintenance.ui.DiscoverActivity
+import com.ethernom.maintenance.ui.QRCodeActivity
 import com.ethernom.maintenance.utils.AppConstant
 import com.ethernom.maintenance.utils.AppConstant.START_ACTIVITY_ANIM_LEFT
 import com.ethernom.maintenance.utils.AppConstant.START_ACTIVITY_ANIM_RIGHT
 import com.ethernom.maintenance.utils.AppConstant.START_ACTIVITY_ANIM_TOP
+import com.ethernom.maintenance.utils.COLOR
 import com.ethernom.maintenance.utils.Utils
+import com.ethernom.maintenance.utils.customView.CustomToast
 import com.ethernom.maintenance.utils.customView.LoadingView
 import kotlinx.android.synthetic.main.toolbar_back_press.*
 import kotlinx.android.synthetic.main.toolbar_center_title.center_toolbar
 import kotlinx.android.synthetic.main.toolbar_center_title.toolbar_title
+import java.lang.IllegalArgumentException
+import kotlin.system.exitProcess
 
 
 abstract class BaseActivity<VB: ViewBinding>: AppCompatActivity() {
     lateinit var binding: VB
     var dialogFragment: DialogFragment? = null
-    private var isBackground: Boolean = false
+    var isBackground: Boolean = false
+
+    private val nextActivityTimeout : Long = 2500
+    private var requestStateType: Pair<Byte, Bundle?> = Pair(0x00, null)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -119,6 +134,94 @@ abstract class BaseActivity<VB: ViewBinding>: AppCompatActivity() {
         }
     }
 
+    open fun setAppStateRequest(stateType: Byte, bundle: Bundle?){
+        requestStateType = Pair(stateType, bundle)
+    }
+
+    open fun handleUiAction() {
+        if (isBackground) return
+        when (requestStateType.first) {
+            AppRequestState.ACT_RESET_FAILURE.type -> {
+                val errorCode = requestStateType.second!!.getInt(AppConstant.ERROR_CODE)
+                showFailedDialogFragment(DialogEnum.RESET_FAILED.type, errorCode) {
+                    exitApplication()
+                }
+            }
+            AppRequestState.ACT_RESET_COMPLETED.type -> {
+                requestComplete(DialogEnum.RESET_SUCCESS.type ,DiscoverActivity::class.java, false)
+            }
+            AppRequestState.ACT_DEBUG_PROCESS_FAILURE.type -> {
+                val errorCode = requestStateType.second!!.getInt(AppConstant.ERROR_CODE)
+                showFailedDialogFragment(DialogEnum.DEBUG_FAILED.type, errorCode) {
+                    exitApplication()
+                }
+            }
+            AppRequestState.ACT_DEBUG_PROCESS_DATA_RSP.type -> {
+                requestComplete(DialogEnum.DEBUG_SUCCESS.type ,DebugProcessActivity::class.java, true, requestStateType.second)
+            }
+            AppRequestState.READ_QR_CODE_FAILURE.type -> {
+                val errorCode = requestStateType.second!!.getInt(AppConstant.ERROR_CODE)
+                showFailedDialogFragment(DialogEnum.QR_FAILED.type, errorCode) {
+                    exitApplication()
+                }
+            }
+            AppRequestState.READ_QR_CODE_COMPLETED.type -> {
+                requestComplete(DialogEnum.QR_SUCCESS.type, QRCodeActivity::class.java, true, requestStateType.second)
+            }
+            AppRequestState.ACT_TIMEOUT_UPDATE_CT.type -> {
+                val errorCode = requestStateType.second!!.getInt(AppConstant.ERROR_CODE)
+                showFailedDialogFragment(DialogEnum.UPDATE_CT_FAILED.type, errorCode){
+                    exitApplication()
+                }
+            }
+            AppRequestState.ACT_UPDATE_CT_RES.type -> {
+
+            }
+            AppRequestState.ACT_DEBUG_PROCESS_COMPLETED.type -> {
+                startPreviousActivity(DiscoverActivity::class.java, true)
+            }
+            AppRequestState.ACT_LOGIN_FAILURE.type -> {
+                val errMsg = requestStateType.second!!.getString(AppConstant.ERROR_CODE)
+                CustomToast().infoToast(this, COLOR.DANGER, errMsg!!)
+
+            }
+            AppRequestState.ACT_LOGIN_COMPLETE.type -> {
+                startNextActivity(DiscoverActivity::class.java, true)
+            }
+
+            else -> {
+                Log.d("tag", "Invalid App State ${requestStateType.first}")
+            }
+        }
+        requestStateType = Pair(0x00, null)
+    }
+
+    private fun requestComplete(dialogType: Byte ,activityClass: Class<out AppCompatActivity?>, isNextActivity: Boolean,bundle: Bundle? = null){
+        var isClick = false
+        val handler = Handler(Looper.getMainLooper())
+        showConfirmDialogFragment(dialogType){
+            isClick = true
+            removeTimeout(handler,isClick)
+            if(isNextActivity) startNextActivity(activityClass, bundle, true)
+            if(!isNextActivity) startPreviousActivity(activityClass, bundle, true)
+        }
+
+        handler.postDelayed({
+            if(!isClick && !isBackground){
+                dismissDialogFragment()
+                if(isNextActivity) startNextActivity(activityClass, bundle, true)
+                if(!isNextActivity) startPreviousActivity(activityClass, bundle, true)
+            } else {
+                Log.d("tag", "App in background!!!")
+            }
+        }, nextActivityTimeout)
+    }
+
+    private fun removeTimeout(handler: Handler,timeout: Boolean) {
+        if(!timeout) return
+        handler.removeCallbacksAndMessages(null)
+    }
+
     open fun startNextActivity(clz: Class<out AppCompatActivity?>, isFinish: Boolean) {
         startNewActivity(clz, START_ACTIVITY_ANIM_RIGHT, isFinish, null)
     }
@@ -192,6 +295,16 @@ abstract class BaseActivity<VB: ViewBinding>: AppCompatActivity() {
         bundle.putByte(AppConstant.DIALOG_TYPE, dialogType)
         dialogFragment!!.arguments = bundle
         dialogFragment!!.show(supportFragmentManager.beginTransaction(), null)
+    }
+
+    open fun dismissDialogFragment(){
+        if(isBackground) return
+        if(dialogFragment != null) dialogFragment!!.dismiss()
+    }
+
+    open fun exitApplication() {
+        finish()
+        exitProcess(0)
     }
 
     // Broad cast function //

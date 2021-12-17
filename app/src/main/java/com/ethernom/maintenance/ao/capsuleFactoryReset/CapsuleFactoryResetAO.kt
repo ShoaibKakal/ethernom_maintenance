@@ -117,6 +117,7 @@ class CapsuleFactoryResetAO(ctx:Context) {
             // +------------------+------------------+
             // |     Status(1)    |  Error Code(1)   |
             // +------------------+------------------+
+            cmAPI!!.cmReset(CmType.capsule)
             val errorCode = payloadData.copyOfRange(1, 2)
             Log.d(tag, "errorCode: ${errorCode.hexa()}")
             val errorMessage = ErrorCode.factoryResetError[errorCode[0].toInt()]
