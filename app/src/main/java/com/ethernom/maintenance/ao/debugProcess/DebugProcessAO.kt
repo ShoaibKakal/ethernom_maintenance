@@ -196,7 +196,9 @@ class DebugProcessAO(ctx: Context) {
         mHandler.postDelayed({
             if(updateCTTimeout){
                 updateCTTimeout = false
-                sendBroadCast(DebugProcessBRAction.ACT_TIMEOUT_UPDATE_CT)
+                val bundle = Bundle()
+                bundle.putSerializable(CAPSULE_FAILURE_KEY, RequestFailureModel(errorCode = 4, errorMessage = ErrorCode.debugProcessError[4]!!))
+                sendBroadCast(DebugProcessBRAction.ACT_TIMEOUT_UPDATE_CT, bundle)
             }
         }, TIMER)
 

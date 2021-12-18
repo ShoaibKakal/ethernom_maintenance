@@ -102,7 +102,7 @@ enum class DialogEnum(val type: Byte) {
             return DialogModel(
                 context.resources.getString(R.string.debug_title) + "\n(Code: $code)",
                 context.resources.getString(errMsg!!),
-                context.resources.getString(R.string.turn_on),
+                context.resources.getString(R.string.exit),
                 R.drawable.selector_disable_ct,
                 R.drawable.img_failed
             )
