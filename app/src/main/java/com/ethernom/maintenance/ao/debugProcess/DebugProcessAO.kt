@@ -231,7 +231,6 @@ class DebugProcessAO(ctx: Context) {
         val payload = ByteArray(0)
         val data = Utils.makeAPDUHeader(APPCmd.A2C_DBP_COM,payload )
         cmAPI!!.cmSend(CmType.capsule, data, null)
-        cmAPI!!.cmReset(CmType.capsule)
 
         Handler(Looper.getMainLooper()).postDelayed({
             val event = EventBuffer(eventId = DebugProcessEvent.DEBUG_PROCESS_COMPLETED, completedType = 1)
@@ -257,6 +256,7 @@ class DebugProcessAO(ctx: Context) {
         /**
          * Broadcast Receiver(Debug Complete ) to UI
          */
+        cmAPI!!.cmReset(CmType.capsule)
         val bundle = Bundle()
         bundle.putInt(AppConstant.COMPLETE_TYPE_KEY, buffer.completedType!!)
         sendBroadCast(DebugProcessBRAction.ACT_DEBUG_PROCESS_COMPLETED, bundle)

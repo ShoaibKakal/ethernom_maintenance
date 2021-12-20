@@ -100,6 +100,11 @@ class DiscoverActivity : BaseActivity<ActivityDiscoverBinding>() {
     }
 
     override fun onBackPressed() {
+        if(connectionTimeout){
+            hideLoading()
+            showInProgressDialogFragment(DialogEnum.CONNECTING.type)
+            return
+        }
         exitApplication()
     }
 

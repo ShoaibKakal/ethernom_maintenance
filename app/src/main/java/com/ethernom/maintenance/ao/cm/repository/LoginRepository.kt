@@ -14,6 +14,7 @@ import com.ethernom.maintenance.ao.cm.restApi.ApiClient
 import com.ethernom.maintenance.model.LoginRequestBody
 import com.ethernom.maintenance.model.LoginResponse
 import com.ethernom.maintenance.ui.commonAO
+import com.ethernom.maintenance.utils.AppConstant
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -36,7 +37,7 @@ class LoginRepository (ctx: Context){
                     commonAO!!.sendEvent(AoId.AO_CM2_ID, ef)
 
                 } else {
-                    sendEventToAO()
+                    sendEventToAO(AppConstant.LOGIN_FAILED)
                     Log.d(tag, "Login onResponse Fail")
                 }
                 // send broadcast interrupt
@@ -45,14 +46,14 @@ class LoginRepository (ctx: Context){
 
             override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
                 Log.d(tag, "message: ${t.message}")
-                sendEventToAO()
+                sendEventToAO(t.message!!)
                 LocalBroadcastManager.getInstance(context).sendBroadcast(intent)
             }
         })
     }
 
-    private fun sendEventToAO() {
-        val svrBuffer = SvrBuffer(type = SvrBufferType.unregisterRes, responseFailed = true)
+    private fun sendEventToAO(msg: String) {
+        val svrBuffer = SvrBuffer(type = SvrBufferType.loginRes, responseFailed = true, loginResponse = LoginResponse(status = msg))
         val ef = EventBuffer(eventId = AoEvent.HTTP_DATA_REC, svrBuffer =svrBuffer)
         commonAO!!.sendEvent(AoId.AO_CM2_ID, ef)
     }

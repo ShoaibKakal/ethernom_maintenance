@@ -144,6 +144,15 @@ enum class DialogEnum(val type: Byte) {
             context.resources.getString(R.string.connection_timeout_title),
             context.resources.getString(R.string.connection_timeout_msg)
         )
+    },
+
+    CONNECTING(0x15){
+        override fun dialogContent(context: Context, code: Int?): DialogModel {
+            return DialogModel(
+                context.resources.getString(R.string.connecting),
+                context.resources.getString(R.string.connecting_msg),
+            )
+        }
     };
 
     abstract fun dialogContent(context: Context, code: Int? = -1): DialogModel

@@ -112,12 +112,16 @@ class AuthenticationActivity: BaseActivity<ActivityAuthenticationBinding>() {
                 }
                 LoginBRAction.ACT_LOGIN_FAILURE -> {
                     val data = intent.getSerializableExtra(AppConstant.LOGIN_FAILED) as RequestFailureModel
-                    binding.edUsername.setText("")
-                    binding.edUsername.requestFocus()
-                    binding.edPassword.setText("")
                     val bundle = Bundle()
                     bundle.putString(AppConstant.ERROR_CODE, getString(data.errorMessage))
-                    setAppStateRequest(AppRequestState.ACT_LOGIN_FAILURE.type, bundle)
+                    if(data.errorCode == 2){
+                        setAppStateRequest(AppRequestState.ACT_CONNECTION_FAILED.type, null)
+                    } else {
+                        binding.edUsername.setText("")
+                        binding.edUsername.requestFocus()
+                        binding.edPassword.setText("")
+                        setAppStateRequest(AppRequestState.ACT_LOGIN_FAILURE.type, bundle)
+                    }
                     handleUiAction()
                 }
                 LoginBRAction.ACT_LOGIN_COMPLETE -> {

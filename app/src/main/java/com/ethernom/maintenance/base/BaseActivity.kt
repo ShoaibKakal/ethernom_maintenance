@@ -188,6 +188,9 @@ abstract class BaseActivity<VB: ViewBinding>: AppCompatActivity() {
             AppRequestState.ACT_LOGIN_COMPLETE.type -> {
                 startNextActivity(DiscoverActivity::class.java, true)
             }
+            AppRequestState.ACT_CONNECTION_FAILED.type -> {
+                showConfirmDialogFragment(DialogEnum.NETWORK.type){}
+            }
 
             else -> {
                 Log.d("tag", "Invalid App State ${requestStateType.first}")

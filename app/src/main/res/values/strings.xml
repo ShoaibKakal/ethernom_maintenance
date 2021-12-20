@@ -93,6 +93,8 @@
     <string name="advertise_device_title">Advertise Nearby Devices</string>
     <string name="advertise_device_msg">Please press on your capsule devices (1 short press combination by 2 short press) to advertise bluetooth.</string>
 
+    <string name="connecting">Connecting</string>
+    <string name="connecting_msg">Connection in progress, Please do not exit the app.</string>
     <string name="connection_timeout_title">Connection Failed</string>
     <string name="connection_timeout_msg">Connecting with Capsule has been timeout. Please try again.</string>
 

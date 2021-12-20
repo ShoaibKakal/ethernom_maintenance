@@ -39,6 +39,7 @@ object ErrorCode {
             val hashMap = HashMap<Int, Int>()
             hashMap[0] = R.string.login_failed
             hashMap[1] = R.string.login_timeout
+            hashMap[2] = R.string.network_msg
             return hashMap
         }
 }

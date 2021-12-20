@@ -97,13 +97,25 @@ class LoginAO (ctx: Context){
         **/
         removeTimeout(loginTimeout)
         val status = buffer.svrBuffer!!.loginResponse!!.status
-        val event = if(status == AppConstant.LOGIN_SUCCESS) {
-            EventBuffer(LoginEvent.LOGIN_COMPLETE)
+        if(!buffer.svrBuffer!!.responseFailed!!){
+            val event = if(status == AppConstant.LOGIN_SUCCESS) {
+                EventBuffer(LoginEvent.LOGIN_COMPLETE)
+            } else {
+                val error = ErrorCode.loginError[0]
+                EventBuffer(LoginEvent.LOGIN_FAILURE, requestFailure = RequestFailureModel(errorCode = 0, errorMessage = error!!))
+            }
+            commonAO!!.sendEvent(AoId.AO_LOG_ID, event)
         } else {
-            val error = ErrorCode.loginError[0]
-            EventBuffer(LoginEvent.LOGIN_FAILURE, requestFailure = RequestFailureModel(errorCode = 0, errorMessage = error!!))
+            val event = if(status.contains("Failed to connect")){
+                val error = ErrorCode.loginError[0]
+                EventBuffer(LoginEvent.LOGIN_FAILURE, requestFailure = RequestFailureModel(errorCode = 0, errorMessage = error!!))
+            } else {
+                val error = ErrorCode.loginError[2]
+                EventBuffer(LoginEvent.LOGIN_FAILURE, requestFailure = RequestFailureModel(errorCode = 2, errorMessage = error!!))
+            }
+            commonAO!!.sendEvent(AoId.AO_LOG_ID, event)
         }
-        commonAO!!.sendEvent(AoId.AO_LOG_ID, event)
+
         return true
     }
 
