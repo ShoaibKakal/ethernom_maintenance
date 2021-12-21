@@ -76,7 +76,8 @@ class CapsuleFactoryResetAO(ctx:Context) {
          * - Set timer 10sec
          */
 
-        val payload = ByteArray(0)
+//        val payload = ByteArray(0)
+        val payload = Utils.concatPayloadCapsuleFactoryReset()
         val data = Utils.makeAPDUHeader(APPCmd.A2C_FR_REQ, payload)
         cmAPI!!.cmSend(CmType.capsule, data, null)
 
@@ -98,6 +99,7 @@ class CapsuleFactoryResetAO(ctx:Context) {
         /** Check status
         * - IF status == Allow
         * Broadcast Receiver(Request_Response) to UI
+        * cmSend(capsule, A2C_FR_COM) to CM
         * cmSend(srv, Reset_Cert{cert} )  to CM
         * Set timer 10sec
         * - Else
@@ -117,7 +119,6 @@ class CapsuleFactoryResetAO(ctx:Context) {
             // +------------------+------------------+
             // |     Status(1)    |  Error Code(1)   |
             // +------------------+------------------+
-            cmAPI!!.cmReset(CmType.capsule)
             val errorCode = payloadData.copyOfRange(1, 2)
             Log.d(tag, "errorCode: ${errorCode.hexa()}")
             val errorMessage = ErrorCode.factoryResetError[errorCode[0].toInt()]
@@ -129,6 +130,11 @@ class CapsuleFactoryResetAO(ctx:Context) {
             // +------------------+------------------+
             // |     Status(1)    | Serial Number(8) |
             // +------------------+------------------+
+            //
+            val payload = ByteArray(0)
+            val dataCmp = Utils.makeAPDUHeader(APPCmd.A2C_FR_COM, payload)
+            cmAPI!!.cmSend(CmType.capsule, dataCmp, null)
+
             val csn = payloadData.copyOfRange(1, 9)
             val svrBuffer= SvrBuffer(SvrBufferType.unregisterReq, unregisterRequestBody = UnregisterRequestBody(cert = csn.hexa()))
             cmAPI!!.cmSend(CmType.server, null, svrBuffer)
@@ -161,27 +167,19 @@ class CapsuleFactoryResetAO(ctx:Context) {
         val bundle = Bundle()
         bundle.putSerializable(CAPSULE_FAILURE_KEY, buffer.requestFailure)
         sendBroadCast(CapsuleFactoryResetBRAction.ACT_RESET_FAILURE, bundle)
+
+        Handler(Looper.getMainLooper()).postDelayed({
+            cmAPI!!.cmReset(CmType.capsule)
+        }, 2000)
         return true
     }
 
     private fun afResetCertResponse(acb: ACB, buffer: EventBuffer): Boolean {
         Log.d(tag, "afResetCertResponse")
-        /** Send the factory reset completed to capsule by pass the token and param
-        * - cmSend(capsule,  Factory_Reset_Completed {token, param} )  to CM
-        * - Set timer 5sec
-        **/
+        /**
+         * Send_Event (AO_RESET, RESET_COMPLETED)
+         **/
         removeTimeout(timerServerRequest)
-        if(buffer.svrBuffer!!.responseFailed!!){
-            val errorMsg = ErrorCode.factoryResetError[3]
-            val event = EventBuffer(eventId = CapsuleFactoryResetEvent.RESET_FAILURE, requestFailure = RequestFailureModel(3, errorMsg!!))
-            commonAO!!.sendEvent(AoId.AO_CFR_ID, event)
-            return true
-        }
-
-        val payload = Utils.concatPayloadCapsuleFactoryReset()
-        val data = Utils.makeAPDUHeader(APPCmd.A2C_FR_COM, payload)
-        cmAPI!!.cmSend(CmType.capsule, data, null)
-
         val event = EventBuffer(eventId = CapsuleFactoryResetEvent.RESET_COMPLETED)
         commonAO!!.sendEvent(AoId.AO_CFR_ID, event)
 
@@ -190,10 +188,10 @@ class CapsuleFactoryResetAO(ctx:Context) {
 
     private fun afTimeoutServer(acb: ACB, buffer: EventBuffer): Boolean {
         Log.d(tag, "afTimeoutServer")
-        /** Send_Event (AO_RESET, RESET_FAILURE{srv_timeout}) **/
-        val errorMsg = ErrorCode.factoryResetError[2]
-        val event = EventBuffer(eventId = CapsuleFactoryResetEvent.RESET_FAILURE, requestFailure = RequestFailureModel(2, errorMsg!!))
+        /** Send_Event (AO_RESET, RESET_COMPLETED) **/
+        val event = EventBuffer(eventId = CapsuleFactoryResetEvent.RESET_COMPLETED)
         commonAO!!.sendEvent(AoId.AO_CFR_ID, event)
+
         return true
     }
 
