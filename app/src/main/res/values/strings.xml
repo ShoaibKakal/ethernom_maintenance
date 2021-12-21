@@ -74,6 +74,7 @@
     <string name="capsule_reset_success">System configuration successfully.</string>
     <string name="capsule_not_onboard">Invalid Capsule.</string>
     <string name="capsule_not_yet_user_onboard">Capsule not onboarded with a user yet.</string>
+    <string name="capsule_wrong_certificate">Certificate wrong format</string>
     <string name="capsule_reset_timeout">System configuration request capsule factory reset timeout.</string>
     <string name="capsule_reset_failed">System configuration request capsule factory reset failed.</string>
 

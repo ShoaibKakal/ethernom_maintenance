@@ -9,7 +9,8 @@ object ErrorCode {
             hashMap[0] = R.string.capsule_not_onboard
             hashMap[1] = R.string.capsule_not_yet_user_onboard
             hashMap[2] = R.string.capsule_reset_timeout
-            hashMap[3] = R.string.capsule_reset_failed
+            hashMap[3] = R.string.capsule_wrong_certificate
+            hashMap[4] = R.string.capsule_reset_failed
             return hashMap
         }
 
@@ -19,8 +20,9 @@ object ErrorCode {
             hashMap[0] = R.string.capsule_not_onboard
             hashMap[1] = R.string.capsule_not_yet_user_onboard
             hashMap[2] = R.string.debug_timeout
-            hashMap[3] = R.string.debug_failed
-            hashMap[4] = R.string.debug_update_ct
+            hashMap[3] = R.string.capsule_wrong_certificate
+            hashMap[4] = R.string.debug_failed
+            hashMap[5] = R.string.debug_update_ct
             return hashMap
         }
 
@@ -30,7 +32,8 @@ object ErrorCode {
             hashMap[0] = R.string.capsule_not_onboard
             hashMap[1] = R.string.capsule_not_yet_user_onboard
             hashMap[2] = R.string.qr_code_timeout
-            hashMap[3] = R.string.qr_code_failed
+            hashMap[3] = R.string.capsule_wrong_certificate
+            hashMap[4] = R.string.qr_code_failed
             return hashMap
         }
 
