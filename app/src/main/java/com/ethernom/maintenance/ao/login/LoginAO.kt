@@ -106,12 +106,12 @@ class LoginAO (ctx: Context){
             }
             commonAO!!.sendEvent(AoId.AO_LOG_ID, event)
         } else {
-            val event = if(status.contains("Failed to connect")){
-                val error = ErrorCode.loginError[0]
-                EventBuffer(LoginEvent.LOGIN_FAILURE, requestFailure = RequestFailureModel(errorCode = 0, errorMessage = error!!))
-            } else {
+            val event = if(status.lowercase().contains("failed to connect to")){
                 val error = ErrorCode.loginError[2]
                 EventBuffer(LoginEvent.LOGIN_FAILURE, requestFailure = RequestFailureModel(errorCode = 2, errorMessage = error!!))
+            } else {
+                val error = ErrorCode.loginError[0]
+                EventBuffer(LoginEvent.LOGIN_FAILURE, requestFailure = RequestFailureModel(errorCode = 0, errorMessage = error!!))
             }
             commonAO!!.sendEvent(AoId.AO_LOG_ID, event)
         }
