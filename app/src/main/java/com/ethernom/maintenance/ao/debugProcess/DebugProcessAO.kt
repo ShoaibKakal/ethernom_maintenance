@@ -160,6 +160,9 @@ class DebugProcessAO(ctx: Context) {
         val bundle = Bundle()
         bundle.putSerializable(AppConstant.CAPSULE_FAILURE_KEY, buffer.requestFailure)
         sendBroadCast(DebugProcessBRAction.ACT_DEBUG_PROCESS_FAILURE, bundle)
+        Handler(Looper.getMainLooper()).postDelayed({
+            cmAPI!!.cmReset(CmType.capsule)
+        }, 2000)
         return true
     }
 
@@ -231,7 +234,6 @@ class DebugProcessAO(ctx: Context) {
         val payload = ByteArray(0)
         val data = Utils.makeAPDUHeader(APPCmd.A2C_DBP_COM,payload )
         cmAPI!!.cmSend(CmType.capsule, data, null)
-        cmAPI!!.cmReset(CmType.capsule)
 
         Handler(Looper.getMainLooper()).postDelayed({
             val event = EventBuffer(eventId = DebugProcessEvent.DEBUG_PROCESS_COMPLETED, completedType = 1)
@@ -249,6 +251,9 @@ class DebugProcessAO(ctx: Context) {
         val bundle = Bundle()
         bundle.putSerializable(CAPSULE_FAILURE_KEY, errorRequest)
         sendBroadCast(DebugProcessBRAction.ACT_TIMEOUT_UPDATE_CT, bundle)
+        Handler(Looper.getMainLooper()).postDelayed({
+            cmAPI!!.cmReset(CmType.capsule)
+        }, 2000)
         return true
     }
 
@@ -260,6 +265,9 @@ class DebugProcessAO(ctx: Context) {
         val bundle = Bundle()
         bundle.putInt(AppConstant.COMPLETE_TYPE_KEY, buffer.completedType!!)
         sendBroadCast(DebugProcessBRAction.ACT_DEBUG_PROCESS_COMPLETED, bundle)
+        Handler(Looper.getMainLooper()).postDelayed({
+            cmAPI!!.cmReset(CmType.capsule)
+        }, 2000)
         return true
     }
 
@@ -291,7 +299,7 @@ class DebugProcessAO(ctx: Context) {
         val valueTrue = 0x01.toByte()
         val ctValue = ct[0] == valueTrue
         val ctsValue = if (cts[0] == valueTrue) "Started" else "Not Started yet"
-        val proximityAlarm = if (pa[0] == valueTrue) "Enable" else "Disable"
+        val proximityAlarm = if (pa[0] == valueTrue) "Enabled" else "Disabled"
         val uobValue = if (uob[0] == valueTrue) "Registered" else "Unregistered"
         val tsValue = if (ts[0] == valueTrue) "Synchronized" else "Unsynchronized"
 

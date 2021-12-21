@@ -117,7 +117,6 @@ class ReadQRCodeAO(ctx: Context) {
             val payload = ByteArray(0)
             val dataPayload = Utils.makeAPDUHeader(APPCmd.A2C_RQR_COM, payload)
             cmAPI!!.cmSend(CmType.capsule, dataPayload, null)
-            cmAPI!!.cmReset(CmType.capsule)
             val event = EventBuffer(ReadQRCodeEvent.READ_QR_CODE_COMPLETED, deviceName = deviceName, serialNumber = sn)
             commonAO!!.sendEvent(AoId.AO_RQR_ID, event)
         } else {
@@ -152,6 +151,9 @@ class ReadQRCodeAO(ctx: Context) {
         val bundle = Bundle()
         bundle.putSerializable(AppConstant.CAPSULE_FAILURE_KEY, buffer.requestFailure)
         sendBroadCast(ReadQRCodeBRAction.READ_QR_CODE_FAILURE, bundle)
+        Handler(Looper.getMainLooper()).postDelayed({
+            cmAPI!!.cmReset(CmType.capsule)
+        }, 2000)
         return true
     }
 
@@ -162,6 +164,9 @@ class ReadQRCodeAO(ctx: Context) {
         bundle.putString(AppConstant.DEVICE_KEY, buffer.deviceName)
         bundle.putString(AppConstant.SERIAL_NUMBER_KEY, buffer.serialNumber)
         sendBroadCast(ReadQRCodeBRAction.READ_QR_CODE_COMPLETED, bundle)
+        Handler(Looper.getMainLooper()).postDelayed({
+            cmAPI!!.cmReset(CmType.capsule)
+        }, 2000)
         return true
     }
 
